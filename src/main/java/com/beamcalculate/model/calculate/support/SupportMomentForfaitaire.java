@@ -11,7 +11,6 @@ import java.util.Map;
 
 import static com.beamcalculate.enums.CombinCoef.G_UNFAVORABLE_COEF;
 import static com.beamcalculate.enums.CombinCoef.Q_UNFAVORABLE_COEF;
-import static com.beamcalculate.enums.MethodName.FORFAITAIRE;
 
 public class SupportMomentForfaitaire extends SupportMoment{
     private Map<Integer, Map<CombinCoef, Double>> mSpanRefMomentMap = new HashMap<>();
@@ -165,7 +164,7 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
     @Override
     public String getMethod() {
-        return FORFAITAIRE.getMethodName();
+        return MethodName.FORFAITAIRE.getMethodName();
     }
 
     @Override
