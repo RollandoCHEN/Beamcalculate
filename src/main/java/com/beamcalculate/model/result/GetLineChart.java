@@ -7,7 +7,6 @@ import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.SpanMomentFunction;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
-import com.beamcalculate.model.entites.Material;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.DoubleProperty;
@@ -27,14 +26,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import javax.swing.event.ChangeListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.beamcalculate.enums.MethodeName.*;
+import static com.beamcalculate.enums.MethodName.TROIS_MOMENT;
+import static com.beamcalculate.enums.MethodName.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 
@@ -255,7 +254,7 @@ public class GetLineChart {
 
 //        if the methode of calculate is "3 moment", add redistribution for the methode
 
-        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodeName())
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
                 && !Controller.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
@@ -368,7 +367,7 @@ public class GetLineChart {
 
         //        if the methode of calculate is "3 moment", add redistribution for the methode
 
-        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodeName())
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
                 && !Controller.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
@@ -413,7 +412,7 @@ public class GetLineChart {
             double spanLocalX = 0;
             double globalX = 0;
 
-            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getMethodeName())) {
+            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getMethodName())) {
                 for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                     double preX;
                     if (preSpanId == 0) {
@@ -485,7 +484,7 @@ public class GetLineChart {
 
                 })
         );
-        series.setName(Main.getBundleText("label." + ultimateCase.toString().toLowerCase()) + " - " + TROIS_MOMENT_R.getMethodeName());
+        series.setName(Main.getBundleText("label." + ultimateCase.toString().toLowerCase()) + " - " + TROIS_MOMENT_R.getMethodName());
     }
 
 
@@ -555,26 +554,26 @@ public class GetLineChart {
                 });
 
 //                mLineChart.getData().removeAll(
-//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_MAX"),
-//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_MIN")
+//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_MAX"),
+//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_MIN")
 //                );
 
-                mStringSeriesMap.put(TROIS_MOMENT.getMethodeName() + "_ReducedMAX", maxELUSeries);
-                mStringSeriesMap.put(TROIS_MOMENT.getMethodeName() + "_ReducedMIN", minELUSeries);
+                mStringSeriesMap.put(TROIS_MOMENT.getMethodName() + "_ReducedMAX", maxELUSeries);
+                mStringSeriesMap.put(TROIS_MOMENT.getMethodName() + "_ReducedMIN", minELUSeries);
 
                 mLineChart.getData().addAll(
-                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_ReducedMAX"),
-                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_ReducedMIN")
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMAX"),
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMIN")
                 );
             } else {
                 mLineChart.getData().removeAll(
-                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_ReducedMAX"),
-                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_ReducedMIN")
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMAX"),
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMIN")
                 );
 
 //                mLineChart.getData().addAll(
-//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_MAX"),
-//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodeName() + "_MIN")
+//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_MAX"),
+//                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_MIN")
 //                );
             }
         });

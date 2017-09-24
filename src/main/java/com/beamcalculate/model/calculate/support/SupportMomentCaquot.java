@@ -6,8 +6,8 @@ import com.beamcalculate.model.entites.Load;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.beamcalculate.enums.MethodeName.CAQUOT;
-import static com.beamcalculate.enums.MethodeName.CAQUOT_MINOREE;
+import static com.beamcalculate.enums.MethodName.CAQUOT;
+import static com.beamcalculate.enums.MethodName.CAQUOT_MINOREE;
 
 public class SupportMomentCaquot extends SupportMoment {
     private final Geometry mGeometry;
@@ -124,9 +124,9 @@ public class SupportMomentCaquot extends SupportMoment {
     @Override
     public String getMethod() {
         if (conditionsMatched){
-            return CAQUOT_MINOREE.getMethodeName();
+            return CAQUOT_MINOREE.getMethodName();
         } else {
-            return CAQUOT.getMethodeName();
+            return CAQUOT.getMethodName();
         }
     }
 

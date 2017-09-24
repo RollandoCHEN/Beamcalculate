@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static com.beamcalculate.enums.MethodeName.TROIS_MOMENT;
+import static com.beamcalculate.enums.MethodName.TROIS_MOMENT;
 
 public class SupportMoment3Moment extends SupportMoment {
     private Map<Integer, Double> mEffectiveSpansLengthMap = new HashMap();
@@ -162,7 +162,7 @@ public class SupportMoment3Moment extends SupportMoment {
 
     @Override
     public String getMethod() {
-        return TROIS_MOMENT.getMethodeName();
+        return TROIS_MOMENT.getMethodName();
     }
 
     @Override
