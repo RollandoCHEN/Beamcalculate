@@ -47,8 +47,10 @@ public class Reinforcement {
     private void calculateReinforcementOfSupport(int supportId){
 
         ELUCombination combination = new ELUCombination(mSpanMomentFunction);
-        double maxMoment = - combination.getMinMomentValueOfSupport(supportId);
         Map<ReinforcementParam, Double> paramValueMap = new TreeMap<>();
+
+        double maxMoment = - combination.getMinMomentValueOfSupport(supportId);
+        paramValueMap.put(a_M, maxMoment);
 
         mReducedMomentMu = maxMoment / (mWidth * Math.pow(mEffectiveHeight, 2.0) * mFcd);
         paramValueMap.put(b_MU, mReducedMomentMu);

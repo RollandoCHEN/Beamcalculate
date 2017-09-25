@@ -1,5 +1,6 @@
 package com.beamcalculate.model.result;
 
+import com.beamcalculate.Main;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.beamcalculate.enums.ReinforcementParam.b_MU;
+import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
 
 public class GetReinforcementResult {
@@ -50,10 +52,10 @@ public class GetReinforcementResult {
         container.getChildren().addAll(spanParamHBox, supportParamHBox);
 
         Stage resultStage = new Stage();
-        resultStage.setTitle("Armatures des sections en travée et en appuis");
+        resultStage.setTitle(Main.getBundleText("window.title.result"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        Scene scene = new Scene(container, 1000, 800);
+        Scene scene = new Scene(container, 1000, 900);
         resultStage.setScene(scene);
         resultStage.show();
     }
@@ -75,13 +77,15 @@ public class GetReinforcementResult {
         reinforceParamMap.get(1).forEach((param, value)->{
             if (param == b_MU){
                 Label paramName = new Label(
-                        param.getParamName() + " " + param.getUnit() + " : "
+                        param.getParaNameBundleKey() + " " + param.getUnit() + " : "
                 );
-                Label pivotName = new Label("Pivot : ");
-                paramNameVBox.getChildren().addAll(paramName, pivotName);
+                Label pivotParam = new Label(
+                        k_PIVOT.getParaNameBundleKey() + " : "
+                );
+                paramNameVBox.getChildren().addAll(paramName, pivotParam);
             } else {
                 Label paramName = new Label(
-                        param.getParamName() + " " + param.getUnit() + " : "
+                        param.getParaNameBundleKey() + " " + param.getUnit() + " : "
                 );
                 paramNameVBox.getChildren().add(paramName);
             }
@@ -90,24 +94,24 @@ public class GetReinforcementResult {
         return paramNameVBox;
     }
 
-    private HBox getParamValuesHBox(Reinforcement reinforcement, String string){
+    private HBox getParamValuesHBox(Reinforcement reinforcement, String spanOrSupport){
         HBox paramValuesHBox = new HBox();
         paramValuesHBox.setSpacing(20);
         String sectionLabelString;
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
-        if (string.equals("span")){
+        if (spanOrSupport.equals("span")){
             reinforceParamMap = reinforcement.getSpanReinforceParam();
-            sectionLabelString = "Travée";
+            sectionLabelString = Main.getBundleText("label.span");
         } else {
             reinforceParamMap = reinforcement.getSupportReinforceParam();
-            sectionLabelString = "Appuis";
+            sectionLabelString = Main.getBundleText("label.support");
         }
 
         reinforceParamMap.forEach((sectionId, paramValueMap)->{
             VBox paramValueVBox = new VBox();
-            if (string.equals("support") && sectionId != 1 && sectionId != Geometry.getNumSupport()
-                    || string.equals("span")){
+            if (spanOrSupport.equals("support") && sectionId != 1 && sectionId != Geometry.getNumSupport()
+                    || spanOrSupport.equals("span")){
                 paramValueVBox.setSpacing(15);
                 Label sectionLabel = new Label(sectionLabelString + " " + sectionId.toString());
                 sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
@@ -115,7 +119,7 @@ public class GetReinforcementResult {
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){
                         Label paramValue = new Label(
-                                param.getSign() + " = " + mFourDecimal.format(value)
+                                param.getSymbol() + " = " + mFourDecimal.format(value)
                         );
                         Label pivotValue = new Label(
                                 reinforcement.getPivotMap().get(sectionId).getContent()
@@ -123,7 +127,7 @@ public class GetReinforcementResult {
                         paramValueVBox.getChildren().addAll(paramValue, pivotValue);
                     } else {
                         Label paramValue = new Label(
-                                param.getSign() + " = " + mFourDecimal.format(value)
+                                param.getSymbol() + " = " + mFourDecimal.format(value)
                         );
                         paramValueVBox.getChildren().add(paramValue);
                     }
