@@ -4,6 +4,7 @@ import com.beamcalculate.Main;
 import com.beamcalculate.controllers.Controller;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
+import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.calculate.SpanMomentFunction;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
@@ -187,7 +188,18 @@ public class MomentLineChart {
                 new HBox(minCaseMomentLabel, minCaseMomentValue)
         );
 
-        HBox bottomHBox = new HBox(method, mMethodChoice, spanNum, spanNnmChoice, xLabel, xValue, unitM, calculateYButton, resultVBox);
+        Button rebarCalculatingButton = new Button(Main.getBundleText("button.calculateRebar"));
+        rebarCalculatingButton.disableProperty().bind(
+                Bindings.isNull(mMethodChoice.valueProperty())
+                        .or(Controller.isDisabledRebarCalculateProperty())
+        );
+        rebarCalculatingButton.setOnAction(event -> {
+            Reinforcement reinforcement = new Reinforcement(mMethodChoiceMap.get(mMethodChoiceValue.get()));
+            ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
+        });
+
+
+        HBox bottomHBox = new HBox(method, mMethodChoice, spanNum, spanNnmChoice, xLabel, xValue, unitM, calculateYButton, resultVBox, rebarCalculatingButton);
         bottomHBox.setSpacing(10);
         bottomHBox.setAlignment(Pos.CENTER);
         bottomHBox.setPadding(new Insets(10, 20, 10, 20));

@@ -151,7 +151,7 @@
 
             <HBox spacing="15.0" alignment="BOTTOM_RIGHT">
                 <Button fx:id="GraphGenerate" onAction="#GenerateGraph" text="%button.generateEnvelopCurve" disable="true"/>
-                <Button fx:id="RebarCalculate" onAction="#CalculateRebar" text="%button.calculateRebar" disable="true" />
+                <!--<Button fx:id="RebarCalculate" onAction="#CalculateRebar" text="%button.calculateRebar" disable="true" />-->
                 <Button onAction="#DEBUG" text="DEBUG" />
             </HBox>
         </VBox>

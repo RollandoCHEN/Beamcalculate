@@ -48,7 +48,6 @@ public class Controller implements Initializable {
     @FXML private TextField fyk;
     @FXML private ChoiceBox ductibilityClass;
     @FXML private Button GraphGenerate;
-    @FXML private Button RebarCalculate;
 
 
     private Geometry newGeometry = new Geometry();
@@ -304,14 +303,13 @@ public class Controller implements Initializable {
                         or(turnTextFieldsIsEmptyGridToBooleanBinding(supportsWidthGrid))
         );
 //        bind rabar calculate button to the text fields
-        RebarCalculate.disableProperty().bind(
+        isDisabledRebarCalculate.bind(
                 Bindings.isEmpty(sectionWidth.textProperty())
-                        .or(Bindings.isEmpty(sectionHeight.textProperty()))
-                        .or(Bindings.isEmpty(fck.textProperty()))
-                        .or(Bindings.isEmpty(fyk.textProperty()))
-                        .or(Bindings.isNull(ductibilityClass.valueProperty()))
+                .or(Bindings.isEmpty(sectionHeight.textProperty()))
+                .or(Bindings.isEmpty(fck.textProperty()))
+                .or(Bindings.isEmpty(fyk.textProperty()))
+                .or(Bindings.isNull(ductibilityClass.valueProperty()))
         );
-        isDisabledRebarCalculate.bind(RebarCalculate.disableProperty());
     }
 
     @FXML
@@ -335,13 +333,13 @@ public class Controller implements Initializable {
         }
     }
 
-    @FXML
+/*    @FXML
     private void CalculateRebar(ActionEvent actionEvent) {
         getInputs();
         calculateMoments();
         mReinforcement = new Reinforcement(mSpanMomentFunction3Moment);
         ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(mReinforcement);
-    }
+    }*/
 
     @FXML
     private void DEBUG(ActionEvent actionEvent) throws Exception {
@@ -395,7 +393,7 @@ public class Controller implements Initializable {
         return isDisabledRebarCalculate.get();
     }
 
-    public BooleanProperty isDisabledRebarCalculateProperty() {
+    public static BooleanProperty isDisabledRebarCalculateProperty() {
         return isDisabledRebarCalculate;
     }
 }
