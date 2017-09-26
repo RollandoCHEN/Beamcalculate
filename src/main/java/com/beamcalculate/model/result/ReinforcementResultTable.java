@@ -22,13 +22,13 @@ import static com.beamcalculate.enums.ReinforcementParam.b_MU;
 import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
 
-public class GetReinforcementResult {
+public class ReinforcementResultTable {
 
     private Locale mCurrentLocale = new Locale("en", "US");
     private DecimalFormat mFourDecimal = new DecimalFormat("##0.0000", new DecimalFormatSymbols(mCurrentLocale));  // show only three decimal digits
 
 
-    public GetReinforcementResult(Reinforcement reinforcement) {
+    public ReinforcementResultTable(Reinforcement reinforcement) {
 
         HBox spanParamHBox = new HBox();
         spanParamHBox.setSpacing(20);

@@ -37,7 +37,7 @@ import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 
-public class GetLineChart {
+public class MomentLineChart {
 
     private Spinner<Integer> mIntegerSpinner;
     private final LineChart<Number, Number> mLineChart;
@@ -72,7 +72,7 @@ public class GetLineChart {
         });
     }
 
-    public GetLineChart(SpanMomentFunction spanMomentFunction) {
+    public MomentLineChart(SpanMomentFunction spanMomentFunction) {
         ELUCombination combination = new ELUCombination(spanMomentFunction);
         mMethodChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
@@ -279,15 +279,15 @@ public class GetLineChart {
         chartStage.show();
     }
 
-    public GetLineChart(SpanMomentFunction spanMomentFunction1,
-                        SpanMomentFunction spanMomentFunction2) {
+    public MomentLineChart(SpanMomentFunction spanMomentFunction1,
+                           SpanMomentFunction spanMomentFunction2) {
         this(spanMomentFunction1);
         addNewMomentChart(spanMomentFunction2);
     }
 
-    public GetLineChart(SpanMomentFunction spanMomentFunction1,
-                        SpanMomentFunction spanMomentFunction2,
-                        SpanMomentFunction spanMomentFunction3) {
+    public MomentLineChart(SpanMomentFunction spanMomentFunction1,
+                           SpanMomentFunction spanMomentFunction2,
+                           SpanMomentFunction spanMomentFunction3) {
         this(spanMomentFunction1, spanMomentFunction2);
         addNewMomentChart(spanMomentFunction3);
     }
