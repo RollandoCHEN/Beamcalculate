@@ -10,9 +10,9 @@ import com.beamcalculate.model.calculate.support.SupportMoment3Moment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 import com.beamcalculate.model.entites.Material;
-import com.beamcalculate.model.result.GetLineChart;
+import com.beamcalculate.model.result.MomentLineChart;
 import com.beamcalculate.model.calculate.support.SupportMomentForfaitaire;
-import com.beamcalculate.model.result.GetReinforcementResult;
+import com.beamcalculate.model.result.ReinforcementResultTable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -20,12 +20,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
@@ -271,7 +269,7 @@ public class Controller implements Initializable {
     private void generateGeometryDiagram(ActionEvent actionEvent) {
 
         getInputValue(numSpans, newGeometry.numSpanProperty());
-        double hgapValue = (880-newGeometry.getNumSpan()*69)/newGeometry.getNumSpan();
+        double hGapValue = (880-newGeometry.getNumSpan()*69)/newGeometry.getNumSpan();
         notEqualSpan.bind(Bindings.not(equalSpanCheck.selectedProperty()));
         notEqualSupport.bind(Bindings.not(equalSupportCheck.selectedProperty()));
 
@@ -287,7 +285,7 @@ public class Controller implements Initializable {
         newGeometry.supportWidthMap().clear();
 
         addTextFieldToGrid(
-                newGeometry.getNumSpan(), hgapValue,
+                newGeometry.getNumSpan(), hGapValue,
                 equalSpanCheck, equalSpanLength,
                 spansLengthGrid
         );
@@ -295,7 +293,7 @@ public class Controller implements Initializable {
         image.setImage(getImage(newGeometry.getNumSpan()));
 
         addTextFieldToGrid(
-                newGeometry.getNumSupport(), hgapValue,
+                newGeometry.getNumSupport(), hGapValue,
                 equalSupportCheck, equalSupportWidth,
                 supportsWidthGrid
         );
@@ -321,15 +319,15 @@ public class Controller implements Initializable {
         getInputs();
         showInputWarning();
         calculateMoments();
-        GetLineChart lineChart;
+        MomentLineChart lineChart;
         if(mSupportMomentForfaitaire.isConditionsVerified()){
-            lineChart = new GetLineChart(
+            lineChart = new MomentLineChart(
                     mSpanMomentFunctionCaquot,
                     mSpanMomentFunctionForfaitaire,
                     mSpanMomentFunction3Moment
             );
         } else {
-            lineChart = new GetLineChart(
+            lineChart = new MomentLineChart(
                     mSpanMomentFunctionCaquot,
                     mSpanMomentFunction3Moment
             );
@@ -342,7 +340,7 @@ public class Controller implements Initializable {
         getInputs();
         calculateMoments();
         mReinforcement = new Reinforcement(mSpanMomentFunction3Moment);
-        GetReinforcementResult reinforcementResult = new GetReinforcementResult(mReinforcement);
+        ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(mReinforcement);
     }
 
     @FXML
