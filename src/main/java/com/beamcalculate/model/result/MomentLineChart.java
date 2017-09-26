@@ -619,7 +619,7 @@ public class MomentLineChart {
                 if (!newValue) { //when focus lost
                     try {
                         if (Double.parseDouble(coefValue.getText()) <
-                                mMomentRedistribution.getFinalRedistributionCoefMap().get(supportId)
+                                mMomentRedistribution.getFinalRedistributionCoefMap().get(supportId) - 0.001
                                 || Double.parseDouble(coefValue.getText()) > 1.0
                                 ) {
                             //set the textField empty
