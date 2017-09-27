@@ -136,14 +136,14 @@ public class MomentLineChart {
 
 //        module to calculate the Y value for the given X value
 
-        Label method = new Label(Main.getBundleText("label.momentCalculateMethod"));
+        Label methodText = new Label(Main.getBundleText("label.momentCalculateMethod"));
         mMethodChoice = new ChoiceBox(FXCollections.observableArrayList(spanMomentFunction.getMethod()));
         mMethodChoice.setPrefWidth(200);
-        Label spanNum = new Label(Main.getBundleText("label.spanNumb"));
-        ChoiceBox<Integer> spanNnmChoice = new ChoiceBox(FXCollections.observableArrayList(Geometry.spansLengthMap().keySet()));
-        Label xLabel = new Label(Main.getBundleText("label.xOnSpan"));
-        TextField xValue = new TextField();
-        Label unitM = new Label(Main.getBundleText("unit.length"));
+        Label spanNumText = new Label(Main.getBundleText("label.spanNumb"));
+        ChoiceBox<Integer> spanNumChoice = new ChoiceBox(FXCollections.observableArrayList(Geometry.spansLengthMap().keySet()));
+        Label xAbscissaText = new Label(Main.getBundleText("label.xOnSpan"));
+        TextField xValueField = new TextField();
+        Label lengthUnitText = new Label(Main.getBundleText("unit.length"));
         Button calculateYButton = new Button(Main.getBundleText("button.calculateMoment"));
         Label maxCaseMomentLabel = new Label(
                 Main.getBundleText("label.maxMoment")
@@ -163,25 +163,29 @@ public class MomentLineChart {
         calculateYButton.setDisable(true);
         calculateYButton.disableProperty().bind(
                 Bindings.isNull(mMethodChoice.valueProperty())
-                        .or(Bindings.isNull(spanNnmChoice.valueProperty()))
-                        .or(Bindings.isEmpty(xValue.textProperty()))
+                        .or(Bindings.isNull(spanNumChoice.valueProperty()))
+                        .or(Bindings.isEmpty(xValueField.textProperty()))
         );
 
 
-        spanNnmChoice.setOnAction(e -> {
-            int selectedSpanId = spanNnmChoice.getValue();
-            addMaxValueValidation(xValue, mMethodChoiceMap.get(mMethodChoiceValue.get()).getCalculateSpanLengthMap().get(selectedSpanId));
+        spanNumChoice.setOnAction(e -> {
+            int selectedSpanId = spanNumChoice.getValue();
+            addMaxValueValidation(xValueField, mMethodChoiceMap.get(mMethodChoiceValue.get()).getCalculateSpanLengthMap().get(selectedSpanId));
         });
+        spanNumChoice.disableProperty().bind(Bindings.isNull(mMethodChoice.valueProperty()));
+
+        xValueField.setMaxWidth(50);
+        xValueField.disableProperty().bind(Bindings.isNull(spanNumChoice.valueProperty()));
+
 
         calculateYButton.setOnAction(e -> {
             ELUCombination eluCombination = new ELUCombination(mMethodChoiceMap.get(mMethodChoiceValue.get()));
-            double maxY = eluCombination.getCombinedUltimateMomentAtXOfSpan(Double.parseDouble(xValue.getText()), spanNnmChoice.getValue(), MAX);
-            double minY = eluCombination.getCombinedUltimateMomentAtXOfSpan(Double.parseDouble(xValue.getText()), spanNnmChoice.getValue(), MIN);
+            double maxY = eluCombination.getCombinedUltimateMomentAtXOfSpan(Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX);
+            double minY = eluCombination.getCombinedUltimateMomentAtXOfSpan(Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN);
             maxCaseMomentValue.setText(mFourDecimals.format(maxY));
             minCaseMomentValue.setText(mFourDecimals.format(minY));
         });
 
-        xValue.setMaxWidth(50);
 
         VBox resultVBox = new VBox(
                 new HBox(maxCaseMomentLabel, maxCaseMomentValue),
@@ -189,7 +193,7 @@ public class MomentLineChart {
         );
 
         Button rebarCalculatingButton = new Button(Main.getBundleText("button.calculateRebar"));
-        rebarCalculatingButton.setStyle("-fx-font-size:15px");
+        rebarCalculatingButton.setStyle("-fx-font-weight:bold;");
         rebarCalculatingButton.disableProperty().bind(
                 Bindings.isNull(mMethodChoice.valueProperty())
                         .or(Controller.isDisabledRebarCalculateProperty())
@@ -199,11 +203,19 @@ public class MomentLineChart {
             ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
         });
 
+        HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
+        firstLine.setSpacing(10);
+        firstLine.setAlignment(Pos.CENTER);
+        firstLine.setPadding(new Insets(10, 20, 10, 20));
 
-        HBox bottomHBox = new HBox(method, mMethodChoice, spanNum, spanNnmChoice, xLabel, xValue, unitM, calculateYButton, resultVBox, rebarCalculatingButton);
-        bottomHBox.setSpacing(10);
-        bottomHBox.setAlignment(Pos.CENTER);
-        bottomHBox.setPadding(new Insets(10, 20, 10, 20));
+        HBox secondLine = new HBox(rebarCalculatingButton, calculateYButton, resultVBox);
+        secondLine.setSpacing(10);
+        secondLine.setAlignment(Pos.CENTER);
+        secondLine.setPadding(new Insets(10, 20, 10, 20));
+
+        VBox bottomVBox = new VBox(firstLine, secondLine);
+        bottomVBox.setAlignment(Pos.CENTER);
+        bottomVBox.setPadding(new Insets(10, 20, 10, 20));
 
 //        checkbox to show or hide line chart
 
@@ -278,7 +290,7 @@ public class MomentLineChart {
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(mGridPaneTop);
         borderPane.setCenter(mLineChart);
-        borderPane.setBottom(bottomHBox);
+        borderPane.setBottom(bottomVBox);
         borderPane.setPadding(new Insets(20, 20, 20, 20));
 
 //        set stage and scene

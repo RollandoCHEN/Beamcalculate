@@ -29,9 +29,7 @@ public class MomentRedistribution {
         return root1;
     }
 
-    public MomentRedistribution(
-            ELUCombination combination
-    ) {
+    public MomentRedistribution(ELUCombination combination) {
 
         for (int supportId = 1; supportId < Geometry.getNumSupport()+1; supportId++) {
 
