@@ -189,6 +189,7 @@ public class MomentLineChart {
         );
 
         Button rebarCalculatingButton = new Button(Main.getBundleText("button.calculateRebar"));
+        rebarCalculatingButton.setStyle("-fx-font-size:15px");
         rebarCalculatingButton.disableProperty().bind(
                 Bindings.isNull(mMethodChoice.valueProperty())
                         .or(Controller.isDisabledRebarCalculateProperty())
