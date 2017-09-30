@@ -3,8 +3,9 @@ package com.beamcalculate.controllers;
 import com.beamcalculate.Main;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
-import com.beamcalculate.model.calculate.Reinforcement;
-import com.beamcalculate.model.calculate.SpanMomentFunction;
+import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span.SpanMomentFunction;
+import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.calculate.support.SupportMomentCaquot;
 import com.beamcalculate.model.calculate.support.SupportMoment3Moment;
 import com.beamcalculate.model.entites.Geometry;
@@ -12,7 +13,6 @@ import com.beamcalculate.model.entites.Load;
 import com.beamcalculate.model.entites.Material;
 import com.beamcalculate.model.result.MomentLineChart;
 import com.beamcalculate.model.calculate.support.SupportMomentForfaitaire;
-import com.beamcalculate.model.result.ReinforcementResultTable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -55,14 +55,12 @@ public class Controller implements Initializable {
     private Material newMaterial = new Material();
 
     private SupportMomentCaquot mSupportMomentCaquot;
-    private SupportMoment3Moment mSupportMoment3Moment;
+    public static SupportMoment3Moment mSupportMoment3Moment;
     private SupportMomentForfaitaire mSupportMomentForfaitaire;
 
     private SpanMomentFunction mSpanMomentFunctionCaquot;
     private SpanMomentFunction mSpanMomentFunction3Moment;
     private SpanMomentFunction mSpanMomentFunctionForfaitaire;
-
-    private Reinforcement mReinforcement;
 
     private Set<String> inputsWarning = new HashSet<>();
     private BooleanProperty notEqualSpan = new SimpleBooleanProperty(true);
@@ -364,8 +362,8 @@ public class Controller implements Initializable {
         System.out.printf("When span 2 Max, the span 2 max moment is %.4f\n", combination.getSpanMaxMomentWhenSpanMomentMax(2, 2));
         System.out.printf("When support 3 Max, the span 2 max moment is %.4f\n", combination.getSpanMaxMomentWhenSupportMomentMin(2, 3));
 
-        SpanMomentFunction spacialLoadCaseFunction = new SpanMomentFunction(combination.getSpecialLoadCaseSupportMomentMap());
-        spacialLoadCaseFunction.getSpecialLoadCaseSpanFunction().forEach((spanId, functionMap) ->
+        AbstractSpanMoment spacialLoadCaseFunction = new SpanMomentFunction_SpecialLoadCase(combination.getSpecialLoadCaseSupportMomentMap());
+        spacialLoadCaseFunction.getSpanMomentFunctionMap().forEach((spanId, functionMap) ->
                 functionMap.forEach((loadCase, function)->{
                     System.out.printf("On the span %d : \n", spanId);
                     System.out.printf("Under the load case of %d, the function is %s\n", loadCase, function);

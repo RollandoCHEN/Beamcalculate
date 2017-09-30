@@ -125,9 +125,9 @@ public class SupportMomentCaquot extends SupportMoment {
     @Override
     public String getMethod() {
         if (conditionsMatched){
-            return CAQUOT_MINOREE.getBundleTextKey();
+            return CAQUOT_MINOREE.getBundleText();
         } else {
-            return CAQUOT.getBundleTextKey();
+            return CAQUOT.getBundleText();
         }
     }
 

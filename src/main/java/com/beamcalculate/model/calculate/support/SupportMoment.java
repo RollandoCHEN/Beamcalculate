@@ -6,7 +6,7 @@ import java.util.Map;
 
 public abstract class SupportMoment {
 
-    protected Map<Integer, Map<Integer, Double>> mSupportMomentMap = new HashMap<>();
+    Map<Integer, Map<Integer, Double>> mSupportMomentMap = new HashMap<>();
 
     public abstract Map<Integer, Map<Integer, Double>> getSupportMomentMap();
 

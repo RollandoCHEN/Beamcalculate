@@ -15,7 +15,7 @@ public enum CalculateMethod {
         mBundleTextKey = bundleTextKey;
     }
 
-    public String getBundleTextKey() {
+    public String getBundleText() {
         return Main.getBundleText(mBundleTextKey);
     }
 }

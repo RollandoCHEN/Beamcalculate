@@ -2,6 +2,8 @@ package com.beamcalculate.model.calculate;
 
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
+import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Material;
 
@@ -9,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.Pivots.PIVOTA;
 import static com.beamcalculate.enums.Pivots.PIVOTB;
@@ -30,7 +33,7 @@ public class Reinforcement {
     private double mFcd;
     private double mFyd;
     private double mSteelUltimateStrain;
-    private SpanMomentFunction mSpanMomentFunction;
+    private AbstractSpanMoment mSpanMomentFunction;
 
     private Map<Integer, Map<ReinforcementParam, Double>> mSpanReinforceParam = new HashMap<>();
     private Map<Integer, Map<ReinforcementParam, Double>> mSupportReinforceParam = new HashMap<>();
@@ -49,7 +52,13 @@ public class Reinforcement {
         ELUCombination combination = new ELUCombination(mSpanMomentFunction);
         Map<ReinforcementParam, Double> paramValueMap = new TreeMap<>();
 
-        double maxMoment = - combination.getMinMomentValueOfSupport(supportId);
+        double maxMoment;
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
+            maxMoment = -newSpanMomentFunction.getMinMomentValueOfSupport(supportId);
+        }else {
+            maxMoment = -combination.getMinMomentValueOfSupport(supportId);
+        }
         paramValueMap.put(a_M, maxMoment);
 
         mReducedMomentMu = maxMoment / (mWidth * Math.pow(mEffectiveHeight, 2.0) * mFcd);
@@ -99,7 +108,13 @@ public class Reinforcement {
         ELUCombination combination = new ELUCombination(mSpanMomentFunction);
         Map<ReinforcementParam, Double> paramValueMap = new TreeMap<>();
 
-        double maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX) ;
+        double maxMoment;
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
+            maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
+        }else {
+            maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX);
+        }
         paramValueMap.put(a_M, maxMoment);
 
         mReducedMomentMu = maxMoment / (mWidth * Math.pow(mEffectiveHeight, 2.0) * mFcd);
@@ -145,7 +160,7 @@ public class Reinforcement {
     }
 
 
-    public Reinforcement(SpanMomentFunction spanMomentFunction) {
+    public Reinforcement(AbstractSpanMoment spanMomentFunction) {
         prepare();
 
         mSpanMomentFunction = spanMomentFunction;

@@ -163,7 +163,7 @@ public class SupportMoment3Moment extends SupportMoment {
 
     @Override
     public String getMethod() {
-        return TROIS_MOMENT.getBundleTextKey();
+        return TROIS_MOMENT.getBundleText();
     }
 
     @Override

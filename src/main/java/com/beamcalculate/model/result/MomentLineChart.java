@@ -5,7 +5,9 @@ import com.beamcalculate.controllers.Controller;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Reinforcement;
-import com.beamcalculate.model.calculate.SpanMomentFunction;
+import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span.SpanMomentFunction;
+import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
 import javafx.beans.binding.Bindings;
@@ -50,7 +52,7 @@ public class MomentLineChart {
     private final NumberAxis xAxis;
     private final NumberAxis yAxis;
     private ChoiceBox<String> mMethodChoice;
-    private Map<String, SpanMomentFunction> mMethodChoiceMap = new HashMap<>();
+    private Map<String, AbstractSpanMoment> mMethodChoiceMap = new HashMap<>();
     private GridPane mGridPaneTop;
     private Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
     private MomentRedistribution mMomentRedistribution;
@@ -75,6 +77,8 @@ public class MomentLineChart {
 
     public MomentLineChart(SpanMomentFunction spanMomentFunction) {
         ELUCombination combination = new ELUCombination(spanMomentFunction);
+
+        // match the calculate method name to the related spanMomentFunction
         mMethodChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
 
@@ -179,9 +183,24 @@ public class MomentLineChart {
 
 
         calculateYButton.setOnAction(e -> {
-            ELUCombination eluCombination = new ELUCombination(mMethodChoiceMap.get(mMethodChoiceValue.get()));
-            double maxY = eluCombination.getCombinedUltimateMomentAtXOfSpan(Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX);
-            double minY = eluCombination.getCombinedUltimateMomentAtXOfSpan(Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN);
+            double maxY, minY;
+            if (mMethodChoiceValue.get().equals(TROIS_MOMENT_R.getBundleText())){
+                SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase)mMethodChoiceMap.get(mMethodChoiceValue.get());
+                maxY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX
+                );
+                minY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN
+                );
+            }else{
+                ELUCombination eluCombination = new ELUCombination(mMethodChoiceMap.get(mMethodChoiceValue.get()));
+                maxY = eluCombination.getCombinedUltimateMomentAtXOfSpan(
+                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX
+                );
+                minY = eluCombination.getCombinedUltimateMomentAtXOfSpan(
+                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN
+                );
+            }
             maxCaseMomentValue.setText(mFourDecimals.format(maxY));
             minCaseMomentValue.setText(mFourDecimals.format(minY));
         });
@@ -279,7 +298,7 @@ public class MomentLineChart {
 
 //        if the methode of calculate is "3 moment", add redistribution for the methode
 
-        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleTextKey())
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
                 && !Controller.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
@@ -319,6 +338,8 @@ public class MomentLineChart {
 
     private void addNewMomentChart(SpanMomentFunction spanMomentFunction) {
         ELUCombination combination = new ELUCombination(spanMomentFunction);
+
+        // match the calculate method name to the related spanMomentFunction
         mMethodChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
         //        add new series to line chart
@@ -390,9 +411,9 @@ public class MomentLineChart {
 
         mMethodChoice.getItems().add(spanMomentFunction.getMethod());
 
-        //        if the methode of calculate is "3 moment", add redistribution for the methode
+        //        if the method of calculate is "3 moment", add redistribution for the method
 
-        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleTextKey())
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
                 && !Controller.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
@@ -437,7 +458,7 @@ public class MomentLineChart {
             double spanLocalX = 0;
             double globalX = 0;
 
-            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getBundleTextKey())) {
+            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getBundleText())) {
                 for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                     double preX;
                     if (preSpanId == 0) {
@@ -475,10 +496,10 @@ public class MomentLineChart {
 
     private void createRedistributionMomentSeries(
             int numSection,
-            SpanMomentFunction spanMomentFunction, UltimateCase ultimateCase,
+            SpanMomentFunction_SpecialLoadCase spanMomentFunction, UltimateCase ultimateCase,
             XYChart.Series series
     ) {
-        spanMomentFunction.getSpecialLoadCaseSpanFunction().forEach((spanId, loadCaseMomentFunctionMap) ->
+        spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) ->
                 loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
 
                     double spanLength = Geometry.getEffectiveSpansLengthMap().get(spanId);
@@ -512,7 +533,7 @@ public class MomentLineChart {
         series.setName(Main.getBundleText("label."
                 + ultimateCase.toString().toLowerCase())
                 + " - "
-                + TROIS_MOMENT_R.getBundleTextKey());
+                + TROIS_MOMENT_R.getBundleText());
     }
 
 
@@ -536,18 +557,23 @@ public class MomentLineChart {
 
         ELUCombination combination = new ELUCombination(spanMomentFunction);
         mMomentRedistribution = new MomentRedistribution(combination);
+
+        Map<Integer, Map<Integer, Double>> supportMomentMap = combination.getSpecialLoadCaseSupportMomentMap();
+        Map<Integer, Double> redistributionCoefmap = new HashMap<>();
+
+        //TODO This is not the correct way to add method to the method choice box
+        mMethodChoice.getItems().add(TROIS_MOMENT_R.getBundleText());
+
         rdsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
             XYChart.Series maxELUSeries = new XYChart.Series();
             XYChart.Series minELUSeries = new XYChart.Series();
-            if (newValue == true) {
-                Map<Integer, Map<Integer, Double>> supportMomentMap = combination.getSpecialLoadCaseSupportMomentMap();
-                Map<Integer, Double> redistributionCoefmap = new HashMap<>();
-                try {
-                    for (int i = 1; i < Geometry.getNumSupport(); i++) {
+            if (newValue) {
+                for (int i = 1; i < Geometry.getNumSupport(); i++) {
+                    try {
                         redistributionCoefmap.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
+                    } catch (Exception exp) {
+                        redistributionCoefmap.put(i, mMomentRedistribution.getFinalRedistributionCoefMap().get(i));
                     }
-                } catch (Exception exp) {
-                    redistributionCoefmap = mMomentRedistribution.getFinalRedistributionCoefMap();
                 }
 
                 Map<Integer, Map<Integer, Double>> supportMomentMap_AD = combination.getSpecialLoadCaseSupportMomentMap();
@@ -567,8 +593,9 @@ public class MomentLineChart {
                     supportMomentMap_AD.put(supportId, newLoadCaseMap);
                 }
 
-
-                SpanMomentFunction newSpanMomentFunction = new SpanMomentFunction(supportMomentMap_AD);
+                SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD);
+                // match the calculate method name to the related spanMomentFunction
+                mMethodChoiceMap.put(newSpanMomentFunction.getMethod(), newSpanMomentFunction);
 
                 createRedistributionMomentSeries(mIntegerSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries);
 
@@ -581,28 +608,20 @@ public class MomentLineChart {
                     createRedistributionMomentSeries(mIntegerSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries);
                 });
 
-//                mLineChart.getData().removeAll(
-//                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_MAX"),
-//                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_MIN")
-//                );
 
-                mStringSeriesMap.put(TROIS_MOMENT.getBundleTextKey() + "_ReducedMAX", maxELUSeries);
-                mStringSeriesMap.put(TROIS_MOMENT.getBundleTextKey() + "_ReducedMIN", minELUSeries);
+                mStringSeriesMap.put(TROIS_MOMENT.getBundleText() + "_ReducedMAX", maxELUSeries);
+                mStringSeriesMap.put(TROIS_MOMENT.getBundleText() + "_ReducedMIN", minELUSeries);
 
                 mLineChart.getData().addAll(
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_ReducedMAX"),
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_ReducedMIN")
+                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMAX"),
+                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMIN")
                 );
             } else {
                 mLineChart.getData().removeAll(
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_ReducedMAX"),
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_ReducedMIN")
+                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMAX"),
+                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMIN")
                 );
 
-//                mLineChart.getData().addAll(
-//                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_MAX"),
-//                        mStringSeriesMap.get(TROIS_MOMENT.getBundleTextKey() + "_MIN")
-//                );
             }
         });
 

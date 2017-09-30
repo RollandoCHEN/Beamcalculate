@@ -165,7 +165,7 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
     @Override
     public String getMethod() {
-        return FORFAITAIRE.getBundleTextKey();
+        return FORFAITAIRE.getBundleText();
     }
 
     @Override

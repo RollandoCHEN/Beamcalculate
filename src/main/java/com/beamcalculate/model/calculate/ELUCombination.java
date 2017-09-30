@@ -2,6 +2,7 @@ package com.beamcalculate.model.calculate;
 
 import com.beamcalculate.enums.SpecialLoadCase;
 import com.beamcalculate.enums.UltimateCase;
+import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 
 import java.util.HashMap;
@@ -15,13 +16,13 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 
 
 public class ELUCombination {
-    private SpanMomentFunction mSpanMomentFunction;
+    private AbstractSpanMoment mSpanMomentFunction;
     private double mMomentBeforeCombination;
     private double mMomentAfterCombination;
     private boolean mUnfavorableCondition;
     private double mMomentUnderLoadCase;
 
-    public ELUCombination(SpanMomentFunction spanMomentFunction) {
+    public ELUCombination(AbstractSpanMoment spanMomentFunction) {
         mSpanMomentFunction = spanMomentFunction;
     }
 
@@ -272,7 +273,7 @@ public class ELUCombination {
 
     }
 
-    public SpanMomentFunction getSpanMomentFunction() {
+    public AbstractSpanMoment getSpanMomentFunction() {
         return mSpanMomentFunction;
     }
 
