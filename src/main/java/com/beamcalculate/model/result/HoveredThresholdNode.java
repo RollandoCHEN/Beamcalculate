@@ -12,11 +12,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-public class HoveredThresholdNode extends StackPane {
+import static com.beamcalculate.enums.NumericalFormat.*;
 
-    private Locale mCurrentLocale = new Locale("en", "US");
-    DecimalFormat fourDecimals = new DecimalFormat("##0.0000", new DecimalFormatSymbols(mCurrentLocale));  // show only four decimal digits
-    DecimalFormat twoDecimals = new DecimalFormat("##0.00", new DecimalFormatSymbols(mCurrentLocale));  // show only two decimal digits
+public class HoveredThresholdNode extends StackPane {
 
     public HoveredThresholdNode(double globelX, double relativeX, double y) {
 
@@ -25,15 +23,15 @@ public class HoveredThresholdNode extends StackPane {
         final Label labelX = new Label(
                 Main.getBundleText("label.abscissa")
                         + " G (R) : "
-                        + twoDecimals.format(globelX) +
-                        " (" + twoDecimals.format(relativeX) + ") "
+                        + TWODEDECIMALS.getDecimalFormat().format(globelX) +
+                        " (" + TWODEDECIMALS.getDecimalFormat().format(relativeX) + ") "
                         + Main.getBundleText("unit.length")
         );
 
         final Label labelY = new Label(
                 Main.getBundleText("label.moment")
                         + " : "
-                        + fourDecimals.format(y)
+                        + FOURDECIMALS.getDecimalFormat().format(y)
                         + " "
                         + Main.getBundleText("unit.moment")
         );

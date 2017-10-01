@@ -29,14 +29,13 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
+import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.THREEDECIMALS;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 
@@ -55,13 +54,7 @@ public class MomentLineChart {
     private Map<String, AbstractSpanMoment> mMethodChoiceMap = new HashMap<>();
     private GridPane mGridPaneTop;
     private Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
-    private MomentRedistribution mMomentRedistribution;
     private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
-
-    private Locale mCurrentLocale = new Locale("en", "US");
-    private DecimalFormat mThreeDecimals = new DecimalFormat("##0.000", new DecimalFormatSymbols(mCurrentLocale));  // show only three decimal digits
-    private DecimalFormat mFourDecimals = new DecimalFormat("##0.0000", new DecimalFormatSymbols(mCurrentLocale));  // show only four decimal digits
-
 
     private void addRealNumberValidation(TextField textField) {
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
@@ -201,8 +194,8 @@ public class MomentLineChart {
                         Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN
                 );
             }
-            maxCaseMomentValue.setText(mFourDecimals.format(maxY));
-            minCaseMomentValue.setText(mFourDecimals.format(minY));
+            maxCaseMomentValue.setText(FOURDECIMALS.getDecimalFormat().format(maxY));
+            minCaseMomentValue.setText(FOURDECIMALS.getDecimalFormat().format(minY));
         });
 
 
@@ -432,7 +425,8 @@ public class MomentLineChart {
         ));
     }
 
-    private void addMaxValueValidation(TextField textField, double maxValue) {
+    private void addMaxValueValidation(TextField textField, double
+            maxValue) {
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (!newValue) { //when focus lost
                 if (!textField.getText().matches("\\d+\\.\\d+|\\d+")) {
@@ -543,6 +537,10 @@ public class MomentLineChart {
         CheckBox rdsCheck = new CheckBox();
         Button rdsConf = new Button(Main.getBundleText("button.rdsConfig"));
 
+        rdsLabel.setOnMouseClicked(event -> {
+            rdsCheck.setSelected(!rdsCheck.selectedProperty().get());
+        });
+
         HBox rdsHBox = new HBox(rdsLabel, rdsCheck, rdsConf);
         rdsHBox.setSpacing(10);
         rdsHBox.setAlignment(Pos.CENTER_RIGHT);
@@ -556,10 +554,15 @@ public class MomentLineChart {
         mIntegerSpinner.disableProperty().bind(mDisableSpinner);
 
         ELUCombination combination = new ELUCombination(spanMomentFunction);
-        mMomentRedistribution = new MomentRedistribution(combination);
+        MomentRedistribution momentRedistribution = new MomentRedistribution(combination);
 
-        Map<Integer, Map<Integer, Double>> supportMomentMap = combination.getSpecialLoadCaseSupportMomentMap();
-        Map<Integer, Double> redistributionCoefmap = new HashMap<>();
+        Map<Integer, Double> calculatedFinalRedCoefMap = momentRedistribution.getFinalRedistributionCoefMap();
+        Map<Integer, Double> calculatedRedCoefMap = momentRedistribution.getRedistributionCoefMap();
+
+        Map<Integer, Double> usedRedCoefMap = new HashMap<>();
+        calculatedFinalRedCoefMap.forEach(usedRedCoefMap::put);
+
+        calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
 
         //TODO This is not the correct way to add method to the method choice box
         mMethodChoice.getItems().add(TROIS_MOMENT_R.getBundleText());
@@ -570,32 +573,13 @@ public class MomentLineChart {
             if (newValue) {
                 for (int i = 1; i < Geometry.getNumSupport(); i++) {
                     try {
-                        redistributionCoefmap.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
+                        usedRedCoefMap.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
                     } catch (Exception exp) {
-                        redistributionCoefmap.put(i, mMomentRedistribution.getFinalRedistributionCoefMap().get(i));
+                        usedRedCoefMap.put(i, calculatedFinalRedCoefMap.get(i));
                     }
                 }
 
-                Map<Integer, Map<Integer, Double>> supportMomentMap_AD = combination.getSpecialLoadCaseSupportMomentMap();
-
-                for (Map.Entry<Integer, Map<Integer, Double>> entry : supportMomentMap.entrySet()) {
-                    Map<Integer, Double> newLoadCaseMap = new HashMap<>();
-                    int supportId = entry.getKey();
-                    for (Map.Entry<Integer, Double> entry1 : entry.getValue().entrySet()) {
-                        int loadCase = entry1.getKey();
-                        double moment = entry1.getValue();
-                        if (supportId == loadCase - 10) {
-                            newLoadCaseMap.put(loadCase, redistributionCoefmap.get(loadCase - 10) * moment);
-                        } else {
-                            newLoadCaseMap.put(loadCase, moment);
-                        }
-                    }
-                    supportMomentMap_AD.put(supportId, newLoadCaseMap);
-                }
-
-                SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD);
-                // match the calculate method name to the related spanMomentFunction
-                mMethodChoiceMap.put(newSpanMomentFunction.getMethod(), newSpanMomentFunction);
+                SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
 
                 createRedistributionMomentSeries(mIntegerSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries);
 
@@ -638,24 +622,24 @@ public class MomentLineChart {
         HBox paramValuesHBox = new HBox();
         paramValuesHBox.setSpacing(20);
         paramValuesHBox.setAlignment(Pos.CENTER);
-        mMomentRedistribution.getRedistributionCoefMap().forEach((supportId, coef) -> {
+        calculatedRedCoefMap.forEach((supportId, coef) -> {
             VBox supportParamValueVBox = new VBox();
             supportParamValueVBox.setSpacing(15);
             Label sectionLabel = new Label(Main.getBundleText("label.support") + " " + supportId.toString());
             sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
             Label rdsCoefValue = new Label(
-                    mThreeDecimals.format(coef)
+                    THREEDECIMALS.getDecimalFormat().format(coef)
             );
             Label finalCoefValue = new Label(
-                    mThreeDecimals.format(mMomentRedistribution.getFinalRedistributionCoefMap().get(supportId))
+                    THREEDECIMALS.getDecimalFormat().format(calculatedFinalRedCoefMap.get(supportId))
             );
 
             TextField coefValue = new TextField();
             coefValue.setPrefWidth(65);
             coefValue.textProperty().setValue(
-                    mThreeDecimals.format(mMomentRedistribution.getFinalRedistributionCoefMap().get(supportId))
+                    THREEDECIMALS.getDecimalFormat().format(calculatedFinalRedCoefMap.get(supportId))
             );
-            if (mMomentRedistribution.getFinalRedistributionCoefMap().get(supportId) == 1) {
+            if (calculatedFinalRedCoefMap.get(supportId) == 1) {
                 coefValue.setDisable(true);
             }
             addRealNumberValidation(coefValue);
@@ -663,7 +647,7 @@ public class MomentLineChart {
                 if (!newValue) { //when focus lost
                     try {
                         if (Double.parseDouble(coefValue.getText()) <
-                                mMomentRedistribution.getFinalRedistributionCoefMap().get(supportId) - 0.001
+                                calculatedFinalRedCoefMap.get(supportId) - 0.001
                                 || Double.parseDouble(coefValue.getText()) > 1.0
                                 ) {
                             //set the textField empty
@@ -720,5 +704,36 @@ public class MomentLineChart {
             rdsCheck.setSelected(true);
             configStage.close();
         });
+    }
+
+    private SpanMomentFunction_SpecialLoadCase calculateRedistributionMoment(
+            SpanMomentFunction spanMomentFunction,
+            Map<Integer, Double> usedRedCoefMap
+    ) {
+        ELUCombination combination = new ELUCombination(spanMomentFunction);
+
+        Map<Integer, Map<Integer, Double>> supportMomentMap = combination.getSpecialLoadCaseSupportMomentMap();
+
+        Map<Integer, Map<Integer, Double>> supportMomentMap_AD = combination.getSpecialLoadCaseSupportMomentMap();
+
+        for (Map.Entry<Integer, Map<Integer, Double>> entry : supportMomentMap.entrySet()) {
+            Map<Integer, Double> newLoadCaseMap = new HashMap<>();
+            int supportId = entry.getKey();
+            for (Map.Entry<Integer, Double> entry1 : entry.getValue().entrySet()) {
+                int loadCase = entry1.getKey();
+                double moment = entry1.getValue();
+                if (supportId == loadCase - 10) {
+                    newLoadCaseMap.put(loadCase, usedRedCoefMap.get(loadCase - 10) * moment);
+                } else {
+                    newLoadCaseMap.put(loadCase, moment);
+                }
+            }
+            supportMomentMap_AD.put(supportId, newLoadCaseMap);
+        }
+
+        SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD);
+        // match the calculate method name to the related spanMomentFunction
+        mMethodChoiceMap.put(newSpanMomentFunction.getMethod(), newSpanMomentFunction);
+        return newSpanMomentFunction;
     }
 }

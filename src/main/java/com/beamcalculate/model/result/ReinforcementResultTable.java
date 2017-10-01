@@ -13,20 +13,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.Map;
 
+import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
 import static com.beamcalculate.enums.ReinforcementParam.b_MU;
 import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
 
 public class ReinforcementResultTable {
-
-    private Locale mCurrentLocale = new Locale("en", "US");
-    private DecimalFormat mFourDecimal = new DecimalFormat("##0.0000", new DecimalFormatSymbols(mCurrentLocale));  // show only three decimal digits
-
 
     public ReinforcementResultTable(Reinforcement reinforcement) {
 
@@ -119,7 +113,7 @@ public class ReinforcementResultTable {
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){
                         Label paramValue = new Label(
-                                param.getSymbol() + " = " + mFourDecimal.format(value)
+                                param.getSymbol() + " = " + FOURDECIMALS.getDecimalFormat().format(value)
                         );
                         Label pivotValue = new Label(
                                 reinforcement.getPivotMap().get(sectionId).getContent()
@@ -127,7 +121,7 @@ public class ReinforcementResultTable {
                         paramValueVBox.getChildren().addAll(paramValue, pivotValue);
                     } else {
                         Label paramValue = new Label(
-                                param.getSymbol() + " = " + mFourDecimal.format(value)
+                                param.getSymbol() + " = " + FOURDECIMALS.getDecimalFormat().format(value)
                         );
                         paramValueVBox.getChildren().add(paramValue);
                     }
