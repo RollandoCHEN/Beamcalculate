@@ -28,7 +28,7 @@ public class Main extends Application {
         borderPane.setTop(createMenuBar());
         loadView(Locale.getDefault());
         primaryStage.titleProperty().bind(windowTitle);
-        primaryStage.setScene(new Scene(borderPane, 1020, 850));
+        primaryStage.setScene(new Scene(borderPane, 1020, 930));
         primaryStage.getIcons().add(new Image("image/main.png"));
         primaryStage.setResizable(false);
         primaryStage.show();
@@ -51,6 +51,11 @@ public class Main extends Application {
         });
         menuBar.getMenus().addAll(menu);
         return menuBar;
+    }
+
+    public static ResourceBundle getResourceBundle(){
+        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", Main.AppSettings.currentLocal);
+        return bundle;
     }
 
     public static String getBundleText(String key){

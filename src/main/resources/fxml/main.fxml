@@ -21,7 +21,7 @@
             stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/8.0.111"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.beamcalculate.controllers.Controller"
+            fx:controller="com.beamcalculate.controllers.MainController"
             maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
 
     <center>
@@ -29,12 +29,17 @@
             <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
             <VBox spacing="10">
 
+                <HBox spacing="5">
+                    <padding><Insets top="10" bottom="10"/></padding>
+                    <CheckBox fx:id="onTSectionCheck"/>
+                    <Label text="%label.ifTSection"/>
+                </HBox>
                 <Label styleClass="title" text="%title.geometry" />
                 <HBox spacing="30">
                     <VBox spacing="10">
                         <HBox styleClass="hbox">
                             <Label text="%label.spanNumber" />
-                            <ChoiceBox fx:id="numSpans" onAction="#generateGeometryDiagram">
+                            <ChoiceBox fx:id="numSpansChoice" onAction="#generateGeometryDiagram">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
                                         <Integer fx:value="1" />
@@ -75,12 +80,12 @@
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.slabThickness" />
-                            <TextField fx:id="slabThickness" promptText="0.18" />
+                            <TextField fx:id="slabThickness" promptText="0.18" disable="${controller.notOnTSection}"/>
                             <Label text="%unit.length" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.perpendicularSpacing" />
-                            <TextField fx:id="perpendicularSpacing" promptText="6" />
+                            <TextField fx:id="perpendicularSpacing" promptText="6" disable="${controller.notOnTSection}" />
                             <Label text="%unit.length" />
                         </HBox>
                     </VBox>

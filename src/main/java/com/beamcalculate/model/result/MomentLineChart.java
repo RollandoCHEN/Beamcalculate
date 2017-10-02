@@ -1,7 +1,7 @@
 package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
-import com.beamcalculate.controllers.Controller;
+import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Reinforcement;
@@ -17,6 +17,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -29,8 +30,10 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
@@ -208,11 +211,28 @@ public class MomentLineChart {
         rebarCalculatingButton.setStyle("-fx-font-weight:bold;");
         rebarCalculatingButton.disableProperty().bind(
                 Bindings.isNull(mMethodChoice.valueProperty())
-                        .or(Controller.isDisabledRebarCalculateProperty())
+                        .or(MainController.isDisabledRebarCalculateProperty())
         );
         rebarCalculatingButton.setOnAction(event -> {
             Reinforcement reinforcement = new Reinforcement(mMethodChoiceMap.get(mMethodChoiceValue.get()));
             ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
+            // TODO Add windows to show the T shaped cross section for each span
+
+            Pane container = null;
+            try {
+                container = FXMLLoader.load(
+                        getClass().getResource("/fxml/section.fxml"),
+                        Main.getResourceBundle());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Stage configStage = new Stage();
+            configStage.setTitle("");
+            configStage.getIcons().add(new Image("image/configuration.png"));
+
+            Scene scene = new Scene(container, 500, 300);
+            configStage.setScene(scene);
+            configStage.show();
         });
 
         HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
@@ -292,7 +312,7 @@ public class MomentLineChart {
 //        if the methode of calculate is "3 moment", add redistribution for the methode
 
         if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
-                && !Controller.isDisabledRebarCalculate()
+                && !MainController.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
         }
@@ -407,7 +427,7 @@ public class MomentLineChart {
         //        if the method of calculate is "3 moment", add redistribution for the method
 
         if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
-                && !Controller.isDisabledRebarCalculate()
+                && !MainController.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
         }

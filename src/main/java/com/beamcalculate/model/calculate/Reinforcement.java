@@ -1,5 +1,6 @@
 package com.beamcalculate.model.calculate;
 
+import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
@@ -52,55 +53,72 @@ public class Reinforcement {
     }
 
     private void calculateReinforcementOfSupport(int supportId){
-
-        Map<ReinforcementParam, Double> paramValueMap = new TreeMap<>();
-
         double maxMoment = getMaxMomentOfSupport(supportId);
-        paramValueMap.put(a_M, maxMoment);
 
-        calculateReinforcementParam(supportId, paramValueMap, maxMoment);
+        Map<ReinforcementParam, Double> paramValueMap = calculateReinforcementParam(maxMoment, mWidth);
 
+        mPivotMap.put(supportId, mPivot);
         mSupportReinforceParam.put(supportId, paramValueMap);
-
-    }
-
-    private double getMaxMomentOfSupport(int supportId) {
-        double maxMoment;
-        ELUCombination combination = new ELUCombination(mSpanMomentFunction);
-        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
-            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
-            maxMoment = -newSpanMomentFunction.getMinMomentValueOfSupport(supportId);
-        }else {
-            maxMoment = -combination.getMinMomentValueOfSupport(supportId);
-        }
-        return maxMoment;
     }
 
     private void calculateReinforcementOfSpan(int spanId){
-        Map<ReinforcementParam, Double> paramValueMap = new TreeMap<>();
-
         double maxMoment = getMaxMomentOfSpan(spanId);
-        paramValueMap.put(a_M, maxMoment);
 
-        calculateReinforcementParam(spanId, paramValueMap, maxMoment);
+        Map<ReinforcementParam, Double> paramValueMap = calculateReinforcementParam(maxMoment, mWidth);
 
+        mPivotMap.put(spanId, mPivot);
         mSpanReinforceParam.put(spanId, paramValueMap);
     }
 
-    private double getMaxMomentOfSpan(int spanId) {
-        double maxMoment;
-        ELUCombination combination = new ELUCombination(mSpanMomentFunction);
-        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
-            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
-            maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
-        }else {
-            maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX);
+    private void calculateReinforcementParamWithTSection(int spanId){
+        Map<Integer, Double> conventionalLengthMap = new HashMap<>();
+        Map<Integer, Double> effectiveWidthMap = new HashMap<>();
+
+        mSpanMomentFunction.getCalculateSpanLengthMap().forEach((span, spanLength)->{
+            if(span == 1 || span == Geometry.getNumSpan()) {
+                conventionalLengthMap.put(span, 0.85 * spanLength);
+            } else {
+                conventionalLengthMap.put(span, 0.7 * spanLength);
+            }
+        });
+
+        conventionalLengthMap.forEach((span, conventionalLength)->{
+            // distances between beams are the same
+            double b1 = 0.5 * (mPerpendicularSpacing - mWidth);
+            double b = Math.min(0.2 * b1 + 0.1 * conventionalLength, 0.2 * conventionalLength);
+            b = Math.min(b, b1);
+            double effectiveWidth = mWidth + 2 * b;
+            effectiveWidthMap.put(span, effectiveWidth);
+        });
+
+        double ultimateMomentByFlange =
+                effectiveWidthMap.get(spanId) * mSlabThickness *  mFcd * (mEffectiveHeight - mSlabThickness/2);
+
+        double maxMoment = getMaxMomentOfSpan(spanId);
+        Map<ReinforcementParam, Double> paramValueMap = new HashMap<>();
+
+        if (maxMoment < ultimateMomentByFlange){
+            paramValueMap = calculateReinforcementParam(maxMoment, effectiveWidthMap.get(spanId));
+        } else {
+            double forceByFlange = (effectiveWidthMap.get(spanId) - mWidth) * mSlabThickness *  mFcd;
+            double momentByFlange =
+                    forceByFlange * (mEffectiveHeight - mSlabThickness/2);
+            double momentByWeb = maxMoment - momentByFlange;
+            paramValueMap = calculateReinforcementParam(momentByWeb, mWidth);
+            double rebarAreaByFlangeForce = forceByFlange / paramValueMap.get(g_EPSILON_S) * 10000;
+            paramValueMap.put(j_A_S, paramValueMap.get(j_A_S) + rebarAreaByFlangeForce);
         }
-        return maxMoment;
+
+        mPivotMap.put(spanId, mPivot);
+        mSpanReinforceParam.put(spanId, paramValueMap);
     }
 
-    private void calculateReinforcementParam(int supportOrSpanId, Map<ReinforcementParam, Double> paramValueMap, double maxMoment){
-        mReducedMomentMu = maxMoment / (mWidth * Math.pow(mEffectiveHeight, 2.0) * mFcd);
+    private Map<ReinforcementParam, Double> calculateReinforcementParam(double maxMoment, double bw){
+        Map<ReinforcementParam, Double> paramValueMap = new TreeMap<>();
+
+        paramValueMap.put(a_M, maxMoment);
+
+        mReducedMomentMu = maxMoment / (bw * Math.pow(mEffectiveHeight, 2.0) * mFcd);
         paramValueMap.put(b_MU, mReducedMomentMu);
 
         if (mReducedMomentMu < 0.056){
@@ -110,7 +128,6 @@ public class Reinforcement {
         }else {
             mPivot = PIVOTC;
         }
-        mPivotMap.put(supportOrSpanId, mPivot);
 
         mNeutralAxisAlpha = 1.25 * (1 - Math.sqrt(1 - 2 * mReducedMomentMu));
         paramValueMap.put(c_ALPHA, mNeutralAxisAlpha);
@@ -138,30 +155,32 @@ public class Reinforcement {
 
         mRebarAreaAs = maxMoment/(mLeverArmZ * mStressSigmaS) * 10000;
         paramValueMap.put(j_A_S, mRebarAreaAs);
+
+        return paramValueMap;
     }
 
-    private void calculateReinforcementParamWithTSection(int spanId, Map<ReinforcementParam, Double> paramValueMap, double maxMoment){
-        Map<Integer, Double> conventionalLengthMap = new HashMap<>();
-        Map<Integer, Double> effectiveWidthMap = new HashMap<>();
+    private double getMaxMomentOfSupport(int supportId) {
+        double maxMoment;
+        ELUCombination combination = new ELUCombination(mSpanMomentFunction);
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
+            maxMoment = -newSpanMomentFunction.getMinMomentValueOfSupport(supportId);
+        }else {
+            maxMoment = -combination.getMinMomentValueOfSupport(supportId);
+        }
+        return maxMoment;
+    }
 
-        mSpanMomentFunction.getCalculateSpanLengthMap().forEach((span, spanLength)->{
-            if(span == 1 || span == Geometry.getNumSpan()) {
-                conventionalLengthMap.put(span, 0.85 * spanLength);
-            } else {
-                conventionalLengthMap.put(span, 0.7 * spanLength);
-            }
-        });
-
-        conventionalLengthMap.forEach((span, conventionalLength)->{
-            double b = Math.min(0.2 * 0.5 * (mPerpendicularSpacing - mWidth) + 0.1 * conventionalLength, 0.2 * conventionalLength);
-            double effectiveWidth = Math.min(mWidth + 2 * b, mPerpendicularSpacing);
-            effectiveWidthMap.put(span, effectiveWidth);
-        });
-
-        double ultimateMomentByFlange = mSlabThickness * effectiveWidthMap.get(spanId) * mFcd * (mEffectiveHeight - mSlabThickness/2) ;
-
-        // TODO Calculation of reinforcement with T-shaped cross section
-
+    private double getMaxMomentOfSpan(int spanId) {
+        double maxMoment;
+        ELUCombination combination = new ELUCombination(mSpanMomentFunction);
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
+            maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
+        }else {
+            maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX);
+        }
+        return maxMoment;
     }
 
     public Reinforcement(AbstractSpanMoment spanMomentFunction) {
@@ -170,7 +189,11 @@ public class Reinforcement {
         mSpanMomentFunction = spanMomentFunction;
 
         for (int spanId = 1; spanId < Geometry.getNumSpan()+1; spanId++){
-            calculateReinforcementOfSpan(spanId);
+            if (MainController.isOnTSection()) {
+                calculateReinforcementParamWithTSection(spanId);
+            } else {
+                calculateReinforcementOfSpan(spanId);
+            }
         }
 
         for (int supportId = 1; supportId < Geometry.getNumSupport()+1; supportId++){

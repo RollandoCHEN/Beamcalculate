@@ -1,6 +1,6 @@
 package com.beamcalculate.model.calculate.span;
 
-import com.beamcalculate.controllers.Controller;
+import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.UltimateCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
@@ -134,6 +134,6 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
     @Override
     public Map<Integer, Double> getCalculateSpanLengthMap() {
-        return Controller.mSupportMoment3Moment.getCalculateSpanLengthMap();
+        return MainController.mSupportMoment3Moment.getCalculateSpanLengthMap();
     }
 }

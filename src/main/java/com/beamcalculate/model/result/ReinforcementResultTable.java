@@ -1,6 +1,7 @@
 package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
+import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
@@ -38,9 +39,18 @@ public class ReinforcementResultTable {
         supportParamHBox.getChildren().add(getParamNameVBox(reinforcement, "support"));
         supportParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "support"));
 
-        Label methodTitle = new Label(
-                Main.getBundleText("label.momentCalculateMethod") + " : " + reinforcement.getSpanMomentFunction().getMethod()
+        StringBuilder tableTitle = new StringBuilder();
+        tableTitle.append(
+                Main.getBundleText("label.momentCalculateMethod") +
+                " : " +
+                reinforcement.getSpanMomentFunction().getMethod()
         );
+        if (MainController.isOnTSection()){
+            tableTitle.append(
+                    " (" + Main.getBundleText("title.onTSection") + ")"
+            );
+        }
+        Label methodTitle = new Label(tableTitle.toString());
         methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
 
         VBox container = new VBox();

@@ -29,8 +29,9 @@ import java.net.URL;
 import java.util.*;
 
 
-public class Controller implements Initializable {
-    @FXML private ChoiceBox numSpans;
+public class MainController implements Initializable {
+    @FXML private CheckBox onTSectionCheck;
+    @FXML private ChoiceBox numSpansChoice;
     @FXML private CheckBox equalSupportCheck;
     @FXML private CheckBox equalSpanCheck;
     @FXML private GridPane spansLengthGrid;
@@ -65,6 +66,8 @@ public class Controller implements Initializable {
     private Set<String> inputsWarning = new HashSet<>();
     private BooleanProperty notEqualSpan = new SimpleBooleanProperty(true);
     private BooleanProperty notEqualSupport = new SimpleBooleanProperty(true);
+    private BooleanProperty notOnTSection = new SimpleBooleanProperty(true);
+    private static BooleanProperty onTSection = new SimpleBooleanProperty(true);
 
     private List<TextField> allTextField = new ArrayList<>();
 
@@ -72,7 +75,11 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        notEqualSpan.bind(Bindings.not(equalSpanCheck.selectedProperty()));
+        notEqualSupport.bind(Bindings.not(equalSupportCheck.selectedProperty()));
 
+        notOnTSection.bind(Bindings.not(onTSectionCheck.selectedProperty()));
+        onTSection.bind(onTSectionCheck.selectedProperty());
     }
 
     private BooleanBinding turnTextFieldsIsEmptyGridToBooleanBinding(GridPane gridPane){
@@ -265,10 +272,8 @@ public class Controller implements Initializable {
     @FXML
     private void generateGeometryDiagram(ActionEvent actionEvent) {
 
-        getInputValue(numSpans, newGeometry.numSpanProperty());
+        getInputValue(numSpansChoice, newGeometry.numSpanProperty());
         double hGapValue = (880-newGeometry.getNumSpan()*69)/newGeometry.getNumSpan();
-        notEqualSpan.bind(Bindings.not(equalSpanCheck.selectedProperty()));
-        notEqualSupport.bind(Bindings.not(equalSupportCheck.selectedProperty()));
 
         allTextField.addAll(Arrays.asList(
                 equalSupportWidth, equalSpanLength, sectionWidth,
@@ -393,5 +398,21 @@ public class Controller implements Initializable {
 
     public static BooleanProperty isDisabledRebarCalculateProperty() {
         return isDisabledRebarCalculate;
+    }
+
+    public boolean isNotOnTSection() {
+        return notOnTSection.get();
+    }
+
+    public BooleanProperty notOnTSectionProperty() {
+        return notOnTSection;
+    }
+
+    public static boolean isOnTSection() {
+        return onTSection.get();
+    }
+
+    public BooleanProperty onTSectionProperty() {
+        return onTSection;
     }
 }
