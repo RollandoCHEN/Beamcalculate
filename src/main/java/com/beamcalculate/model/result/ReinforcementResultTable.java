@@ -38,12 +38,17 @@ public class ReinforcementResultTable {
         supportParamHBox.getChildren().add(getParamNameVBox(reinforcement, "support"));
         supportParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "support"));
 
+        Label methodTitle = new Label(
+                Main.getBundleText("label.momentCalculateMethod") + " : " + reinforcement.getSpanMomentFunction().getMethod()
+        );
+        methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
+
         VBox container = new VBox();
         container.setPadding(new Insets(20,20,20,20));
         container.setSpacing(20);
         container.setAlignment(Pos.CENTER);
 
-        container.getChildren().addAll(spanParamHBox, supportParamHBox);
+        container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox);
 
         Stage resultStage = new Stage();
         resultStage.setTitle(Main.getBundleText("window.title.result"));
@@ -108,7 +113,7 @@ public class ReinforcementResultTable {
                     || spanOrSupport.equals("span")){
                 paramValueVBox.setSpacing(15);
                 Label sectionLabel = new Label(sectionLabelString + " " + sectionId.toString());
-                sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
+                sectionLabel.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
                 paramValueVBox.getChildren().add(sectionLabel);
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){

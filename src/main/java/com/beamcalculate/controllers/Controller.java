@@ -235,7 +235,7 @@ public class Controller implements Initializable {
         getInputValue(sectionHeight, newGeometry.sectionHeightProperty());
         getInputValue(sectionWidth, newGeometry.sectionWidthProperty());
         getInputValue(slabThickness, newGeometry.slabThicknessProperty());
-        getInputValue(perpendicularSpacing, newGeometry.perpendicularSpcingProperty());
+        getInputValue(perpendicularSpacing, newGeometry.perpendicularSpacingProperty());
         getInputValue(permanentLoad, newLoad.gTmProperty());
         getInputValue(variableLoad, newLoad.qTmProperty());
         getInputValue(fck, newMaterial.fckProperty());

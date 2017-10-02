@@ -10,97 +10,97 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Geometry {
-    private final static IntegerProperty numSpan = new SimpleIntegerProperty();
-    private final static IntegerProperty numSupport = new SimpleIntegerProperty();
-    private final static DoubleProperty sectionWidth = new SimpleDoubleProperty();
-    private final static DoubleProperty sectionHeight = new SimpleDoubleProperty();
-    private final static DoubleProperty slabThickness = new SimpleDoubleProperty();
-    private final static DoubleProperty perpendicularSpacing = new SimpleDoubleProperty();
-    private final static DoubleProperty effectiveHeight = new SimpleDoubleProperty();
-    private static double totalLength = 0.0;
+    private final static IntegerProperty mNumSpan = new SimpleIntegerProperty();
+    private final static IntegerProperty mNumSupport = new SimpleIntegerProperty();
+    private final static DoubleProperty mSectionWidth = new SimpleDoubleProperty();
+    private final static DoubleProperty mSectionHeight = new SimpleDoubleProperty();
+    private final static DoubleProperty mSlabThickness = new SimpleDoubleProperty();
+    private final static DoubleProperty mPerpendicularSpacing = new SimpleDoubleProperty();
+    private final static DoubleProperty mEffectiveHeight = new SimpleDoubleProperty();
+    private static double mTotalLength = 0.0;
 
-    private static Map<Integer, Double> spansLengthMap = new HashMap<>();        // Not be able to use MapProperty, cause not be able to set (k,v) to it
+    private static Map<Integer, Double> mSpansLengthMap = new HashMap<>();        // Not be able to use MapProperty, cause not be able to set (k,v) to it
     private static Map<Integer, Double> mEffectiveSpansLengthMap = new HashMap<>();
-    private static Map<Integer, Double> supportWidthMap = new HashMap<>();
+    private static Map<Integer, Double> mSupportWidthMap = new HashMap<>();
 
 
     public Geometry() {
-        numSupport.bind(Bindings.add(numSpan,1));
-        effectiveHeight.bind(Bindings.multiply(sectionHeight, 0.9));
+        mNumSupport.bind(Bindings.add(mNumSpan,1));
+        mEffectiveHeight.bind(Bindings.multiply(mSectionHeight, 0.9));
     }
 
     public DoubleProperty effectiveHeightProperty() {
-        return effectiveHeight;
+        return mEffectiveHeight;
     }
 
     public static double getEffectiveHeight() {
-        return effectiveHeight.get();
+        return mEffectiveHeight.get();
     }
 
     public static int getNumSpan() {
-        return numSpan.get();
+        return mNumSpan.get();
     }
 
     public IntegerProperty numSpanProperty() {
-        return numSpan;
+        return mNumSpan;
     }
 
     public static int getNumSupport() {
-        return numSupport.get();
+        return mNumSupport.get();
     }
 
     public IntegerProperty numSupportProperty() {
-        return numSupport;
+        return mNumSupport;
     }
 
     public static Map<Integer,Double> spansLengthMap() {
-        return spansLengthMap;
+        return mSpansLengthMap;
     }
 
     public static Map<Integer,Double> supportWidthMap() {
-        return supportWidthMap;
+        return mSupportWidthMap;
     }
 
     public static double getSectionWidth() {
-        return sectionWidth.get();
+        return mSectionWidth.get();
     }
 
     public DoubleProperty sectionWidthProperty() {
-        return sectionWidth;
+        return mSectionWidth;
     }
 
     public static double getSectionHeight() {
-        return sectionHeight.get();
+        return mSectionHeight.get();
     }
 
     public DoubleProperty sectionHeightProperty() {
-        return sectionHeight;
+        return mSectionHeight;
     }
 
     public static double getSlabThickness() {
-        return slabThickness.get();
+        return mSlabThickness.get();
     }
 
     public static DoubleProperty slabThicknessProperty() {
-        return slabThickness;
+        return mSlabThickness;
     }
 
     public static double getPerpendicularSpacing() {
-        return perpendicularSpacing.get();
+        return mPerpendicularSpacing.get();
     }
 
-    public static DoubleProperty perpendicularSpcingProperty() {
-        return perpendicularSpacing;
+    public static DoubleProperty perpendicularSpacingProperty() {
+        return mPerpendicularSpacing;
     }
 
     public static double getTotalLength() {
-        totalLength = 0;
-        if (spansLengthMap.size()==0){
+        mTotalLength = 0;
+        if (mSpansLengthMap.size()==0){
             return 0.0;
         }else {
-            spansLengthMap.forEach((k, v)-> totalLength += v);
-            supportWidthMap.forEach((k, v)-> totalLength += v);
-            return totalLength;
+            mSpansLengthMap.forEach((k, v)-> mTotalLength += v);
+            mSupportWidthMap.forEach((k, v)-> mTotalLength += v);
+            return mTotalLength;
         }
     }
 

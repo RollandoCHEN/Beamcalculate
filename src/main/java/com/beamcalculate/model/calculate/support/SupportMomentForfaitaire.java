@@ -27,7 +27,7 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
         // add spanId and Map to mSpanRefMomentMap
 
-        for(int i = 0;i<geometry.getNumSpan();i++){
+        for(int i = 0; i<geometry.getNumSpan(); i++){
             Map<CombinCoef, Double> loadCaseMomentMap = new HashMap();
             loadCaseMomentMap.put(G_UNFAVORABLE_COEF, 0.0);
             loadCaseMomentMap.put(Q_UNFAVORABLE_COEF, 0.0);
@@ -36,9 +36,9 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
         // add supportId and Map to mSupportMomentMap
 
-        for(int i = 0;i<geometry.getNumSupport();i++){
+        for(int i = 0; i<geometry.getNumSupport(); i++){
             Map<Integer, Double> loadCaseMomentMap = new HashMap();
-            for (int j = 0; j<geometry.getNumSpan()+1;j++){
+            for (int j = 0; j<geometry.getNumSpan()+1; j++){
                 loadCaseMomentMap.put(j,0.0);
             }
             mSupportMomentMap.put(i+1, loadCaseMomentMap);
@@ -46,13 +46,13 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
         // add spanId and value to mSpanELURefMomentMap
 
-        for(int i = 0;i<geometry.getNumSpan();i++){
+        for(int i = 0; i<geometry.getNumSpan(); i++){
             mSpanELURefMomentMap.put(i+1, 0.0);
         }
 
         // add supportId and value to mSupportELUMomentMap
 
-        for(int i = 0;i<geometry.getNumSupport();i++){
+        for(int i = 0; i<geometry.getNumSupport(); i++){
             mSupportELUMomentMap.put(i+1, 0.0);
         }
 

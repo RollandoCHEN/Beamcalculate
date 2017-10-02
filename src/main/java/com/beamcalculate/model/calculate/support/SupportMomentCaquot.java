@@ -28,9 +28,9 @@ public class SupportMomentCaquot extends SupportMoment {
 
         // add supportId and Map to mSupportMomentMap
 
-        for(int i = 0;i<geometry.getNumSupport();i++){
+        for(int i = 0; i<geometry.getNumSupport(); i++){
             Map<Integer, Double> loadCaseMomentMap = new HashMap();
-            for (int j = 0; j<geometry.getNumSpan()+1;j++){
+            for (int j = 0; j<geometry.getNumSpan()+1; j++){
                 loadCaseMomentMap.put(j,0.0);
             }
             mSupportMomentMap.put(i+1, loadCaseMomentMap);
