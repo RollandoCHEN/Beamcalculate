@@ -20,6 +20,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -28,6 +29,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -228,9 +230,9 @@ public class MomentLineChart {
             }
             Stage configStage = new Stage();
             configStage.setTitle("");
-            configStage.getIcons().add(new Image("image/configuration.png"));
+            //configStage.getIcons().add(new Image("image/configuration.png"));
 
-            Scene scene = new Scene(container, 500, 300);
+            Scene scene = new Scene(container, 1000, 500);
             configStage.setScene(scene);
             configStage.show();
         });

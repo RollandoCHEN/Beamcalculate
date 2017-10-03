@@ -65,7 +65,7 @@ public class Geometry {
         return mSectionWidth.get();
     }
 
-    public DoubleProperty sectionWidthProperty() {
+    public static DoubleProperty sectionWidthProperty() {
         return mSectionWidth;
     }
 
@@ -73,7 +73,7 @@ public class Geometry {
         return mSectionHeight.get();
     }
 
-    public DoubleProperty sectionHeightProperty() {
+    public static DoubleProperty sectionHeightProperty() {
         return mSectionHeight;
     }
 
