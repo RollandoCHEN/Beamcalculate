@@ -15,8 +15,9 @@
     -fx-spacing: 10px;
     -fx-alignment:center-left;
 }
+
 .title{
-    -fx-font-size: 20px;
+    -fx-font-size: 25px;
     -fx-font-weight: bold;
 }
 

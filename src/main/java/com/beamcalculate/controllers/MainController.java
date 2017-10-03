@@ -23,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 import java.net.URL;
@@ -41,8 +42,8 @@ public class MainController implements Initializable {
     @FXML private TextField equalSpanLength;
     @FXML private TextField sectionWidth;
     @FXML private TextField sectionHeight;
-    @FXML public TextField perpendicularSpacing;
-    @FXML public TextField slabThickness;
+    @FXML private TextField perpendicularSpacing;
+    @FXML private TextField slabThickness;
     @FXML private TextField permanentLoad;
     @FXML private TextField variableLoad;
     @FXML private TextField fck;
@@ -75,6 +76,13 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        allTextField.addAll(Arrays.asList(
+                equalSupportWidth, equalSpanLength,
+                sectionWidth, sectionHeight, perpendicularSpacing, slabThickness,
+                permanentLoad, variableLoad, fck, fyk
+        ));
+        addRealNumberValidation(allTextField);
+
         notEqualSpan.bind(Bindings.not(equalSpanCheck.selectedProperty()));
         notEqualSupport.bind(Bindings.not(equalSupportCheck.selectedProperty()));
 
@@ -260,6 +268,11 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    public void clickOnTSectionCheck(MouseEvent mouseEvent) {
+        onTSectionCheck.selectedProperty().setValue(!onTSectionCheck.isSelected());
+    }
+
+    @FXML
     private void disableSpanLength(ActionEvent actionEvent) {
         checkIfDisableTextFields(equalSpanCheck, equalSpanLength, spansLengthGrid);
     }
@@ -274,12 +287,6 @@ public class MainController implements Initializable {
 
         getInputValue(numSpansChoice, newGeometry.numSpanProperty());
         double hGapValue = (880-newGeometry.getNumSpan()*69)/newGeometry.getNumSpan();
-
-        allTextField.addAll(Arrays.asList(
-                equalSupportWidth, equalSpanLength, sectionWidth,
-                sectionHeight, permanentLoad, variableLoad, fck, fyk
-        ));
-        addRealNumberValidation(allTextField);
 
         spansLengthGrid.getChildren().clear();
         supportsWidthGrid.getChildren().clear();
@@ -374,7 +381,6 @@ public class MainController implements Initializable {
                     System.out.printf("Under the load case of %d, the function is %s\n", loadCase, function);
         }));
     }
-
 
     public boolean isNotEqualSpan() {
         return notEqualSpan.get();

@@ -39,9 +39,9 @@ public class Reinforcement {
     private double mPerpendicularSpacing;
     private double mSlabThickness;
     private AbstractSpanMoment mSpanMomentFunction;
-    private static Map<Integer, DoubleProperty> effectiveWidthPropertyMap = new HashMap();
-    private static DoubleProperty mFlangeCompressionHeight = new SimpleDoubleProperty();
-    private static DoubleProperty mWebCompressionHeight = new SimpleDoubleProperty();
+    private static Map<Integer, DoubleProperty> mEffectiveWidthPropertyMap = new HashMap();
+    private static Map<Integer, DoubleProperty> mFlangeCompressionsHeightMap = new HashMap<>();
+    private static Map<Integer, DoubleProperty> mWebCompressionHeightMap = new HashMap<>();
 
     private Map<Integer, Map<ReinforcementParam, Double>> mSpanReinforceParam = new HashMap<>();
     private Map<Integer, Map<ReinforcementParam, Double>> mSupportReinforceParam = new HashMap<>();
@@ -71,8 +71,14 @@ public class Reinforcement {
 
         Map<ReinforcementParam, Double> paramValueMap = calculateReinforcementParam(maxMoment, mWidth);
 
-        flangeCompressionHightProperty().setValue(0);
-        webCompressionHeightProperty().setValue(paramValueMap.get(d_X));
+        DoubleProperty flangeCompressionHeight = new SimpleDoubleProperty();
+        DoubleProperty webCompressionHeight = new SimpleDoubleProperty();
+
+        flangeCompressionHeight.setValue(0);
+        webCompressionHeight.setValue(paramValueMap.get(d_X));
+
+        mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
+        mWebCompressionHeightMap.put(spanId, webCompressionHeight);
 
         mPivotMap.put(spanId, mPivot);
         mSpanReinforceParam.put(spanId, paramValueMap);
@@ -99,19 +105,22 @@ public class Reinforcement {
             effectiveWidthMap.put(span, effectiveWidth);
             DoubleProperty effectiveWidthProperty = new SimpleDoubleProperty();
             effectiveWidthProperty.setValue(effectiveWidth);
-            effectiveWidthPropertyMap.put(span, effectiveWidthProperty);
+            mEffectiveWidthPropertyMap.put(span, effectiveWidthProperty);
         });
 
         double ultimateMomentByFlange =
                 effectiveWidthMap.get(spanId) * mSlabThickness *  mFcd * (mEffectiveHeight - mSlabThickness/2);
+
+        DoubleProperty flangeCompressionHeight = new SimpleDoubleProperty();
+        DoubleProperty webCompressionHeight = new SimpleDoubleProperty();
 
         double maxMoment = getMaxMomentOfSpan(spanId);
         Map<ReinforcementParam, Double> paramValueMap;
 
         if (maxMoment < ultimateMomentByFlange){
             paramValueMap = calculateReinforcementParam(maxMoment, effectiveWidthMap.get(spanId));
-            flangeCompressionHightProperty().setValue(paramValueMap.get(d_X));
-            webCompressionHeightProperty().setValue(0);
+            flangeCompressionHeight.setValue(paramValueMap.get(d_X));
+            webCompressionHeight.setValue(0);
         } else {
             double forceByFlange = (effectiveWidthMap.get(spanId) - mWidth) * mSlabThickness *  mFcd;
             double momentByFlange =
@@ -120,9 +129,12 @@ public class Reinforcement {
             paramValueMap = calculateReinforcementParam(momentByWeb, mWidth);
             double rebarAreaByFlangeForce = forceByFlange / paramValueMap.get(g_EPSILON_S) * 10000;
             paramValueMap.put(j_A_S, paramValueMap.get(j_A_S) + rebarAreaByFlangeForce);
-            flangeCompressionHightProperty().setValue(mSlabThickness);
-            webCompressionHeightProperty().setValue(paramValueMap.get(d_X));
+            flangeCompressionHeight.setValue(mSlabThickness);
+            webCompressionHeight.setValue(paramValueMap.get(d_X));
         }
+
+        mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
+        mWebCompressionHeightMap.put(spanId, webCompressionHeight);
 
         mPivotMap.put(spanId, mPivot);
         mSpanReinforceParam.put(spanId, paramValueMap);
@@ -234,22 +246,14 @@ public class Reinforcement {
     }
 
     public static Map<Integer, DoubleProperty> getEffectiveWidthPropertyMap() {
-        return effectiveWidthPropertyMap;
+        return mEffectiveWidthPropertyMap;
     }
 
-    public static double getFlangeCompressionHight() {
-        return mFlangeCompressionHeight.get();
+    public static Map<Integer, DoubleProperty> getFlangeCompressionsHeightMap() {
+        return mFlangeCompressionsHeightMap;
     }
 
-    public static DoubleProperty flangeCompressionHightProperty() {
-        return mFlangeCompressionHeight;
-    }
-
-    public static double getWebCompressionHeight() {
-        return mWebCompressionHeight.get();
-    }
-
-    public static DoubleProperty webCompressionHeightProperty() {
-        return mWebCompressionHeight;
+    public static Map<Integer, DoubleProperty> getWebCompressionHeightMap() {
+        return mWebCompressionHeightMap;
     }
 }

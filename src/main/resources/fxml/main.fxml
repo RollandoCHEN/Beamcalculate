@@ -32,7 +32,7 @@
                 <HBox spacing="5">
                     <padding><Insets top="10" bottom="10"/></padding>
                     <CheckBox fx:id="onTSectionCheck"/>
-                    <Label text="%label.ifTSection"/>
+                    <Label text="%label.ifTSection" onMouseClicked="#clickOnTSectionCheck"/>
                 </HBox>
                 <Label styleClass="title" text="%title.geometry" />
                 <HBox spacing="30">

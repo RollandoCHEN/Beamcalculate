@@ -20,7 +20,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -29,13 +28,11 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
@@ -60,6 +57,9 @@ public class MomentLineChart {
     private GridPane mGridPaneTop;
     private Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
     private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
+
+
+
 
     private void addRealNumberValidation(TextField textField) {
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
@@ -220,21 +220,21 @@ public class MomentLineChart {
             ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
             // TODO Add windows to show the T shaped cross section for each span
 
-            Pane container = null;
+            Scene scene = null;
             try {
-                container = FXMLLoader.load(
+                Pane container = FXMLLoader.load(
                         getClass().getResource("/fxml/section.fxml"),
                         Main.getResourceBundle());
+                scene = new Scene(container, 1000, 500);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Stage configStage = new Stage();
-            configStage.setTitle("");
-            //configStage.getIcons().add(new Image("image/configuration.png"));
 
-            Scene scene = new Scene(container, 1000, 500);
-            configStage.setScene(scene);
-            configStage.show();
+            Stage crossSectionStage = new Stage();
+            crossSectionStage.setTitle("");
+            //configStage.getIcons().add(new Image("image/configuration.png"));
+            crossSectionStage.setScene(scene);
+            crossSectionStage.show();
         });
 
         HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
@@ -295,9 +295,14 @@ public class MomentLineChart {
         mHBoxMethod.setSpacing(5);
         mHBoxMethod.setAlignment(Pos.CENTER);
 
+
         VBox methodVBox = new VBox(mHBoxMethod, conditionsInfos);
         methodVBox.setSpacing(5);
         methodVBox.setAlignment(Pos.CENTER);
+
+        StackPane methodStackPane = new StackPane();
+        methodStackPane.getChildren().add(methodVBox);
+        methodCheck.setAlignment(Pos.CENTER_RIGHT);
 
 //        add top grid pane
 
@@ -306,9 +311,12 @@ public class MomentLineChart {
         c1.setPercentWidth(50);
         ColumnConstraints c2 = new ColumnConstraints();
         c2.setPercentWidth(50);
-        mGridPaneTop.getColumnConstraints().addAll(c1, c2);
+        ColumnConstraints c3 = new ColumnConstraints();
+        c3.setPercentWidth(50);
+        //mGridPaneTop.getColumnConstraints().add(c3);
+        mGridPaneTop.getColumnConstraints().addAll(c1, c2, c3);
         mGridPaneTop.add(hBoxSpinner, 0, 0);
-        mGridPaneTop.add(methodVBox, 1, 0);
+        mGridPaneTop.add(methodStackPane, 1, 0);
         mGridPaneTop.setPadding(new Insets(10, 20, 10, 20));
 
 //        if the methode of calculate is "3 moment", add redistribution for the methode
@@ -327,7 +335,7 @@ public class MomentLineChart {
         borderPane.setBottom(bottomVBox);
         borderPane.setPadding(new Insets(20, 20, 20, 20));
 
-//        set stage and scene
+//        set mCrossSectionStage and scene
 
         Stage chartStage = new Stage();
         chartStage.setTitle(Main.getBundleText("window.title.envelop"));
@@ -567,9 +575,7 @@ public class MomentLineChart {
         rdsHBox.setSpacing(10);
         rdsHBox.setAlignment(Pos.CENTER_RIGHT);
 
-        ColumnConstraints c3 = new ColumnConstraints();
-        c3.setPercentWidth(50);
-        mGridPaneTop.getColumnConstraints().add(c3);
+
         mGridPaneTop.add(rdsHBox, 2, 0);
 
         mDisableSpinner = mDisableSpinner.and(Bindings.not(rdsCheck.selectedProperty()));

@@ -53,6 +53,8 @@ public class ReinforcementResultTable {
         Label methodTitle = new Label(tableTitle.toString());
         methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
 
+        // TODO Add a button to the reinforcement result window to show the cross section diagram
+
         VBox container = new VBox();
         container.setPadding(new Insets(20,20,20,20));
         container.setSpacing(20);
