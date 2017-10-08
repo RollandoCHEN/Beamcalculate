@@ -87,6 +87,7 @@ public class ELUCombination {
                 break;
         }
 
+        // TODO When span numb is 1, there is NullPointerException
         xPositionMomentFunctionMap.forEach((loadCase, momentFunction) -> {
             double loadCaseObjectMoment = 0.0;
             mMomentBeforeCombination = momentFunction.apply(x);

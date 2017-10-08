@@ -75,6 +75,7 @@ public class MomentRedistribution {
             mSupportMuMap_AR.put(supportId, redistributionCoef * mSupportMuMap_BR.get(supportId));
         });
 
+        // TODO When span numb is 1, there is NullPointerException
         mRedistributionCoefMap.forEach((supportId, redistributionCoef)->{
             double supportMomentWhenSpanMomentMax = Math.min(
                     combination.getSupportMomentWhenSpanMomentMax(supportId, 1),

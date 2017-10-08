@@ -74,7 +74,8 @@ public class ReinforcementResultTable {
         resultStage.setTitle(Main.getBundleText("window.title.result"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        Scene scene = new Scene(container, 1000, 850);
+        double sceneWidth = Geometry.getNumSpan() * 170 + 350;
+        Scene scene = new Scene(container, sceneWidth, 950);
         resultStage.setScene(scene);
         resultStage.show();
     }
@@ -115,7 +116,7 @@ public class ReinforcementResultTable {
 
     private HBox getParamValuesHBox(Reinforcement reinforcement, String spanOrSupport){
         HBox paramValuesHBox = new HBox();
-        paramValuesHBox.setSpacing(20);
+        paramValuesHBox.setSpacing(30);
         String sectionLabelString;
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
