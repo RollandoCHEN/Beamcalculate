@@ -8,6 +8,7 @@ import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -56,17 +57,24 @@ public class ReinforcementResultTable {
         // TODO Add a button to the reinforcement result window to show the cross section diagram
 
         VBox container = new VBox();
-        container.setPadding(new Insets(20,20,20,20));
+        container.setPadding(new Insets(10,20,10,20));
         container.setSpacing(20);
         container.setAlignment(Pos.CENTER);
 
-        container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox);
+        Button crossSectionButton = new Button(Main.getBundleText("button.crossSection"));
+        crossSectionButton.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
+        crossSectionButton.setOnAction(event -> MomentLineChart.getCrossSectionStage().show());
+
+        HBox bottomHBox = new HBox(crossSectionButton);
+        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
+
+        container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox, bottomHBox);
 
         Stage resultStage = new Stage();
         resultStage.setTitle(Main.getBundleText("window.title.result"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        Scene scene = new Scene(container, 1000, 900);
+        Scene scene = new Scene(container, 1000, 850);
         resultStage.setScene(scene);
         resultStage.show();
     }
@@ -124,9 +132,9 @@ public class ReinforcementResultTable {
             if (spanOrSupport.equals("support") && sectionId != 1 && sectionId != Geometry.getNumSupport()
                     || spanOrSupport.equals("span")){
                 paramValueVBox.setSpacing(15);
-                Label sectionLabel = new Label(sectionLabelString + " " + sectionId.toString());
-                sectionLabel.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
-                paramValueVBox.getChildren().add(sectionLabel);
+                Label crossSectionLabel = new Label(sectionLabelString + " " + sectionId.toString());
+                crossSectionLabel.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
+                paramValueVBox.getChildren().add(crossSectionLabel);
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){
                         Label paramValue = new Label(

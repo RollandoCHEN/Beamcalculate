@@ -59,8 +59,7 @@ public class MomentLineChart {
     private Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
     private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
 
-
-
+    private static Stage mCrossSectionStage = new Stage();
 
     private void addRealNumberValidation(TextField textField) {
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
@@ -237,11 +236,10 @@ public class MomentLineChart {
                 e.printStackTrace();
             }
 
-            Stage crossSectionStage = new Stage();
-            crossSectionStage.setTitle("");
+            mCrossSectionStage.setTitle("");
             //configStage.getIcons().add(new Image("image/configuration.png"));
-            crossSectionStage.setScene(scene);
-            crossSectionStage.show();
+            mCrossSectionStage.setScene(scene);
+            mCrossSectionStage.show();
         });
 
         HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
@@ -770,5 +768,9 @@ public class MomentLineChart {
         // match the calculate method name to the related spanMomentFunction
         mMethodChoiceMap.put(newSpanMomentFunction.getMethod(), newSpanMomentFunction);
         return newSpanMomentFunction;
+    }
+
+    public static Stage getCrossSectionStage() {
+        return mCrossSectionStage;
     }
 }
