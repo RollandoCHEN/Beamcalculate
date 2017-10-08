@@ -8,10 +8,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-
 import static com.beamcalculate.enums.NumericalFormat.*;
 
 public class HoveredThresholdNode extends StackPane {
@@ -25,7 +21,7 @@ public class HoveredThresholdNode extends StackPane {
                         + " G (R) : "
                         + TWODEDECIMALS.getDecimalFormat().format(globelX) +
                         " (" + TWODEDECIMALS.getDecimalFormat().format(relativeX) + ") "
-                        + Main.getBundleText("unit.length")
+                        + Main.getBundleText("unit.length.m")
         );
 
         final Label labelY = new Label(

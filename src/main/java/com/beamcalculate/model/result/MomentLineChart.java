@@ -2,6 +2,7 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
+import com.beamcalculate.controllers.TSectionController;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Reinforcement;
@@ -98,7 +99,7 @@ public class MomentLineChart {
         xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
         yAxis = new NumberAxis(1.2 * maxMomentValue.get(), 1.2 * minMomentValue.get(), 0.05);
 
-        xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length") + ")");
+        xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length.m") + ")");
         yAxis.setLabel(Main.getBundleText("label.ordinate") + " (" + Main.getBundleText("unit.moment") + ")");
 
 //        creating the chart
@@ -145,7 +146,7 @@ public class MomentLineChart {
         ChoiceBox<Integer> spanNumChoice = new ChoiceBox(FXCollections.observableArrayList(Geometry.spansLengthMap().keySet()));
         Label xAbscissaText = new Label(Main.getBundleText("label.xOnSpan"));
         TextField xValueField = new TextField();
-        Label lengthUnitText = new Label(Main.getBundleText("unit.length"));
+        Label lengthUnitText = new Label(Main.getBundleText("unit.length.m"));
         Button calculateYButton = new Button(Main.getBundleText("button.calculateMoment"));
         Label maxCaseMomentLabel = new Label(
                 Main.getBundleText("label.maxMoment")
@@ -225,7 +226,13 @@ public class MomentLineChart {
                 Pane container = FXMLLoader.load(
                         getClass().getResource("/fxml/section.fxml"),
                         Main.getResourceBundle());
-                scene = new Scene(container, 1000, 500);
+
+                // initial scene width is according to the flange width (flange width + 200px)
+                // or according to num of buttons for spans (N° spans * 130)
+                // initial scene height is fix, cause the cross section diagram is fixed at 300px
+                double initialSceneWidth;
+                initialSceneWidth = Math.max(TSectionController.getSceneWidth(), 130 * Geometry.getNumSpan());
+                scene = new Scene(container, initialSceneWidth, 700);
             } catch (IOException e) {
                 e.printStackTrace();
             }

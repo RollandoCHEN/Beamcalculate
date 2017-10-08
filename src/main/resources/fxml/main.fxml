@@ -57,36 +57,36 @@
                             <CheckBox fx:id="equalSupportCheck" onAction="#disableSupportWidth" />
                             <Label text="%label.supportWidth" />
                             <TextField fx:id="equalSupportWidth" disable="${controller.notEqualSupport}" />
-                            <Label text="%unit.length" />
+                            <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%ifSpanEqual" />
                             <CheckBox fx:id="equalSpanCheck" onAction="#disableSpanLength" />
                             <Label text="%label.spanLength" />
                             <TextField fx:id="equalSpanLength" disable="${controller.notEqualSpan}" />
-                            <Label text="%unit.length" />
+                            <Label text="%unit.length.m" />
                         </HBox>
                     </VBox>
                     <VBox spacing="10">
                         <HBox styleClass="hbox">
                             <Label text="%label.sectionWidth" />
                             <TextField fx:id="sectionWidth" promptText="0.35" />
-                            <Label text="%unit.length" />
+                            <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.sectionHeight" />
                             <TextField fx:id="sectionHeight" promptText="0.6" />
-                            <Label text="%unit.length" />
+                            <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.slabThickness" />
                             <TextField fx:id="slabThickness" promptText="0.18" disable="${controller.notOnTSection}"/>
-                            <Label text="%unit.length" />
+                            <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.perpendicularSpacing" />
                             <TextField fx:id="perpendicularSpacing" promptText="6" disable="${controller.notOnTSection}" />
-                            <Label text="%unit.length" />
+                            <Label text="%unit.length.m" />
                         </HBox>
                     </VBox>
                 </HBox>
