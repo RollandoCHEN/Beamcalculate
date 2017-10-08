@@ -236,8 +236,8 @@ public class MomentLineChart {
                 e.printStackTrace();
             }
 
-            mCrossSectionStage.setTitle("");
-            //configStage.getIcons().add(new Image("image/configuration.png"));
+            mCrossSectionStage.setTitle(Main.getBundleText("window.title.crossSection"));
+            mCrossSectionStage.getIcons().add(new Image("image/section.png"));
             mCrossSectionStage.setScene(scene);
             mCrossSectionStage.show();
         });

@@ -62,7 +62,7 @@ public class ReinforcementResultTable {
         container.setAlignment(Pos.CENTER);
 
         Button crossSectionButton = new Button(Main.getBundleText("button.crossSection"));
-        crossSectionButton.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
+        crossSectionButton.setStyle("-fx-font-size:16px;");
         crossSectionButton.setOnAction(event -> MomentLineChart.getCrossSectionStage().show());
 
         HBox bottomHBox = new HBox(crossSectionButton);
@@ -74,7 +74,7 @@ public class ReinforcementResultTable {
         resultStage.setTitle(Main.getBundleText("window.title.result"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        double sceneWidth = Geometry.getNumSpan() * 170 + 350;
+        double sceneWidth = Geometry.getNumSpan() * 170 + 400;
         Scene scene = new Scene(container, sceneWidth, 950);
         resultStage.setScene(scene);
         resultStage.show();
