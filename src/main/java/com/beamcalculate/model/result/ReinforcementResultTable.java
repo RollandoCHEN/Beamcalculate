@@ -2,6 +2,7 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
+import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
@@ -15,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
@@ -120,11 +122,14 @@ public class ReinforcementResultTable {
         String sectionLabelString;
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
+        Map<Integer, Pivots> pivotMap;
         if (spanOrSupport.equals("span")){
             reinforceParamMap = reinforcement.getSpanReinforceParam();
+            pivotMap = reinforcement.getSpanPivotMap();
             sectionLabelString = Main.getBundleText("label.span");
         } else {
             reinforceParamMap = reinforcement.getSupportReinforceParam();
+            pivotMap = reinforcement.getSupportPivotMap();
             sectionLabelString = Main.getBundleText("label.support");
         }
 
@@ -142,7 +147,7 @@ public class ReinforcementResultTable {
                                 param.getSymbol() + " = " + FOURDECIMALS.getDecimalFormat().format(value)
                         );
                         Label pivotValue = new Label(
-                                reinforcement.getPivotMap().get(sectionId).getContent()
+                                pivotMap.get(sectionId).getContent()
                         );
                         paramValueVBox.getChildren().addAll(paramValue, pivotValue);
                     } else {

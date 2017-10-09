@@ -45,7 +45,8 @@ public class Reinforcement {
 
     private Map<Integer, Map<ReinforcementParam, Double>> mSpanReinforceParam = new HashMap<>();
     private Map<Integer, Map<ReinforcementParam, Double>> mSupportReinforceParam = new HashMap<>();
-    private Map<Integer, Pivots> mPivotMap = new HashMap<>();
+    private Map<Integer, Pivots> mSpanPivotMap = new HashMap<>();
+    private Map<Integer, Pivots> mSupportPivotMap = new HashMap<>();
 
     private void prepare(){
         mWidth = Geometry.getSectionWidth();
@@ -62,7 +63,7 @@ public class Reinforcement {
 
         Map<ReinforcementParam, Double> paramValueMap = calculateReinforcementParam(maxMoment, mWidth);
 
-        mPivotMap.put(supportId, mPivot);
+        mSupportPivotMap.put(supportId, mPivot);
         mSupportReinforceParam.put(supportId, paramValueMap);
     }
 
@@ -80,7 +81,7 @@ public class Reinforcement {
         mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
         mWebCompressionHeightMap.put(spanId, webCompressionHeight);
 
-        mPivotMap.put(spanId, mPivot);
+        mSpanPivotMap.put(spanId, mPivot);
         mSpanReinforceParam.put(spanId, paramValueMap);
     }
 
@@ -136,7 +137,7 @@ public class Reinforcement {
         mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
         mWebCompressionHeightMap.put(spanId, webCompressionHeight);
 
-        mPivotMap.put(spanId, mPivot);
+        mSpanPivotMap.put(spanId, mPivot);
         mSpanReinforceParam.put(spanId, paramValueMap);
     }
 
@@ -182,6 +183,12 @@ public class Reinforcement {
 
         mRebarAreaAs = maxMoment/(mLeverArmZ * mStressSigmaS) * 10000;
         paramValueMap.put(j_A_S, mRebarAreaAs);
+
+        // TODO To finish the rebar choosing
+
+        if(mRebarAreaAs != 0){
+            Rebar rebar = new Rebar(mRebarAreaAs);
+        }
 
         return paramValueMap;
     }
@@ -237,8 +244,12 @@ public class Reinforcement {
         return mSupportReinforceParam;
     }
 
-    public Map<Integer, Pivots> getPivotMap() {
-        return mPivotMap;
+    public Map<Integer, Pivots> getSpanPivotMap() {
+        return mSpanPivotMap;
+    }
+
+    public Map<Integer, Pivots> getSupportPivotMap() {
+        return mSupportPivotMap;
     }
 
     public AbstractSpanMoment getSpanMomentFunction() {
