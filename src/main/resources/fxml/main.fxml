@@ -109,12 +109,12 @@
                     <Label styleClass="title" text="%title.load" />
                     <HBox styleClass="hbox">
                         <Label text="%label.deadLoad" />
-                        <TextField fx:id="permanentLoad" promptText="0.2650" />
+                        <TextField fx:id="permanentLoad" promptText="2.650" />
                         <Label text="%unit.load" />
                     </HBox>
                     <HBox styleClass="hbox">
                         <Label text="%label.liveLoad" />
-                        <TextField fx:id="variableLoad" promptText="0.1500" />
+                        <TextField fx:id="variableLoad" promptText="1.500" />
                         <Label text="%unit.load" />
                     </HBox>
                 </VBox>

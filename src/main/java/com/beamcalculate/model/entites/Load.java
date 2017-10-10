@@ -11,8 +11,8 @@ public class Load {
     private static final DoubleProperty qTm = new SimpleDoubleProperty();
 
     public Load() {
-        gMNm.bind(Bindings.divide(gTm, 10));
-        qMNm.bind(Bindings.divide(qTm, 10));
+        gMNm.bind(Bindings.divide(gTm, 100));
+        qMNm.bind(Bindings.divide(qTm, 100));
     }
 
     public static double getGMNm() {
