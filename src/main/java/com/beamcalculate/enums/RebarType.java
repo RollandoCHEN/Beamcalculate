@@ -1,6 +1,6 @@
 package com.beamcalculate.enums;
 
-public enum RebarSize {
+public enum RebarType {
     HA6(6),
     HA8(8),
     HA10(10),
@@ -14,7 +14,7 @@ public enum RebarSize {
 
     private double mDiameter_mm;
 
-    RebarSize(double diameter) {
+    RebarType(double diameter) {
         setDiameter_mm(diameter);
     }
 
