@@ -48,15 +48,15 @@ public class MomentLineChart {
     private final LineChart<Number, Number> mLineChart;
     private HBox mHBoxMethod;
     private BooleanBinding mDisableSpinner;
-    private DoubleProperty maxMomentValue = new SimpleDoubleProperty();
-    private DoubleProperty minMomentValue = new SimpleDoubleProperty();
+    private double maxMomentValue;
+    private double minMomentValue;
     private StringProperty mMethodChoiceValue = new SimpleStringProperty();
-    private static NumberAxis xAxis = new NumberAxis();
-    private static NumberAxis yAxis = new NumberAxis();
+    private NumberAxis xAxis = new NumberAxis();
+    private NumberAxis yAxis = new NumberAxis();
     private ChoiceBox<String> mMethodChoice;
     private Map<String, AbstractSpanMoment> mMethodChoiceMap = new HashMap<>();
     private GridPane mGridPaneTop;
-    private static Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
+    private Map<String, XYChart.Series<Number, Number>> mStringSeriesMap = new HashMap<>();
     private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
 
     private static Stage mCrossSectionStage = new Stage();
@@ -92,11 +92,11 @@ public class MomentLineChart {
 
 //        defining the axes
 
-        maxMomentValue.set(-combination.getUltimateMomentValue(MAX));
-        minMomentValue.set(-combination.getUltimateMomentValue(MIN));
+        maxMomentValue = -combination.getUltimateMomentValue(MAX);
+        minMomentValue = -combination.getUltimateMomentValue(MIN);
 
         xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
-        yAxis = new NumberAxis(1.2 * maxMomentValue.get(), 1.2 * minMomentValue.get(), 0.05);
+        yAxis = new NumberAxis(1.2 * maxMomentValue, 1.2 * minMomentValue, 0.05);
 
         xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length.m") + ")");
         yAxis.setLabel(Main.getBundleText("label.ordinate") + " (" + Main.getBundleText("unit.moment") + ")");
@@ -218,6 +218,7 @@ public class MomentLineChart {
         rebarCalculatingButton.setOnAction(event -> {
             Reinforcement reinforcement = new Reinforcement(mMethodChoiceMap.get(mMethodChoiceValue.get()));
             ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
+
             // TODO Add windows to show the T shaped cross section for each span
 
             Scene scene = null;
@@ -430,18 +431,11 @@ public class MomentLineChart {
 
 //        add margin to the y axis
 
-        maxMomentValue.set(-Math.max(
-                -maxMomentValue.get(),
-                combination.getUltimateMomentValue(MAX)
-                )
-        );
-        minMomentValue.set(-Math.min(
-                -minMomentValue.get(),
-                combination.getUltimateMomentValue(MIN)
-                )
-        );
-        yAxis.lowerBoundProperty().set(1.2 * maxMomentValue.get());
-        yAxis.upperBoundProperty().set(1.2 * minMomentValue.get());
+        maxMomentValue = -Math.max(-maxMomentValue, combination.getUltimateMomentValue(MAX));
+        minMomentValue = -Math.min(-minMomentValue, combination.getUltimateMomentValue(MIN));
+
+        yAxis.lowerBoundProperty().set(1.2 * maxMomentValue);
+        yAxis.upperBoundProperty().set(1.2 * minMomentValue);
 
         mMethodChoice.getItems().add(spanMomentFunction.getMethod());
 
@@ -480,7 +474,7 @@ public class MomentLineChart {
         });
     }
 
-    private void createMomentSeries(
+    public static void createMomentSeries(
             int numSection,
             ELUCombination eluCombination, UltimateCase ultimateCase,
             XYChart.Series series
@@ -528,7 +522,7 @@ public class MomentLineChart {
         series.setName(Main.getBundleText("label." + ultimateCase.toString().toLowerCase()) + " - " + eluCombination.getSpanMomentFunction().getMethod());
     }
 
-    private void createRedistributionMomentSeries(
+    public static void createRedistributionMomentSeries(
             int numSection,
             SpanMomentFunction_SpecialLoadCase spanMomentFunction, UltimateCase ultimateCase,
             XYChart.Series series
@@ -777,18 +771,6 @@ public class MomentLineChart {
 
     public static Stage getCrossSectionStage() {
         return mCrossSectionStage;
-    }
-
-    public static NumberAxis getxAxis() {
-        return xAxis;
-    }
-
-    public static NumberAxis getyAxis() {
-        return yAxis;
-    }
-
-    public static Map<String, XYChart.Series> getStringSeriesMap() {
-        return mStringSeriesMap;
     }
 }
 

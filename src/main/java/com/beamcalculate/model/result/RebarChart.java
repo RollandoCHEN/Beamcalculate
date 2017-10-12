@@ -1,8 +1,10 @@
 package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
+import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
+import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -10,26 +12,56 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.Map;
+
+import static com.beamcalculate.enums.UltimateCase.MAX;
+import static com.beamcalculate.enums.UltimateCase.MIN;
 
 public class RebarChart {
 
     public RebarChart(Rebar rebar) {
         AbstractSpanMoment spanMoment = rebar.getReinforcement().getSpanMomentFunction();
+        ELUCombination combination = new ELUCombination(spanMoment);
 
-        NumberAxis xAxis = MomentLineChart.getxAxis();
-        NumberAxis yAxis = MomentLineChart.getyAxis();
+        NumberAxis xAxis;
+        NumberAxis yAxis;
 
-        Map<String, XYChart.Series> stringSeriesMap = MomentLineChart.getStringSeriesMap();
+        double maxMomentValue = -combination.getUltimateMomentValue(MAX);
+        double minMomentValue = -combination.getUltimateMomentValue(MIN);
 
+        xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
+        yAxis = new NumberAxis(1.2 * maxMomentValue, 1.2 * minMomentValue, 0.05);
+
+        xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length.m") + ")");
+        yAxis.setLabel(Main.getBundleText("label.ordinate") + " (" + Main.getBundleText("unit.moment") + ")");
+
+        XYChart.Series<Number, Number> maxSeries = new XYChart.Series<>();
+        XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
+
+        MomentLineChart.createMomentSeries(50, combination, MAX, maxSeries);
+        MomentLineChart.createMomentSeries(50, combination, MIN, minSeries);
+
+        //for all series, take date, each data has Node (symbol) for representing point
+        for (XYChart.Data<Number, Number> data : maxSeries.getData()) {
+            // this node is StackPane
+            StackPane stackPane = (StackPane) data.getNode();
+            stackPane.setVisible(false);
+        }
+        for (XYChart.Data<Number, Number> data : minSeries.getData()) {
+            // this node is StackPane
+            StackPane stackPane = (StackPane) data.getNode();
+            stackPane.setVisible(false);
+        }
         LineChart<Number, Number> lineChart = new LineChart(xAxis, yAxis);
 
         lineChart.getData().addAll(
-                stringSeriesMap.get(spanMoment.getMethod() + "_" + Main.getBundleText("label.max")),
-                stringSeriesMap.get(spanMoment.getMethod() + "_" + Main.getBundleText("label.min"))
+                maxSeries, minSeries
         );
+
+
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(lineChart);
