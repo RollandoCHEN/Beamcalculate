@@ -184,12 +184,6 @@ public class Reinforcement {
         mRebarAreaAs = maxMoment/(mLeverArmZ * mStressSigmaS) * 10000;
         paramValueMap.put(j_A_S, mRebarAreaAs);
 
-        // TODO To finish the rebar choosing
-
-        if(mRebarAreaAs != 0){
-            Rebar rebar = new Rebar(mRebarAreaAs);
-        }
-
         return paramValueMap;
     }
 

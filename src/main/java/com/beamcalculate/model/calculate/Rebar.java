@@ -8,24 +8,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
+
 public class Rebar {
     private int mMaxDiameter = 20;
     private double mSectionWidth_cm = Geometry.getSectionWidth() * 100;
     private List<Map<Integer, Map<RebarType, Integer>>> mRebarList = new ArrayList();
+    private Reinforcement mReinforcement;
 
-    public Rebar(double neededRebarArea) {
-        int maxRebarPerLayer = (int)Math.round(mSectionWidth_cm / 10);
+    public Rebar(Reinforcement reinforcement) {
+        setReinforcement(reinforcement);
+
+        int spanId = 1;
+        double rebarAreaAs = getRebarAreaOfSpan(spanId);
+
+        int maxRebarPerLayer = (int) Math.round(mSectionWidth_cm / 10);
         int maxNumLayers = 2;
-        for (int numOfLayers=1; numOfLayers < maxNumLayers+1; numOfLayers++){
+        for (int numOfLayers = 1; numOfLayers < maxNumLayers + 1; numOfLayers++) {
             for (RebarType rebarType : RebarType.values()) {
                 Map<RebarType, Integer> typeNumberMap = new HashMap<>();
                 Map<Integer, Map<RebarType, Integer>> layerRadarsMap = new HashMap<>();
-                if(rebarType.getSectionalArea_cm2(maxRebarPerLayer * numOfLayers) > neededRebarArea
-                        && rebarType.getDiameter_mm() < mMaxDiameter){
+                if (rebarType.getSectionalArea_cm2(maxRebarPerLayer * numOfLayers) > rebarAreaAs
+                        && rebarType.getDiameter_mm() < mMaxDiameter) {
 
                     typeNumberMap.put(rebarType, maxRebarPerLayer);
 
-                    for (int layerNum=1; layerNum < numOfLayers+1; layerNum++){
+                    for (int layerNum = 1; layerNum < numOfLayers + 1; layerNum++) {
                         layerRadarsMap.put(layerNum, typeNumberMap);
                     }
 
@@ -39,6 +47,14 @@ public class Rebar {
             }
         }
         printRebar();
+    }
+
+    private double getRebarAreaOfSpan(int spanId) {
+        return getReinforcement().getSpanReinforceParam().get(spanId).get(j_A_S);
+    }
+
+    private double getRebarAreaOfSupport(int supportId) {
+        return getReinforcement().getSupportReinforceParam().get(supportId).get(j_A_S);
     }
 
     private void printRebar() {
@@ -55,5 +71,13 @@ public class Rebar {
             );
 
         }
+    }
+
+    public void setReinforcement(Reinforcement reinforcement) {
+        mReinforcement = reinforcement;
+    }
+
+    public Reinforcement getReinforcement() {
+        return mReinforcement;
     }
 }
