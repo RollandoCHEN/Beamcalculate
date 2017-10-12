@@ -226,10 +226,16 @@ public class MomentLineChart {
                         getClass().getResource("/fxml/section.fxml"),
                         Main.getResourceBundle());
 
-                // initial scene width is according to the flange width (flange width + 200px)
-                // or according to num of buttons for spans (N° spans * 130)
-                // initial scene height is fix, cause the cross section diagram is fixed at 300px
+                /*I wander if it's better to pass the reinforcement instance to the fxml controller
+                * as like:
+                * TSectionController controller = fxmlLoader.<TSectionController>getController();
+                * controller.setReinforcement(reinforcement);*/
+
                 double initialSceneWidth;
+
+                /* initial scene width is according to the flange width (flange width + 200px)
+                 or according to num of buttons for spans (N° spans * 130)
+                 initial scene height is fix, cause the cross section diagram is fixed at 300px*/
                 initialSceneWidth = Math.max(TSectionController.getSceneWidth(), 130 * Geometry.getNumSpan());
                 scene = new Scene(container, initialSceneWidth, 700);
             } catch (IOException e) {
