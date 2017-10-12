@@ -51,12 +51,12 @@ public class MomentLineChart {
     private DoubleProperty maxMomentValue = new SimpleDoubleProperty();
     private DoubleProperty minMomentValue = new SimpleDoubleProperty();
     private StringProperty mMethodChoiceValue = new SimpleStringProperty();
-    private final NumberAxis xAxis;
-    private final NumberAxis yAxis;
+    private static NumberAxis xAxis = new NumberAxis();
+    private static NumberAxis yAxis = new NumberAxis();
     private ChoiceBox<String> mMethodChoice;
     private Map<String, AbstractSpanMoment> mMethodChoiceMap = new HashMap<>();
     private GridPane mGridPaneTop;
-    private Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
+    private static Map<String, XYChart.Series> mStringSeriesMap = new HashMap<>();
     private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
 
     private static Stage mCrossSectionStage = new Stage();
@@ -460,8 +460,7 @@ public class MomentLineChart {
         ));
     }
 
-    private void addMaxValueValidation(TextField textField, double
-            maxValue) {
+    private void addMaxValueValidation(TextField textField, double maxValue) {
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (!newValue) { //when focus lost
                 if (!textField.getText().matches("\\d+\\.\\d+|\\d+")) {
@@ -773,4 +772,18 @@ public class MomentLineChart {
     public static Stage getCrossSectionStage() {
         return mCrossSectionStage;
     }
+
+    public static NumberAxis getxAxis() {
+        return xAxis;
+    }
+
+    public static NumberAxis getyAxis() {
+        return yAxis;
+    }
+
+    public static Map<String, XYChart.Series> getStringSeriesMap() {
+        return mStringSeriesMap;
+    }
 }
+
+

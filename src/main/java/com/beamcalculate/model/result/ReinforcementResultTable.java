@@ -4,7 +4,9 @@ import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
+import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
+import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +23,7 @@ import java.util.Map;
 
 import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
 import static com.beamcalculate.enums.ReinforcementParam.b_MU;
+import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
 
@@ -67,7 +70,16 @@ public class ReinforcementResultTable {
         crossSectionButton.setStyle("-fx-font-size:16px;");
         crossSectionButton.setOnAction(event -> MomentLineChart.getCrossSectionStage().show());
 
-        HBox bottomHBox = new HBox(crossSectionButton);
+        Button rebarGenerationButton = new Button(Main.getBundleText("button.rebarGeneration"));
+        rebarGenerationButton.setStyle("-fx-font-size:16px");
+        rebarGenerationButton.setOnAction(event -> {
+
+            Rebar rebar = new Rebar(reinforcement);
+            RebarChart rebarChart = new RebarChart(rebar);
+
+        });
+
+        HBox bottomHBox = new HBox(crossSectionButton, rebarGenerationButton);
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
 
         container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox, bottomHBox);
