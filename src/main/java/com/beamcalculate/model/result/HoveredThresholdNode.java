@@ -15,16 +15,25 @@ public class HoveredThresholdNode extends StackPane {
     public HoveredThresholdNode(double globelX, double relativeX, double y) {
 
         setPrefSize(10, 10);
+        Label labelX;
+        if (globelX == relativeX){
+            labelX = new Label(
+                    Main.getBundleText("label.abscissa")
+                            + " : "
+                            + TWODECIMALS.getDecimalFormat().format(globelX)
+                            + Main.getBundleText("unit.length.m")
+            );
+        }else {
+            labelX = new Label(
+                    Main.getBundleText("label.abscissa")
+                            + " G (R) : "
+                            + TWODECIMALS.getDecimalFormat().format(globelX) +
+                            " (" + TWODECIMALS.getDecimalFormat().format(relativeX) + ") "
+                            + Main.getBundleText("unit.length.m")
+            );
+        }
 
-        final Label labelX = new Label(
-                Main.getBundleText("label.abscissa")
-                        + " G (R) : "
-                        + TWODEDECIMALS.getDecimalFormat().format(globelX) +
-                        " (" + TWODEDECIMALS.getDecimalFormat().format(relativeX) + ") "
-                        + Main.getBundleText("unit.length.m")
-        );
-
-        final Label labelY = new Label(
+        Label labelY = new Label(
                 Main.getBundleText("label.moment")
                         + " : "
                         + FOURDECIMALS.getDecimalFormat().format(y)

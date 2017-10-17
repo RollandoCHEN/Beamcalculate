@@ -7,7 +7,7 @@ import java.util.Locale;
 public enum NumericalFormat {
     ZERODECIMAL("##0"),
     ONEDECIMAL("##0.0"),
-    TWODEDECIMALS("##0.00"),
+    TWODECIMALS("##0.00"),
     THREEDECIMALS("##0.000"),
     FOURDECIMALS("##0.0000");
 

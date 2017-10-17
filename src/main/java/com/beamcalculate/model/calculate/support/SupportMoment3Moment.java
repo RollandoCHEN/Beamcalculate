@@ -1,6 +1,7 @@
 package com.beamcalculate.model.calculate.support;
 
 import Jama.Matrix;
+import com.beamcalculate.enums.MyMath;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 
@@ -32,9 +33,7 @@ public class SupportMoment3Moment extends SupportMoment {
         geometry.spansLengthMap().forEach((spanId, spanLength) -> {
             double spanL = spanLength + geometry.supportWidthMap().get(spanId) / 2 + geometry.supportWidthMap().get(spanId + 1) / 2;
 
-            // TODO Round a double to two decimal places, it could be created as an enums class
-            spanL = Math.round(spanL * 100);
-            spanL = spanL / 100;
+            MyMath.round(spanL, 2);
 
             mEffectiveSpansLengthMap.put(spanId, spanL);
         });
