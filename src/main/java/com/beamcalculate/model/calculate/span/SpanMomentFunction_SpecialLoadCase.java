@@ -80,6 +80,30 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
         return finalMoment;
     }
 
+    public double getUltimateMomentValue(
+            UltimateCase ultimateCase
+    ) {
+        double ultimateMoment = 0;
+        boolean compareCondition = true;
+
+        for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
+            double moment = getUltimateMomentValueOfSpan(spanId, ultimateCase);
+            switch (ultimateCase) {
+                case MAX:
+                    compareCondition = moment > ultimateMoment;
+                    break;
+                case MIN:
+                    compareCondition = moment < ultimateMoment;
+                    break;
+            }
+            if (compareCondition) {
+                ultimateMoment = moment;
+            }
+
+        }
+        return ultimateMoment;
+    }
+
     public double getUltimateMomentValueOfSpan(
             int spanId, UltimateCase ultimateCase
     ) {

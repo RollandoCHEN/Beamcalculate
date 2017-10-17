@@ -92,8 +92,8 @@ public class MomentLineChart {
 
 //        defining the axes
 
-        xAxis = defineAxis(combination).get(0);
-        yAxis = defineAxis(combination).get(1);
+        xAxis = defineAxis(spanMomentFunction).get(0);
+        yAxis = defineAxis(spanMomentFunction).get(1);
 
 //        creating the chart
 
@@ -468,9 +468,19 @@ public class MomentLineChart {
         });
     }
 
-    public static List<NumberAxis> defineAxis(ELUCombination combination){
-        double maxMomentValue = -combination.getUltimateMomentValue(MAX);
-        double minMomentValue = -combination.getUltimateMomentValue(MIN);
+    public static List<NumberAxis> defineAxis(AbstractSpanMoment spanMomentFunction){
+        double maxMomentValue;
+        double minMomentValue;
+
+        if(spanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) spanMomentFunction;
+            minMomentValue = -newSpanMomentFunction.getUltimateMomentValue(MIN);
+            maxMomentValue = newSpanMomentFunction.getUltimateMomentValue(MAX);
+        }else {
+            ELUCombination combination = new ELUCombination(spanMomentFunction);
+            minMomentValue = -combination.getUltimateMomentValue(MIN);
+            maxMomentValue = combination.getUltimateMomentValue(MAX);
+        }
 
         NumberAxis xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
         NumberAxis yAxis = new NumberAxis(1.2 * maxMomentValue, 1.2 * minMomentValue, 0.05);

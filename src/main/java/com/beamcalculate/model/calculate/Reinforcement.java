@@ -189,11 +189,11 @@ public class Reinforcement {
 
     private double getMaxMomentOfSupport(int supportId) {
         double maxMoment;
-        ELUCombination combination = new ELUCombination(mSpanMomentFunction);
         if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
             maxMoment = -newSpanMomentFunction.getMinMomentValueOfSupport(supportId);
         }else {
+            ELUCombination combination = new ELUCombination(mSpanMomentFunction);
             maxMoment = -combination.getMinMomentValueOfSupport(supportId);
         }
         return maxMoment;
@@ -201,11 +201,11 @@ public class Reinforcement {
 
     private double getMaxMomentOfSpan(int spanId) {
         double maxMoment;
-        ELUCombination combination = new ELUCombination(mSpanMomentFunction);
         if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
             maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
         }else {
+            ELUCombination combination = new ELUCombination(mSpanMomentFunction);
             maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX);
         }
         return maxMoment;

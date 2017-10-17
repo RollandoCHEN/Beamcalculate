@@ -18,7 +18,7 @@ public enum RebarType {
         setDiameter_mm(diameter);
     }
 
-    public void setDiameter_mm(double diameter_mm) {
+    private void setDiameter_mm(double diameter_mm) {
         mDiameter_mm = diameter_mm;
     }
 
@@ -32,5 +32,15 @@ public enum RebarType {
 
     public double getMassPerMeter_kg(int numOfRebar){
         return 7840 * getSectionalArea_cm2(numOfRebar) / 10000;
+    }
+
+    public RebarType getRebarTypeOfDiameter(double diameter_mm){
+        RebarType rebarType = null;
+        for (RebarType type : RebarType.values()){
+            if (diameter_mm == type.getDiameter_mm()){
+                rebarType = type;
+            }
+        }
+        return rebarType;
     }
 }
