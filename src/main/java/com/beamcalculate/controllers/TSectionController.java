@@ -16,8 +16,7 @@ import javafx.scene.layout.GridPane;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static com.beamcalculate.enums.NumericalFormat.ONEDECIMAL;
-import static com.beamcalculate.enums.NumericalFormat.TWODEDECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.TWODECIMALS;
 import static com.beamcalculate.enums.NumericalFormat.ZERODECIMAL;
 
 public class TSectionController implements Initializable {
@@ -94,7 +93,7 @@ public class TSectionController implements Initializable {
         }
 
         Bindings.bindBidirectional(webCompWidthString, webCompWidth, ZERODECIMAL.getDecimalFormat());
-        Bindings.bindBidirectional(compRegionHeightString, compRegionHeight, TWODEDECIMALS.getDecimalFormat());
+        Bindings.bindBidirectional(compRegionHeightString, compRegionHeight, TWODECIMALS.getDecimalFormat());
         Bindings.bindBidirectional(flangeWidthString, flangeWidth, ZERODECIMAL.getDecimalFormat());
         Bindings.bindBidirectional(flangeHeightString, flangeHeight, ZERODECIMAL.getDecimalFormat());
         Bindings.bindBidirectional(totalHeightString, totalHeight, ZERODECIMAL.getDecimalFormat());

@@ -75,11 +75,13 @@ public class ReinforcementResultTable {
         rebarGenerationButton.setOnAction(event -> {
 
             Rebar rebar = new Rebar(reinforcement);
-            RebarChart rebarChart = new RebarChart(rebar);
+
+            new RebarCaseTable(rebar);
 
         });
 
         HBox bottomHBox = new HBox(crossSectionButton, rebarGenerationButton);
+        bottomHBox.setSpacing(15);
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
 
         container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox, bottomHBox);
@@ -150,7 +152,7 @@ public class ReinforcementResultTable {
             if (spanOrSupport.equals("support") && sectionId != 1 && sectionId != Geometry.getNumSupport()
                     || spanOrSupport.equals("span")){
                 paramValueVBox.setSpacing(15);
-                Label crossSectionLabel = new Label(sectionLabelString + " " + sectionId.toString());
+                Label crossSectionLabel = new Label(sectionLabelString + " " + sectionId);
                 crossSectionLabel.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
                 paramValueVBox.getChildren().add(crossSectionLabel);
                 paramValueMap.forEach((param, value)->{

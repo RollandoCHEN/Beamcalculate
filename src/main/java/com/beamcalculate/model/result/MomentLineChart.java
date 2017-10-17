@@ -32,7 +32,9 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
@@ -48,8 +50,6 @@ public class MomentLineChart {
     private final LineChart<Number, Number> mLineChart;
     private HBox mHBoxMethod;
     private BooleanBinding mDisableSpinner;
-    private double maxMomentValue;
-    private double minMomentValue;
     private StringProperty mMethodChoiceValue = new SimpleStringProperty();
     private NumberAxis xAxis = new NumberAxis();
     private NumberAxis yAxis = new NumberAxis();
@@ -92,14 +92,8 @@ public class MomentLineChart {
 
 //        defining the axes
 
-        maxMomentValue = -combination.getUltimateMomentValue(MAX);
-        minMomentValue = -combination.getUltimateMomentValue(MIN);
-
-        xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
-        yAxis = new NumberAxis(1.2 * maxMomentValue, 1.2 * minMomentValue, 0.05);
-
-        xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length.m") + ")");
-        yAxis.setLabel(Main.getBundleText("label.ordinate") + " (" + Main.getBundleText("unit.moment") + ")");
+        xAxis = defineAxis(combination).get(0);
+        yAxis = defineAxis(combination).get(1);
 
 //        creating the chart
 
@@ -246,7 +240,7 @@ public class MomentLineChart {
             mCrossSectionStage.setTitle(Main.getBundleText("window.title.crossSection"));
             mCrossSectionStage.getIcons().add(new Image("image/section.png"));
             mCrossSectionStage.setScene(scene);
-            mCrossSectionStage.show();
+//            mCrossSectionStage.show();
         });
 
         HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
@@ -431,11 +425,11 @@ public class MomentLineChart {
 
 //        add margin to the y axis
 
-        maxMomentValue = -Math.max(-maxMomentValue, combination.getUltimateMomentValue(MAX));
-        minMomentValue = -Math.min(-minMomentValue, combination.getUltimateMomentValue(MIN));
+        double maxMomentValue = -Math.max(-yAxis.getLowerBound(), 1.2 * combination.getUltimateMomentValue(MAX));
+        double minMomentValue = -Math.min(-yAxis.getUpperBound(), 1.2 * combination.getUltimateMomentValue(MIN));
 
-        yAxis.lowerBoundProperty().set(1.2 * maxMomentValue);
-        yAxis.upperBoundProperty().set(1.2 * minMomentValue);
+        yAxis.lowerBoundProperty().set(maxMomentValue);
+        yAxis.upperBoundProperty().set(minMomentValue);
 
         mMethodChoice.getItems().add(spanMomentFunction.getMethod());
 
@@ -474,10 +468,27 @@ public class MomentLineChart {
         });
     }
 
+    public static List<NumberAxis> defineAxis(ELUCombination combination){
+        double maxMomentValue = -combination.getUltimateMomentValue(MAX);
+        double minMomentValue = -combination.getUltimateMomentValue(MIN);
+
+        NumberAxis xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
+        NumberAxis yAxis = new NumberAxis(1.2 * maxMomentValue, 1.2 * minMomentValue, 0.05);
+
+        xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length.m") + ")");
+        yAxis.setLabel(Main.getBundleText("label.ordinate") + " (" + Main.getBundleText("unit.moment") + ")");
+
+        List<NumberAxis> axisList = new ArrayList<>();
+        axisList.add(xAxis);
+        axisList.add(yAxis);
+
+        return axisList;
+    }
+
     public static void createMomentSeries(
             int numSection,
             ELUCombination eluCombination, UltimateCase ultimateCase,
-            XYChart.Series series
+            XYChart.Series<Number, Number> series
     ) {
 
         for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
@@ -512,7 +523,7 @@ public class MomentLineChart {
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
                 double moment = -eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);         // negative just because can't inverse the Y axis to show the span moment underside of 0 axis
-                final XYChart.Data<Double, Double> data = new XYChart.Data<>(globalX, moment);
+                final XYChart.Data<Number, Number> data = new XYChart.Data<>(globalX, moment);
                 data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
                 series.getData().add(data);
                 spanLocalX += spanLength / numSection;
