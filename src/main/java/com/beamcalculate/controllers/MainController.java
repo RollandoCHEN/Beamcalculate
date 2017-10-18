@@ -27,7 +27,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -360,6 +368,31 @@ public class MainController implements Initializable {
 
     @FXML
     private void DEBUG(ActionEvent actionEvent) throws Exception {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save file");
+        fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("Document Word (*.docx)", "*.docx"));
+
+        File savedFile = fileChooser.showSaveDialog(graphGenerate_button.getScene().getWindow());
+
+        if(savedFile != null){
+            //Blank Document
+            XWPFDocument document = new XWPFDocument();
+            //Write the Document in file system
+            FileOutputStream out = new FileOutputStream(savedFile);
+
+            //create Paragraph
+            XWPFParagraph paragraph = document.createParagraph();
+            XWPFRun run = paragraph.createRun();
+            run.setText(sectionHeight_tf.getParameterName() + " : " + Geometry.getSectionHeight());
+            document.write(out);
+
+            //Close document
+            out.close();
+        }else{
+            System.out.println("No Directory selected");
+        }
 
 
     }
