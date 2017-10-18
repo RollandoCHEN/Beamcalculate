@@ -548,37 +548,32 @@ public class MomentLineChart {
             SpanMomentFunction_SpecialLoadCase spanMomentFunction, UltimateCase ultimateCase,
             XYChart.Series series
     ) {
-        spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) ->
-                loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
+        spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) -> {
+            double spanLength = Geometry.getEffectiveSpansLengthMap().get(spanId);
+            double spanLocalX = 0;
+            double globalX = 0;
 
-                    double spanLength = Geometry.getEffectiveSpansLengthMap().get(spanId);
-                    double spanLocalX = 0;
-                    double globalX = 0;
+            for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
+                double preX;
+                if (preSpanId == 0) {
+                    preX = Geometry.supportWidthMap().get(1) / 2;
+                } else {
+                    preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
+                }
+                globalX += preX;
+            }
 
-                    for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
-                        double preX;
-                        if (preSpanId == 0) {
-                            preX = Geometry.supportWidthMap().get(1) / 2;
-                        } else {
-                            preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
-                        }
-                        globalX += preX;
-                    }
-
-                    for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
-                        double moment = -spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                spanLocalX, spanId, ultimateCase
-                        );         // negative just because can't inverse the Y axis to show the span moment underside of 0 axis
-                        final XYChart.Data<Double, Double> data = new XYChart.Data<>(globalX, moment);
-                        data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
-                        series.getData().add(data);
-                        spanLocalX += spanLength / numSection;
-                        globalX += spanLength / numSection;
-                    }
-
-
-                })
-        );
+            for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
+                double moment = -spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                        spanLocalX, spanId, ultimateCase
+                );         // negative just because can't inverse the Y axis to show the span moment underside of 0 axis
+                final XYChart.Data<Double, Double> data = new XYChart.Data<>(globalX, moment);
+                data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
+                series.getData().add(data);
+                spanLocalX += spanLength / numSection;
+                globalX += spanLength / numSection;
+            }
+        });
         series.setName(Main.getBundleText("label."
                 + ultimateCase.toString().toLowerCase())
                 + " - "

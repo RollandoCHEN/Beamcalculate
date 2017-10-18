@@ -43,10 +43,9 @@ public class RebarChart {
         XYChart.Series<Number, Number> maxSeries = new XYChart.Series<>();
         XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
-        // TODO redistribution moment line chart produces bug, to fix
         if (mSpanMoment.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
             MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
-            MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, maxSeries);
+            MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, minSeries);
 
         } else {
             ELUCombination combination = new ELUCombination(mSpanMoment);
