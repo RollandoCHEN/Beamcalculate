@@ -99,7 +99,8 @@ public class Rebar {
                             double secondLayerMinRebarDiameter = firstLayerRebarType.getDiameter_mm();
                             for (RebarType secondLayerRebarType : RebarType.values()) {
                                 if (secondLayerRebarType.getDiameter_mm() <= secondLayerMinRebarDiameter &&
-                                        firstLayerRebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) + secondLayerRebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) > rebarAreaAs)
+                                        firstLayerRebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) + secondLayerRebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) > rebarAreaAs &&
+                                        firstLayerRebarType.getInnerNumber() - secondLayerRebarType.getInnerNumber() <= 2)
                                 {
                                     secondLayerMinRebarDiameter = secondLayerRebarType.getDiameter_mm();
                                     RebarType_Number first_type_numberMap = new RebarType_Number(firstLayerRebarType, mMaxNumOfRebarPerLayer);

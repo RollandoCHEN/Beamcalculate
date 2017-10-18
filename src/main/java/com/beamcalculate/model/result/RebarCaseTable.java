@@ -33,8 +33,8 @@ public class RebarCaseTable {
 
         GridPane spanGridPane = new GridPane();
         spanGridPane.setAlignment(Pos.CENTER);
-        spanGridPane.setHgap(10);
-        spanGridPane.setVgap(10);
+        spanGridPane.setHgap(20);
+        spanGridPane.setVgap(15);
         GridPane supportGridPane = new GridPane();
         supportGridPane.setAlignment(Pos.CENTER);
         supportGridPane.setHgap(10);
@@ -121,8 +121,9 @@ public class RebarCaseTable {
         resultStage.setTitle(Main.getBundleText("window.title.result"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        double sceneWidth = Geometry.getNumSpan() * 100 + 300;
-        Scene scene = new Scene(container, sceneWidth, 600);
+        double sceneWidth = Geometry.getNumSpan() * 110 + 180;
+        double sceneHeight = maxNumOfCases * 110 + 100;
+        Scene scene = new Scene(container, sceneWidth, sceneHeight);
         resultStage.setScene(scene);
         resultStage.show();
     }

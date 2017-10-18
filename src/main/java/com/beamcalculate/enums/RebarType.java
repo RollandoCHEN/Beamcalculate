@@ -1,21 +1,23 @@
 package com.beamcalculate.enums;
 
 public enum RebarType {
-    HA6(6),
-    HA8(8),
-    HA10(10),
-    HA12(12),
-    HA14(14),
-    HA16(16),
-    HA20(20),
-    HA25(25),
-    HA32(32),
-    HA40(40);
+    HA6(6, 1),
+    HA8(8, 2),
+    HA10(10, 3),
+    HA12(12, 4),
+    HA14(14, 5),
+    HA16(16, 6),
+    HA20(20, 7),
+    HA25(25, 8),
+    HA32(32, 8),
+    HA40(40, 9);
 
     private double mDiameter_mm;
+    private int mInnerNumber;
 
-    RebarType(double diameter) {
+    RebarType(double diameter, int innerNumber) {
         setDiameter_mm(diameter);
+        setInnerNumber(innerNumber);
     }
 
     private void setDiameter_mm(double diameter_mm) {
@@ -24,6 +26,14 @@ public enum RebarType {
 
     public double getDiameter_mm() {
         return mDiameter_mm;
+    }
+
+    private void setInnerNumber(int innerNumber) {
+        mInnerNumber = innerNumber;
+    }
+
+    public int getInnerNumber() {
+        return mInnerNumber;
     }
 
     public double getSectionalArea_cm2(int numOfRebar){
