@@ -53,7 +53,7 @@ public class Reinforcement {
         mEffectiveHeight = Geometry.getEffectiveHeight();
         mFcd = Material.getFcd();
         mFyd = Material.getFyd();
-        mSteelUltimateStrain = Material.getSteelUltimateExtension();
+        mSteelUltimateStrain = Material.getSteelUltimateStrain();
         mPerpendicularSpacing = Geometry.getPerpendicularSpacing();
         mSlabThickness = Geometry.getSlabThickness();
     }

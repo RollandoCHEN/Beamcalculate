@@ -1,5 +1,7 @@
 package com.beamcalculate.model.entites;
 
+import com.beamcalculate.Main;
+import com.beamcalculate.model.NamedDoubleProperty;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -12,11 +14,11 @@ import java.util.Map;
 public class Geometry {
     private final static IntegerProperty mNumSpan = new SimpleIntegerProperty();
     private final static IntegerProperty mNumSupport = new SimpleIntegerProperty();
-    private final static DoubleProperty mSectionWidth = new SimpleDoubleProperty();
-    private final static DoubleProperty mSectionHeight = new SimpleDoubleProperty();
-    private final static DoubleProperty mSlabThickness = new SimpleDoubleProperty();
-    private final static DoubleProperty mPerpendicularSpacing = new SimpleDoubleProperty();
-    private final static DoubleProperty mEffectiveHeight = new SimpleDoubleProperty();
+    private final static NamedDoubleProperty mSectionWidth = new NamedDoubleProperty();
+    private final static NamedDoubleProperty mSectionHeight = new NamedDoubleProperty();
+    private final static NamedDoubleProperty mSlabThickness = new NamedDoubleProperty();
+    private final static NamedDoubleProperty mPerpendicularSpacing = new NamedDoubleProperty();
+    private final static NamedDoubleProperty mEffectiveHeight = new NamedDoubleProperty();
     private static double mTotalLength = 0.0;
 
     private static Map<Integer, Double> mSpansLengthMap = new HashMap<>();        // Not be able to use MapProperty, cause not be able to set (k,v) to it
@@ -29,7 +31,7 @@ public class Geometry {
         mEffectiveHeight.bind(Bindings.multiply(mSectionHeight, 0.9));
     }
 
-    public DoubleProperty effectiveHeightProperty() {
+    public static NamedDoubleProperty effectiveHeightProperty() {
         return mEffectiveHeight;
     }
 
@@ -65,7 +67,7 @@ public class Geometry {
         return mSectionWidth.get();
     }
 
-    public static DoubleProperty sectionWidthProperty() {
+    public static NamedDoubleProperty sectionWidthProperty() {
         return mSectionWidth;
     }
 
@@ -73,7 +75,7 @@ public class Geometry {
         return mSectionHeight.get();
     }
 
-    public static DoubleProperty sectionHeightProperty() {
+    public static NamedDoubleProperty sectionHeightProperty() {
         return mSectionHeight;
     }
 
@@ -81,7 +83,7 @@ public class Geometry {
         return mSlabThickness.get();
     }
 
-    public static DoubleProperty slabThicknessProperty() {
+    public static NamedDoubleProperty slabThicknessProperty() {
         return mSlabThickness;
     }
 
@@ -89,7 +91,7 @@ public class Geometry {
         return mPerpendicularSpacing.get();
     }
 
-    public static DoubleProperty perpendicularSpacingProperty() {
+    public static NamedDoubleProperty perpendicularSpacingProperty() {
         return mPerpendicularSpacing;
     }
 

@@ -3,6 +3,9 @@ package com.beamcalculate.model.result;
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.controllers.TSectionController;
+import com.beamcalculate.enums.NumericalFormat;
+import com.beamcalculate.model.NamedDoubleProperty;
+import com.beamcalculate.model.NamedStringProperty;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Reinforcement;
@@ -11,10 +14,10 @@ import com.beamcalculate.model.calculate.span.SpanMomentFunction;
 import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
+import com.beamcalculate.model.entites.Load;
+import com.beamcalculate.model.entites.Material;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -28,9 +31,16 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +49,7 @@ import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
-import static com.beamcalculate.enums.NumericalFormat.THREEDECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.*;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 
@@ -325,7 +334,7 @@ public class MomentLineChart {
         mGridPaneTop.add(methodStackPane, 1, 0);
         mGridPaneTop.setPadding(new Insets(10, 20, 10, 20));
 
-//        if the methode of calculate is "3 moment", add redistribution for the methode
+//        if the method of calculate is "3 moment", add redistribution for the method
 
         if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
                 && !MainController.isDisabledRebarCalculate()
@@ -335,21 +344,107 @@ public class MomentLineChart {
 
 //        set border pane
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(mGridPaneTop);
-        borderPane.setCenter(mLineChart);
-        borderPane.setBottom(bottomVBox);
-        borderPane.setPadding(new Insets(20, 20, 20, 20));
+        BorderPane chartBorderPane = new BorderPane();
+        chartBorderPane.setTop(mGridPaneTop);
+        chartBorderPane.setCenter(mLineChart);
+        chartBorderPane.setBottom(bottomVBox);
+        chartBorderPane.setPadding(new Insets(20, 20, 20, 20));
 
-//        set mCrossSectionStage and scene
+        MenuBar menuBar = new MenuBar();
+        Menu fileMenu = new Menu(Main.getBundleText("menu.file"));
+        MenuItem printItem = new MenuItem(Main.getBundleText("menu.item.print"));
+        printItem.setAccelerator(KeyCombination.keyCombination("Ctrl+P"));
+        // TODO the print command should be added
+        printItem.setOnAction(event -> {
+            System.out.println("Press print button");
+        });
+
+        Menu exportMenu = new Menu(Main.getBundleText("menu.export"));
+        MenuItem wordExportItem = new MenuItem(Main.getBundleText("menu.item.export.word"));
+        wordExportItem.setAccelerator(KeyCombination.keyCombination("Alt+W"));
+        wordExportItem.setOnAction(event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(Main.getBundleText("window.title.exportResults"));
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter(Main.getBundleText("export.word.description"), "*.docx"));
+
+            File savedFile = fileChooser.showSaveDialog(menuBar.getScene().getWindow());
+
+            if(savedFile != null){
+                try {
+                    //Blank Document
+                    XWPFDocument document = new XWPFDocument();
+                    //Write the Document in file system
+                    FileOutputStream out = new FileOutputStream(savedFile);
+
+                    //create Paragraph
+                    XWPFParagraph paragraph = document.createParagraph();
+                    writeInputParameter(paragraph, Geometry.sectionWidthProperty(), TWODECIMALS);
+                    writeInputParameter(paragraph, Geometry.sectionHeightProperty(), TWODECIMALS);
+                    writeInputParameter(paragraph, Geometry.slabThicknessProperty(), TWODECIMALS);
+                    writeInputParameter(paragraph, Geometry.perpendicularSpacingProperty(), TWODECIMALS);
+                    writeInputParameter(paragraph, Geometry.effectiveHeightProperty(), TWODECIMALS);
+
+                    writeInputParameter(paragraph, Load.gTmProperty(), TWODECIMALS);
+                    writeInputParameter(paragraph, Load.qTmProperty(), TWODECIMALS);
+
+                    writeInputParameter(paragraph, Material.fckProperty(), ONEDECIMAL);
+                    writeInputParameter(paragraph, Material.fykProperty(), ONEDECIMAL);
+                    writeInputParameter(paragraph, Material.fcdProperty(), ONEDECIMAL);
+                    writeInputParameter(paragraph, Material.fydProperty(), ONEDECIMAL);
+                    writeInputParameter(paragraph, Material.ductibilityClassProperty());
+                    writeInputParameter(paragraph, Material.steelUltimateStrainProperty(), THREEDECIMALS);
+
+
+
+                    document.write(out);
+
+                    //Close document
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                System.out.println("No Directory selected");
+            }
+
+        });
+
+        MenuItem pdfExportItem = new MenuItem(Main.getBundleText("menu.item.export.pdf"));
+        pdfExportItem.setAccelerator(KeyCombination.keyCombination("Alt+F"));
+        pdfExportItem.setOnAction(event ->{System.out.println("Press PDF export button");});
+
+                exportMenu.getItems().addAll(wordExportItem, pdfExportItem);
+
+        fileMenu.getItems().addAll(exportMenu, printItem);
+        menuBar.getMenus().addAll(fileMenu);
+
+        BorderPane containerBorderPane = new BorderPane();
+        containerBorderPane.setTop(menuBar);
+        containerBorderPane.setCenter(chartBorderPane);
+
+
+//        set chartStage and scene
 
         Stage chartStage = new Stage();
         chartStage.setTitle(Main.getBundleText("window.title.envelop"));
         chartStage.getIcons().add(new Image("image/chart.png"));
 
-        Scene scene = new Scene(borderPane, 1800, 800);
+        Scene scene = new Scene(containerBorderPane, 1800, 800);
         chartStage.setScene(scene);
         chartStage.show();
+    }
+
+    private void writeInputParameter(XWPFParagraph paragraph, NamedDoubleProperty parameter, NumericalFormat numericalFormat) {
+        XWPFRun run = paragraph.createRun();
+        run.setText(parameter.getParameterName() + " : " + numericalFormat.getDecimalFormat().format(parameter.get()));
+        run.addBreak();
+    }
+
+    private void writeInputParameter(XWPFParagraph paragraph, NamedStringProperty parameter) {
+        XWPFRun run = paragraph.createRun();
+        run.setText(parameter.getParameterName() + " : " + parameter.get());
+        run.addBreak();
     }
 
     public MomentLineChart(SpanMomentFunction spanMomentFunction1,

@@ -3,11 +3,7 @@ package com.beamcalculate.controllers;
 import com.beamcalculate.Main;
 import com.beamcalculate.model.NamedChoiceBox;
 import com.beamcalculate.model.NamedTextField;
-import com.beamcalculate.model.calculate.ELUCombination;
-import com.beamcalculate.model.calculate.MomentRedistribution;
-import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
 import com.beamcalculate.model.calculate.span.SpanMomentFunction;
-import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.calculate.support.SupportMomentCaquot;
 import com.beamcalculate.model.calculate.support.SupportMoment3Moment;
 import com.beamcalculate.model.entites.Geometry;
@@ -27,9 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -86,16 +80,35 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // set the parameter name for the text fields and choice box in order to show the correct parameter name in the missing param warning message
+        // set parameter name for the text fields and choice box in order to show the correct parameter name in the missing param warning message
         ductibilityClass_chcb.setParameterName(resources.getString("parameter.ductilityClass"));
         sectionWidth_tf.setParameterName(resources.getString("parameter.sectionWidth"));
         sectionHeight_tf.setParameterName(resources.getString("parameter.sectionHeight"));
         perpendicularSpacing_tf.setParameterName(resources.getString("parameter.perpendicularSpacing"));
         slabThickness_tf.setParameterName(resources.getString("parameter.slabThickness"));
-        permanentLoad_tf.setParameterName(resources.getString("parameter.deadLoad"));
-        variableLoad_tf.setParameterName(resources.getString("parameter.liveLoad"));
+        permanentLoad_tf.setParameterName(resources.getString("parameter.liveLoad"));
+        variableLoad_tf.setParameterName(resources.getString("parameter.deadLoad"));
         fck_tf.setParameterName(resources.getString("parameter.fck"));
         fyk_tf.setParameterName(resources.getString("parameter.fyk"));
+
+        // set parameter name for double property in order to show the correct parameter name in the exported word document
+        Geometry.sectionWidthProperty().setParameterName(resources.getString("parameter.sectionWidth"));
+        Geometry.sectionHeightProperty().setParameterName(resources.getString("parameter.sectionHeight"));
+        Geometry.slabThicknessProperty().setParameterName(resources.getString("parameter.slabThickness"));
+        Geometry.perpendicularSpacingProperty().setParameterName(resources.getString("parameter.perpendicularSpacing"));
+        Geometry.effectiveHeightProperty().setParameterName(resources.getString("parameter.effectiveHeight"));
+
+        Load.gTmProperty().setParameterName(resources.getString("parameter.deadLoad"));
+        Load.qTmProperty().setParameterName(resources.getString("parameter.liveLoad"));
+        Load.gMNmProperty().setParameterName(resources.getString("parameter.deadLoad"));
+        Load.qMNmProperty().setParameterName(resources.getString("parameter.liveLoad"));
+
+        Material.fckProperty().setParameterName(resources.getString("parameter.fck"));
+        Material.fykProperty().setParameterName(resources.getString("parameter.fyk"));
+        Material.fcdProperty().setParameterName(resources.getString("parameter.fcd"));
+        Material.fydProperty().setParameterName(resources.getString("parameter.fyd"));
+        Material.ductibilityClassProperty().setParameterName(resources.getString("parameter.ductilityClass"));
+        Material.steelUltimateStrainProperty().setParameterName(resources.getString("result.moment.paraName.steelUltimateStrain"));
 
         allTextField.addAll(Arrays.asList(
                 equalSupportWidth_tf, equalSpanLength_tf,

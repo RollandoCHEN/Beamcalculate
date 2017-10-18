@@ -1,47 +1,44 @@
 package com.beamcalculate.model.entites;
 
+import com.beamcalculate.model.NamedDoubleProperty;
+import com.beamcalculate.model.NamedStringProperty;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 
 public class Material {
     public static double CONCRETE_COEF = 1.5;
     public static double STEEL_COEF = 1.15;
 
-    private final DoubleProperty fck = new SimpleDoubleProperty();
-    private static final DoubleProperty fcd = new SimpleDoubleProperty();
-    private final DoubleProperty fyk = new SimpleDoubleProperty();
-    private static final DoubleProperty fyd = new SimpleDoubleProperty();
-    private static final StringProperty ductibilityClass = new SimpleStringProperty();
-    private static final DoubleProperty steelUltimateExtension = new SimpleDoubleProperty();
+    private static final NamedDoubleProperty fck = new NamedDoubleProperty();
+    private static final NamedDoubleProperty fcd = new NamedDoubleProperty();
+    private static final NamedDoubleProperty fyk = new NamedDoubleProperty();
+    private static final NamedDoubleProperty fyd = new NamedDoubleProperty();
+    private static final NamedStringProperty ductibilityClass = new NamedStringProperty();
+    private static final NamedDoubleProperty steelUltimateStrain = new NamedDoubleProperty();
 
     public Material() {
         fcd.bind(Bindings.divide(fck, CONCRETE_COEF));
         fyd.bind(Bindings.divide(fyk, STEEL_COEF));
-        steelUltimateExtension.bind(
+        steelUltimateStrain.bind(
                 Bindings.when(ductibilityClass.isEqualTo("A")).then(0.025).otherwise(
                         Bindings.when(ductibilityClass.isEqualTo("B")).then(0.05).otherwise(0.075)
                 )
         );
     }
 
-    public static double getSteelUltimateExtension() {
-        return steelUltimateExtension.get();
+    public static double getSteelUltimateStrain() {
+        return steelUltimateStrain.get();
     }
 
-    public DoubleProperty steelUltimateExtensionProperty() {
-        return steelUltimateExtension;
+    public static NamedDoubleProperty steelUltimateStrainProperty() {
+        return steelUltimateStrain;
     }
-
 
     public static double getFcd() {
         return fcd.get();
     }
 
-    public DoubleProperty fcdProperty() {
+    public static NamedDoubleProperty fcdProperty() {
         return fcd;
     }
 
@@ -49,7 +46,7 @@ public class Material {
         return fyd.get();
     }
 
-    public DoubleProperty fydProperty() {
+    public static NamedDoubleProperty fydProperty() {
         return fyd;
     }
 
@@ -57,7 +54,7 @@ public class Material {
         return fck.get();
     }
 
-    public DoubleProperty fckProperty() {
+    public static NamedDoubleProperty fckProperty() {
         return fck;
     }
 
@@ -65,7 +62,7 @@ public class Material {
         return fyk.get();
     }
 
-    public DoubleProperty fykProperty() {
+    public static NamedDoubleProperty fykProperty() {
         return fyk;
     }
 
@@ -73,7 +70,7 @@ public class Material {
         return ductibilityClass.get();
     }
 
-    public StringProperty ductibilityClassProperty() {
+    public static NamedStringProperty ductibilityClassProperty() {
         return ductibilityClass;
     }
 
