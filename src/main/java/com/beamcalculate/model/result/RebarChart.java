@@ -5,6 +5,7 @@ import com.beamcalculate.enums.MyMath;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
 import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
+import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.ReinforcementParam.a_M;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 import static com.beamcalculate.enums.UltimateCase.MAX;
@@ -28,22 +30,28 @@ public class RebarChart {
 
     private AbstractSpanMoment mSpanMoment;
     private double mFirstLayerMoment;
-    private double mCumulatedMoment;
+    private double mCumulativeMoment;
 
-    private double mAncrageLength_mm;
+    private double mAnchorageLength_mm;
 
     public RebarChart(Rebar rebar, int spanId, int caseNum) {
         mSpanMoment = rebar.getReinforcement().getSpanMomentFunction();
-        ELUCombination combination = new ELUCombination(mSpanMoment);
 
-        NumberAxis xAxis = MomentLineChart.defineAxis(combination).get(0);
-        NumberAxis yAxis = MomentLineChart.defineAxis(combination).get(1);
+        NumberAxis xAxis = MomentLineChart.defineAxis(mSpanMoment).get(0);
+        NumberAxis yAxis = MomentLineChart.defineAxis(mSpanMoment).get(1);
 
         XYChart.Series<Number, Number> maxSeries = new XYChart.Series<>();
         XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
-        MomentLineChart.createMomentSeries(300, combination, MAX, maxSeries);
-        MomentLineChart.createMomentSeries(300, combination, MIN, minSeries);
+        if (mSpanMoment.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+            MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
+            MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, minSeries);
+
+        } else {
+            ELUCombination combination = new ELUCombination(mSpanMoment);
+            MomentLineChart.createMomentSeries(300, combination, MAX, maxSeries);
+            MomentLineChart.createMomentSeries(300, combination, MIN, minSeries);
+        }
 
         //for all series, take date, each data has Node (symbol) for representing point
         removeLineChartPoints(maxSeries);
@@ -54,8 +62,6 @@ public class RebarChart {
         lineChart.getData().addAll(maxSeries, minSeries);
 
         double moveDistance = 1.25 * 0.9 * Geometry.getEffectiveHeight();
-
-
 
         double startPoint = getStartGlobalXOfSpan(spanId);
         double endPoint = startPoint + mSpanMoment.getCalculateSpanLengthMap().get(spanId);
@@ -81,26 +87,25 @@ public class RebarChart {
         // TODO this switch statement should be finished, the number of layers could be more than 2
         switch (layer_rebarArea_map.size()){
             case 1 : {
-                setCumulatedMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
-                XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulatedMoment());
-                XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulatedMoment());
-                XYChart.Series<Number, Number> cumulatedSeries = new XYChart.Series();
-                cumulatedSeries.getData().addAll(data3, data4);
-                removeLineChartPoints(cumulatedSeries);
-                cumulatedSeries.setName("MR1er+2ème lit");
+                setCumulativeMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
+                XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
+                XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
+                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series();
+                cumulativeSeries.getData().addAll(data3, data4);
+                removeLineChartPoints(cumulativeSeries);
+                cumulativeSeries.setName("MR1er+2ème lit");
 
-                yAxis.setLowerBound(1.2 * getCumulatedMoment());
+                yAxis.setLowerBound(1.2 * getCumulativeMoment());
 
-                lineChart.getData().addAll(cumulatedSeries);
+                lineChart.getData().addAll(cumulativeSeries);
                 break;
             }
             case 2 : {
-                rebar.getRebarCasesListOfSpan(spanId).get(caseNum).get(2).forEach((rebarType, number)->{
-                    setAncrageLength_mm(Math.max(40 * rebarType.getDiameter_mm(), getAncrageLength_mm()));
-                });
+                double secondLayerRebarDiameter = rebar.getRebarCasesListOfSpan(spanId).get(caseNum).get(2).getRebarType().getDiameter_mm();
+                setAnchorageLength_mm(Math.max(40 * secondLayerRebarDiameter, getAnchorageLength_mm()));
 
                 setFirstLayerMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
-                setCumulatedMoment(getFirstLayerMoment() + layer_rebarArea_map.get(2) * rebarAreaMomentRatio);
+                setCumulativeMoment(getFirstLayerMoment() + layer_rebarArea_map.get(2) * rebarAreaMomentRatio);
 
                 XYChart.Data<Number, Number> data1 = new XYChart.Data<>(startPoint, getFirstLayerMoment());
                 XYChart.Data<Number, Number> data2 = new XYChart.Data<>(endPoint, getFirstLayerMoment());
@@ -109,16 +114,16 @@ public class RebarChart {
                 removeLineChartPoints(firstLayerSeries);
                 firstLayerSeries.setName("MR1er lit");
 
-                XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulatedMoment());
-                XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulatedMoment());
-                XYChart.Series<Number, Number> cumulatedSeries = new XYChart.Series();
-                cumulatedSeries.getData().addAll(data3, data4);
-                removeLineChartPoints(cumulatedSeries);
-                cumulatedSeries.setName("MR1er+2ème lit");
+                XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
+                XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
+                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series();
+                cumulativeSeries.getData().addAll(data3, data4);
+                removeLineChartPoints(cumulativeSeries);
+                cumulativeSeries.setName("MR1er+2ème lit");
 
-                yAxis.setLowerBound(1.2 * getCumulatedMoment());
+                yAxis.setLowerBound(1.2 * getCumulativeMoment());
 
-                lineChart.getData().addAll(firstLayerSeries, cumulatedSeries);
+                lineChart.getData().addAll(firstLayerSeries, cumulativeSeries);
 
                 double finalMaxMomentXValue = preMaxMomentXValue;
                 XYChart.Series<Number, Number> newMaxSeries = new XYChart.Series<>();
@@ -163,23 +168,23 @@ public class RebarChart {
                         global.getData().add(firstLayerIntersectionData);
                         if (xValue < finalMaxMomentXValue) {
                             final XYChart.Data<Number, Number> secondLayerIntersectionData =
-                                    new XYChart.Data<>(xValue + getAncrageLength_mm()/1000, getCumulatedMoment());
+                                    new XYChart.Data<>(xValue + getAnchorageLength_mm()/1000, getCumulativeMoment());
                             secondLayerIntersectionData.setNode(
                                     new HoveredThresholdNode(
-                                            xValue + getAncrageLength_mm()/1000,
-                                            xValue + getAncrageLength_mm()/1000,
-                                            getCumulatedMoment()
+                                            xValue + getAnchorageLength_mm()/1000,
+                                            xValue + getAnchorageLength_mm()/1000,
+                                            getCumulativeMoment()
                                     )
                             );
                             global.getData().add(secondLayerIntersectionData);
                         } else {
                             final XYChart.Data<Number, Number> secondLayerIntersectionData =
-                                    new XYChart.Data<>(xValue - getAncrageLength_mm()/1000, getCumulatedMoment());
+                                    new XYChart.Data<>(xValue - getAnchorageLength_mm()/1000, getCumulativeMoment());
                             secondLayerIntersectionData.setNode(
                                     new HoveredThresholdNode(
-                                            xValue + getAncrageLength_mm()/1000,
-                                            xValue + getAncrageLength_mm()/1000,
-                                            getCumulatedMoment()
+                                            xValue + getAnchorageLength_mm()/1000,
+                                            xValue + getAnchorageLength_mm()/1000,
+                                            getCumulativeMoment()
                                     )
                             );
                             global.getData().add(secondLayerIntersectionData);
@@ -213,7 +218,7 @@ public class RebarChart {
 
     private double getStartGlobalXOfSpan(int spanId){
         double globalX = 0;
-        if (mSpanMoment.getMethod().equals(TROIS_MOMENT.getBundleText())) {
+        if (mSpanMoment.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {
@@ -247,19 +252,19 @@ public class RebarChart {
         mFirstLayerMoment = firstLayerMoment;
     }
 
-    public double getCumulatedMoment() {
-        return mCumulatedMoment;
+    public double getCumulativeMoment() {
+        return mCumulativeMoment;
     }
 
-    public void setCumulatedMoment(double cumulatedMoment) {
-        mCumulatedMoment = cumulatedMoment;
+    public void setCumulativeMoment(double cumulativeMoment) {
+        mCumulativeMoment = cumulativeMoment;
     }
 
-    public double getAncrageLength_mm() {
-        return mAncrageLength_mm;
+    public double getAnchorageLength_mm() {
+        return mAnchorageLength_mm;
     }
 
-    public void setAncrageLength_mm(double ancrageLength_mm) {
-        mAncrageLength_mm = ancrageLength_mm;
+    public void setAnchorageLength_mm(double anchorageLength_mm) {
+        mAnchorageLength_mm = anchorageLength_mm;
     }
 }

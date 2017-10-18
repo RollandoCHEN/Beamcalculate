@@ -17,6 +17,8 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.geometry.Insets?>
+<?import com.beamcalculate.model.NamedChoiceBox?>
+<?import com.beamcalculate.model.NamedTextField?>
 <BorderPane fx:id="container"
             stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/8.0.111"
@@ -31,7 +33,7 @@
 
                 <HBox spacing="5">
                     <padding><Insets top="10" bottom="10"/></padding>
-                    <CheckBox fx:id="onTSectionCheck"/>
+                    <CheckBox fx:id="onTSection_chkb"/>
                     <Label text="%label.ifTSection" onMouseClicked="#clickOnTSectionCheck"/>
                 </HBox>
                 <Label styleClass="title" text="%title.geometry" />
@@ -39,7 +41,7 @@
                     <VBox spacing="10">
                         <HBox styleClass="hbox">
                             <Label text="%label.spanNumber" />
-                            <ChoiceBox fx:id="numSpansChoice" onAction="#generateGeometryDiagram">
+                            <ChoiceBox fx:id="numSpans_chcb" onAction="#generateGeometryDiagram">
                                 <items>
                                     <FXCollections fx:factory="observableArrayList">
                                         <Integer fx:value="1" />
@@ -54,51 +56,51 @@
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%ifSupportEqual" />
-                            <CheckBox fx:id="equalSupportCheck" onAction="#disableSupportWidth" />
+                            <CheckBox fx:id="equalSupport_chkb" onAction="#disableOrEnableSupportWidth" />
                             <Label text="%label.supportWidth" />
-                            <TextField fx:id="equalSupportWidth" disable="${controller.notEqualSupport}" />
+                            <NamedTextField fx:id="equalSupportWidth_tf" disable="${controller.notEqualSupport}" />
                             <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%ifSpanEqual" />
-                            <CheckBox fx:id="equalSpanCheck" onAction="#disableSpanLength" />
+                            <CheckBox fx:id="equalSpan_chkb" onAction="#disableOrEnableSpanLength" />
                             <Label text="%label.spanLength" />
-                            <TextField fx:id="equalSpanLength" disable="${controller.notEqualSpan}" />
+                            <NamedTextField fx:id="equalSpanLength_tf" disable="${controller.notEqualSpan}" />
                             <Label text="%unit.length.m" />
                         </HBox>
                     </VBox>
                     <VBox spacing="10">
                         <HBox styleClass="hbox">
                             <Label text="%label.sectionWidth" />
-                            <TextField fx:id="sectionWidth" promptText="0.35" />
+                            <NamedTextField fx:id="sectionWidth_tf" promptText="0.35" />
                             <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.sectionHeight" />
-                            <TextField fx:id="sectionHeight" promptText="0.6" />
+                            <NamedTextField fx:id="sectionHeight_tf" promptText="0.6" />
                             <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.slabThickness" />
-                            <TextField fx:id="slabThickness" promptText="0.18" disable="${controller.notOnTSection}"/>
+                            <NamedTextField fx:id="slabThickness_tf" promptText="0.18" disable="${controller.notOnTSection}"/>
                             <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
                             <Label text="%label.perpendicularSpacing" />
-                            <TextField fx:id="perpendicularSpacing" promptText="6" disable="${controller.notOnTSection}" />
+                            <NamedTextField fx:id="perpendicularSpacing_tf" promptText="6" disable="${controller.notOnTSection}" />
                             <Label text="%unit.length.m" />
                         </HBox>
                     </VBox>
                 </HBox>
 
                 <Label text="%spanAndSupport" />
-                <GridPane fx:id="spansLengthGrid" alignment="CENTER">
+                <GridPane fx:id="spansLength_gp" alignment="CENTER">
                     <TextField disable="true" />
                 </GridPane>
-                <ImageView fx:id="image" fitWidth="950">
+                <ImageView fx:id="beamDiagram" fitWidth="950">
                     <Image url="@../image/1span.png" />
                 </ImageView>
-                <GridPane fx:id="supportsWidthGrid" alignment="CENTER_LEFT">
+                <GridPane fx:id="supportsWidth_gp" alignment="CENTER_LEFT">
                     <TextField disable="true" />
                 </GridPane>
 
@@ -109,12 +111,12 @@
                     <Label styleClass="title" text="%title.load" />
                     <HBox styleClass="hbox">
                         <Label text="%label.deadLoad" />
-                        <TextField fx:id="permanentLoad" promptText="2.650" />
+                        <NamedTextField fx:id="permanentLoad_tf" promptText="2.650" />
                         <Label text="%unit.load" />
                     </HBox>
                     <HBox styleClass="hbox">
                         <Label text="%label.liveLoad" />
-                        <TextField fx:id="variableLoad" promptText="1.500" />
+                        <NamedTextField fx:id="variableLoad_tf" promptText="1.500" />
                         <Label text="%unit.load" />
                     </HBox>
                 </VBox>
@@ -122,17 +124,17 @@
                     <Label styleClass="title" text="%title.material" />
                     <HBox styleClass="hbox">
                         <Label text="%label.fck" />
-                        <TextField fx:id="fck" promptText="25"/>
+                        <NamedTextField fx:id="fck_tf" promptText="25"/>
                         <Label text="%unit.stress" />
                     </HBox>
                     <HBox styleClass="hbox">
                         <Label text="%label.fyk" />
-                        <TextField fx:id="fyk" promptText="500" />
+                        <NamedTextField fx:id="fyk_tf" promptText="500" />
                         <Label text="%unit.load" />
                     </HBox>
                     <HBox styleClass="hbox">
-                        <Label text="%label.ductibilityClass" />
-                        <ChoiceBox fx:id="ductibilityClass">
+                        <Label text="%label.ductilibilityClass" />
+                        <NamedChoiceBox fx:id="ductibilityClass_chcb">
                             <items>
                                 <FXCollections fx:factory="observableArrayList">
                                     <String fx:value="A" />
@@ -140,7 +142,7 @@
                                     <String fx:value="C" />
                                 </FXCollections>
                             </items>
-                        </ChoiceBox>
+                        </NamedChoiceBox>
                     </HBox>
                 </VBox>
             </HBox>
@@ -155,8 +157,7 @@
             </HBox>
 
             <HBox spacing="15.0" alignment="BOTTOM_RIGHT">
-                <Button fx:id="GraphGenerate" onAction="#GenerateGraph" text="%button.generateEnvelopCurve" disable="true"/>
-                <!--<Button fx:id="RebarCalculate" onAction="#CalculateRebar" text="%button.calculateRebar" disable="true" />-->
+                <Button fx:id="graphGenerate_button" onAction="#GenerateGraph" text="%button.generateEnvelopCurve" disable="true"/>
                 <Button onAction="#DEBUG" text="DEBUG" />
             </HBox>
         </VBox>

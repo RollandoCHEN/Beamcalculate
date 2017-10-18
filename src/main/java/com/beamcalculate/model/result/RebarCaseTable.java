@@ -3,6 +3,7 @@ package com.beamcalculate.model.result;
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.RebarType;
+import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
@@ -32,8 +33,8 @@ public class RebarCaseTable {
 
         GridPane spanGridPane = new GridPane();
         spanGridPane.setAlignment(Pos.CENTER);
-        spanGridPane.setHgap(10);
-        spanGridPane.setVgap(10);
+        spanGridPane.setHgap(20);
+        spanGridPane.setVgap(15);
         GridPane supportGridPane = new GridPane();
         supportGridPane.setAlignment(Pos.CENTER);
         supportGridPane.setHgap(10);
@@ -79,19 +80,19 @@ public class RebarCaseTable {
             int columnNum = spanId;
             spanGridPane.add(spanVBox, columnNum, 0);
 
-            List<Map<Integer, Map<RebarType, Integer>>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
+            List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
             int caseVariable;
             for (caseVariable = 0; caseVariable < rebarCasesList.size(); caseVariable++){
                 int caseNum = caseVariable;
                 Button rebarCaseButton = new Button();
                 StringBuilder buttonString = new StringBuilder();
-                rebarCasesList.get(caseVariable).forEach((layerNum, rebarType_number_map) -> {
+                rebarCasesList.get(caseVariable).forEach((layerNum, rebarType_number) -> {
                     if (layerNum != 1){
                         buttonString.append("\n");
                     }
-                    rebarType_number_map.forEach((rebarType, number) ->
-                            buttonString.append("Layer ").append(layerNum).append(" : ")
-                                    .append(number).append(rebarType.name()));
+                    RebarType rebarType = rebarType_number.getRebarType();
+                    int number = rebarType_number.getNumberOfRebar();
+                    buttonString.append("Layer ").append(layerNum).append(" : ").append(number).append(rebarType.name());
                 });
                 rebarCaseButton.setText(buttonString.toString());
 
@@ -120,8 +121,9 @@ public class RebarCaseTable {
         resultStage.setTitle(Main.getBundleText("window.title.result"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        double sceneWidth = Geometry.getNumSpan() * 100 + 300;
-        Scene scene = new Scene(container, sceneWidth, 600);
+        double sceneWidth = Geometry.getNumSpan() * 110 + 180;
+        double sceneHeight = maxNumOfCases * 110 + 100;
+        Scene scene = new Scene(container, sceneWidth, sceneHeight);
         resultStage.setScene(scene);
         resultStage.show();
     }

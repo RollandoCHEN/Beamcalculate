@@ -1,6 +1,8 @@
 package com.beamcalculate.controllers;
 
 import com.beamcalculate.Main;
+import com.beamcalculate.model.NamedChoiceBox;
+import com.beamcalculate.model.NamedTextField;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
@@ -31,25 +33,25 @@ import java.util.*;
 
 
 public class MainController implements Initializable {
-    @FXML private CheckBox onTSectionCheck;
-    @FXML private ChoiceBox numSpansChoice;
-    @FXML private CheckBox equalSupportCheck;
-    @FXML private CheckBox equalSpanCheck;
-    @FXML private GridPane spansLengthGrid;
-    @FXML private ImageView image;
-    @FXML private GridPane supportsWidthGrid;
-    @FXML private TextField equalSupportWidth;
-    @FXML private TextField equalSpanLength;
-    @FXML private TextField sectionWidth;
-    @FXML private TextField sectionHeight;
-    @FXML private TextField perpendicularSpacing;
-    @FXML private TextField slabThickness;
-    @FXML private TextField permanentLoad;
-    @FXML private TextField variableLoad;
-    @FXML private TextField fck;
-    @FXML private TextField fyk;
-    @FXML private ChoiceBox ductibilityClass;
-    @FXML private Button GraphGenerate;
+    @FXML private CheckBox onTSection_chkb;
+    @FXML private ChoiceBox numSpans_chcb;
+    @FXML private CheckBox equalSupport_chkb;
+    @FXML private CheckBox equalSpan_chkb;
+    @FXML private GridPane spansLength_gp;
+    @FXML private ImageView beamDiagram;
+    @FXML private GridPane supportsWidth_gp;
+    @FXML private NamedTextField equalSupportWidth_tf;
+    @FXML private NamedTextField equalSpanLength_tf;
+    @FXML private NamedTextField sectionWidth_tf;
+    @FXML private NamedTextField sectionHeight_tf;
+    @FXML private NamedTextField perpendicularSpacing_tf;
+    @FXML private NamedTextField slabThickness_tf;
+    @FXML private NamedTextField permanentLoad_tf;
+    @FXML private NamedTextField variableLoad_tf;
+    @FXML private NamedTextField fck_tf;
+    @FXML private NamedTextField fyk_tf;
+    @FXML private NamedChoiceBox ductibilityClass_chcb;
+    @FXML private Button graphGenerate_button;
 
 
     private Geometry newGeometry = new Geometry();
@@ -64,7 +66,7 @@ public class MainController implements Initializable {
     private SpanMomentFunction mSpanMomentFunction3Moment;
     private SpanMomentFunction mSpanMomentFunctionForfaitaire;
 
-    private Set<String> inputsWarning = new HashSet<>();
+    private Set<String> missingParamWarningSet = new HashSet<>();
     private BooleanProperty notEqualSpan = new SimpleBooleanProperty(true);
     private BooleanProperty notEqualSupport = new SimpleBooleanProperty(true);
     private BooleanProperty notOnTSection = new SimpleBooleanProperty(true);
@@ -76,23 +78,34 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // set the parameter name for the text fields and choice box in order to show the correct parameter name in the missing param warning message
+        ductibilityClass_chcb.setParameterName(resources.getString("parameter.ductilityClass"));
+        sectionWidth_tf.setParameterName(resources.getString("parameter.sectionWidth"));
+        sectionHeight_tf.setParameterName(resources.getString("parameter.sectionHeight"));
+        perpendicularSpacing_tf.setParameterName(resources.getString("parameter.perpendicularSpacing"));
+        slabThickness_tf.setParameterName(resources.getString("parameter.slabThickness"));
+        permanentLoad_tf.setParameterName(resources.getString("parameter.deadLoad"));
+        variableLoad_tf.setParameterName(resources.getString("parameter.liveLoad"));
+        fck_tf.setParameterName(resources.getString("parameter.fck"));
+        fyk_tf.setParameterName(resources.getString("parameter.fyk"));
+
         allTextField.addAll(Arrays.asList(
-                equalSupportWidth, equalSpanLength,
-                sectionWidth, sectionHeight, perpendicularSpacing, slabThickness,
-                permanentLoad, variableLoad, fck, fyk
+                equalSupportWidth_tf, equalSpanLength_tf,
+                sectionWidth_tf, sectionHeight_tf, perpendicularSpacing_tf, slabThickness_tf,
+                permanentLoad_tf, variableLoad_tf, fck_tf, fyk_tf
         ));
         addRealNumberValidation(allTextField);
 
-        notEqualSpan.bind(Bindings.not(equalSpanCheck.selectedProperty()));
-        notEqualSupport.bind(Bindings.not(equalSupportCheck.selectedProperty()));
+        notEqualSpan.bind(Bindings.not(equalSpan_chkb.selectedProperty()));
+        notEqualSupport.bind(Bindings.not(equalSupport_chkb.selectedProperty()));
 
-        notOnTSection.bind(Bindings.not(onTSectionCheck.selectedProperty()));
-        onTSection.bind(onTSectionCheck.selectedProperty());
+        notOnTSection.bind(Bindings.not(onTSection_chkb.selectedProperty()));
+        onTSection.bind(onTSection_chkb.selectedProperty());
     }
 
     private BooleanBinding turnTextFieldsIsEmptyGridToBooleanBinding(GridPane gridPane){
 //    由于foreach的lambda中只能出现final的参数，orConjunction = orConjunction.or(...)不能出现，所以用了for (Node node : gridPane.getChildren())
-        BooleanBinding orConjunction = Bindings.isEmpty(permanentLoad.textProperty()).or(Bindings.isEmpty(variableLoad.textProperty()));
+        BooleanBinding orConjunction = Bindings.isEmpty(permanentLoad_tf.textProperty()).or(Bindings.isEmpty(variableLoad_tf.textProperty()));
         for (Node node : gridPane.getChildren()){
             TextInputControl textInputNode = (TextInputControl)node;
             orConjunction = orConjunction.or(Bindings.isEmpty(textInputNode.textProperty()));
@@ -190,22 +203,22 @@ public class MainController implements Initializable {
         });
     }
 
-    private void getInputValue(TextField sourceTextField, DoubleProperty goalProperty){
+    private void getInputValue(NamedTextField sourceTextField, DoubleProperty goalProperty){
         try {
             goalProperty.set(Double.parseDouble(sourceTextField.getText()));
         } catch (NumberFormatException e) {
-            inputsWarning.add(sourceTextField.getId());
+            missingParamWarningSet.add(sourceTextField.getParameterName());
         }
     }
 
-    private void getInputValue(ChoiceBox sourceChoiceBox, StringProperty goalProperty){
+    private void getInputValue(NamedChoiceBox sourceChoiceBox, StringProperty goalProperty){
         try {
             goalProperty.set((String)sourceChoiceBox.getValue());
-            if(sourceChoiceBox.getValue()==null){
-                inputsWarning.add(sourceChoiceBox.getId());
+            if(sourceChoiceBox.getValue() == null){
+                missingParamWarningSet.add(sourceChoiceBox.getParameterName());
             }
         } catch (Exception e) {
-            inputsWarning.add(sourceChoiceBox.getId());
+            missingParamWarningSet.add(sourceChoiceBox.getParameterName());
         }
     }
 
@@ -213,21 +226,21 @@ public class MainController implements Initializable {
         try {
             goalProperty.set((Integer)sourceChoiceBox.getValue());
         } catch (Exception e) {
-            inputsWarning.add(sourceChoiceBox.getId());
+            missingParamWarningSet.add(sourceChoiceBox.getId());
         }
     }
 
     private void showInputWarning(){
-        if(!inputsWarning.isEmpty()) {
+        if(!missingParamWarningSet.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle(Main.getBundleText("window.title.warning"));
             alert.setHeaderText(null);
-            StringBuffer inputsId = new StringBuffer();
-            inputsWarning.forEach (input-> inputsId.append("\n- "+input));
-            String infoMessage = Main.getBundleText("message.inputWarning") + inputsId;
+            StringBuffer missingParamNamesStringBuffer = new StringBuffer();
+            missingParamWarningSet.forEach (missingParameterName -> missingParamNamesStringBuffer.append("\n- " + missingParameterName));
+            String infoMessage = Main.getBundleText("message.inputWarning") + missingParamNamesStringBuffer;
             alert.setContentText(infoMessage);
             alert.showAndWait();
-            inputsWarning.clear();
+            missingParamWarningSet.clear();
         }
     }
 
@@ -244,18 +257,20 @@ public class MainController implements Initializable {
     }
 
     private void getInputs(){
-        getInputValue(spansLengthGrid, newGeometry.spansLengthMap());
-        getInputValue(spansLengthGrid, newGeometry.spansLengthMap());
-        getInputValue(supportsWidthGrid, newGeometry.supportWidthMap());
-        getInputValue(sectionHeight, newGeometry.sectionHeightProperty());
-        getInputValue(sectionWidth, newGeometry.sectionWidthProperty());
-        getInputValue(slabThickness, newGeometry.slabThicknessProperty());
-        getInputValue(perpendicularSpacing, newGeometry.perpendicularSpacingProperty());
-        getInputValue(permanentLoad, newLoad.gTmProperty());
-        getInputValue(variableLoad, newLoad.qTmProperty());
-        getInputValue(fck, newMaterial.fckProperty());
-        getInputValue(fyk, newMaterial.fykProperty());
-        getInputValue(ductibilityClass, newMaterial.ductibilityClassProperty());
+        getInputValue(spansLength_gp, newGeometry.spansLengthMap());
+        getInputValue(spansLength_gp, newGeometry.spansLengthMap());
+        getInputValue(supportsWidth_gp, newGeometry.supportWidthMap());
+        getInputValue(sectionHeight_tf, newGeometry.sectionHeightProperty());
+        getInputValue(sectionWidth_tf, newGeometry.sectionWidthProperty());
+        getInputValue(permanentLoad_tf, newLoad.gTmProperty());
+        getInputValue(variableLoad_tf, newLoad.qTmProperty());
+        getInputValue(fck_tf, newMaterial.fckProperty());
+        getInputValue(fyk_tf, newMaterial.fykProperty());
+        getInputValue(ductibilityClass_chcb, newMaterial.ductibilityClassProperty());
+        if (isOnTSection()) {
+            getInputValue(slabThickness_tf, newGeometry.slabThicknessProperty());
+            getInputValue(perpendicularSpacing_tf, newGeometry.perpendicularSpacingProperty());
+        }
     }
 
     private void calculateMoments(){
@@ -269,56 +284,56 @@ public class MainController implements Initializable {
 
     @FXML
     public void clickOnTSectionCheck(MouseEvent mouseEvent) {
-        onTSectionCheck.selectedProperty().setValue(!onTSectionCheck.isSelected());
+        onTSection_chkb.selectedProperty().setValue(!onTSection_chkb.isSelected());
     }
 
     @FXML
-    private void disableSpanLength(ActionEvent actionEvent) {
-        checkIfDisableTextFields(equalSpanCheck, equalSpanLength, spansLengthGrid);
+    private void disableOrEnableSpanLength(ActionEvent actionEvent) {
+        checkIfDisableTextFields(equalSpan_chkb, equalSpanLength_tf, spansLength_gp);
     }
 
     @FXML
-    private void disableSupportWidth(ActionEvent actionEvent) {
-        checkIfDisableTextFields(equalSupportCheck, equalSupportWidth, supportsWidthGrid);
+    private void disableOrEnableSupportWidth(ActionEvent actionEvent) {
+        checkIfDisableTextFields(equalSupport_chkb, equalSupportWidth_tf, supportsWidth_gp);
     }
 
     @FXML
     private void generateGeometryDiagram(ActionEvent actionEvent) {
 
-        getInputValue(numSpansChoice, newGeometry.numSpanProperty());
+        getInputValue(numSpans_chcb, newGeometry.numSpanProperty());
         double hGapValue = (880-newGeometry.getNumSpan()*69)/newGeometry.getNumSpan();
 
-        spansLengthGrid.getChildren().clear();
-        supportsWidthGrid.getChildren().clear();
+        spansLength_gp.getChildren().clear();
+        supportsWidth_gp.getChildren().clear();
         newGeometry.spansLengthMap().clear();
         newGeometry.supportWidthMap().clear();
 
         addTextFieldToGrid(
                 newGeometry.getNumSpan(), hGapValue,
-                equalSpanCheck, equalSpanLength,
-                spansLengthGrid
+                equalSpan_chkb, equalSpanLength_tf,
+                spansLength_gp
         );
 
-        image.setImage(getImage(newGeometry.getNumSpan()));
+        beamDiagram.setImage(getImage(newGeometry.getNumSpan()));
 
         addTextFieldToGrid(
                 newGeometry.getNumSupport(), hGapValue,
-                equalSupportCheck, equalSupportWidth,
-                supportsWidthGrid
+                equalSupport_chkb, equalSupportWidth_tf,
+                supportsWidth_gp
         );
 
 //        bind graph generating button to the text fields
-        GraphGenerate.disableProperty().bind(
-                turnTextFieldsIsEmptyGridToBooleanBinding(spansLengthGrid).
-                        or(turnTextFieldsIsEmptyGridToBooleanBinding(supportsWidthGrid))
+        graphGenerate_button.disableProperty().bind(
+                turnTextFieldsIsEmptyGridToBooleanBinding(spansLength_gp).
+                        or(turnTextFieldsIsEmptyGridToBooleanBinding(supportsWidth_gp))
         );
 //        bind rabar calculate button to the text fields
         isDisabledRebarCalculate.bind(
-                Bindings.isEmpty(sectionWidth.textProperty())
-                .or(Bindings.isEmpty(sectionHeight.textProperty()))
-                .or(Bindings.isEmpty(fck.textProperty()))
-                .or(Bindings.isEmpty(fyk.textProperty()))
-                .or(Bindings.isNull(ductibilityClass.valueProperty()))
+                Bindings.isEmpty(sectionWidth_tf.textProperty())
+                .or(Bindings.isEmpty(sectionHeight_tf.textProperty()))
+                .or(Bindings.isEmpty(fck_tf.textProperty()))
+                .or(Bindings.isEmpty(fyk_tf.textProperty()))
+                .or(Bindings.isNull(ductibilityClass_chcb.valueProperty()))
         );
     }
 
@@ -343,43 +358,10 @@ public class MainController implements Initializable {
         }
     }
 
-/*    @FXML
-    private void CalculateRebar(ActionEvent actionEvent) {
-        getInputs();
-        calculateMoments();
-        mReinforcement = new Reinforcement(mSpanMomentFunction3Moment);
-        ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(mReinforcement);
-    }*/
-
     @FXML
     private void DEBUG(ActionEvent actionEvent) throws Exception {
 
-        ELUCombination combination = new ELUCombination(mSpanMomentFunction3Moment);
-        MomentRedistribution momentRedistribution = new MomentRedistribution(combination);
 
-        momentRedistribution.getRedistributionCoefMap().forEach((supportId, redistributionCoef) -> {
-            System.out.printf("for the support %d, the redistribution coef is %.4f\n", supportId, redistributionCoef);
-        });
-
-        momentRedistribution.getSupportMuMap_BR().forEach((supportId, supportMoment) -> {
-            System.out.printf("for the support %d, the support moment before redistribution is %.4f\n", supportId, supportMoment);
-        });
-
-        momentRedistribution.getFinalRedistributionCoefMap().forEach((supportId, finalRedistributionCoef) -> {
-            System.out.printf("for the support %d, the final redistribution coef is %.4f\n", supportId, finalRedistributionCoef);
-        });
-
-        System.out.printf("When span 2 Max, the support 2 moment is %.4f\n", combination.getSupportMomentWhenSpanMomentMax(2, 2));
-        System.out.printf("When support 3 Max, the support 2 moment is %.4f\n", combination.getSupportMomentWhenSupportMomentMin(2, 3));
-        System.out.printf("When span 2 Max, the span 2 max moment is %.4f\n", combination.getSpanMaxMomentWhenSpanMomentMax(2, 2));
-        System.out.printf("When support 3 Max, the span 2 max moment is %.4f\n", combination.getSpanMaxMomentWhenSupportMomentMin(2, 3));
-
-        AbstractSpanMoment spacialLoadCaseFunction = new SpanMomentFunction_SpecialLoadCase(combination.getSpecialLoadCaseSupportMomentMap());
-        spacialLoadCaseFunction.getSpanMomentFunctionMap().forEach((spanId, functionMap) ->
-                functionMap.forEach((loadCase, function)->{
-                    System.out.printf("On the span %d : \n", spanId);
-                    System.out.printf("Under the load case of %d, the function is %s\n", loadCase, function);
-        }));
     }
 
     public boolean isNotEqualSpan() {
