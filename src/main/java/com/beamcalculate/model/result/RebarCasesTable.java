@@ -2,24 +2,24 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
+import com.beamcalculate.controllers.TSectionController;
 import com.beamcalculate.enums.MyMethods;
 import com.beamcalculate.enums.RebarType;
 import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -129,9 +129,9 @@ public class RebarCasesTable {
         contentVBox.setAlignment(Pos.CENTER);
         contentVBox.getChildren().addAll(spanGridPane, supportGridPane);
 
-        Button rebarGenerationButton = new Button(Main.getBundleText("button.rebarCalculateTable"));
-        rebarGenerationButton.setStyle("-fx-font-size:14px");
-        rebarGenerationButton.setOnAction(event -> {
+        Button calculateDetailButton = new Button(Main.getBundleText("button.rebarCalculateTable"));
+        calculateDetailButton.setStyle("-fx-font-size:16px");
+        calculateDetailButton.setOnAction(event -> {
 
             ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
             reinforcementResult.showStage();
@@ -139,26 +139,67 @@ public class RebarCasesTable {
         });
 
         VBox topVBox = new VBox(methodTitle);
+        topVBox.setPadding(new Insets(30, 30, 30, 20));
         topVBox.setAlignment(Pos.CENTER);
 
-        HBox bottomHBox = new HBox(rebarGenerationButton);
+        HBox bottomHBox = new HBox(calculateDetailButton);
         bottomHBox.setSpacing(15);
+        bottomHBox.setPadding(new Insets(10,20,10,20));
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
 
-        BorderPane containerBorderPane = new BorderPane();
-        containerBorderPane.setPadding(new Insets(20, 20, 20, 20));
-        containerBorderPane.setTop(topVBox);
-        containerBorderPane.setCenter(contentVBox);
-        containerBorderPane.setBottom(bottomHBox);
+        BorderPane rebarSelectionBorderPane = new BorderPane();
+        rebarSelectionBorderPane.setTop(topVBox);
+        rebarSelectionBorderPane.setCenter(contentVBox);
+        rebarSelectionBorderPane.setBottom(bottomHBox);
+
+        Pane crossSectionPane = new Pane();
+        try {
+            crossSectionPane = FXMLLoader.load(
+                    getClass().getResource("/fxml/section.fxml"),
+                    Main.getResourceBundle());
+
+                /*I wander if it's better to pass the reinforcement instance to the fxml controller
+                * as like:
+                * TSectionController controller = fxmlLoader.<TSectionController>getController();
+                * controller.setReinforcement(reinforcement);*/
+            crossSectionPane.setPrefWidth(Math.max(150 * Geometry.getNumSpan(), TSectionController.getMaxSchemaWidth()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        GridPane leftGridPane = new GridPane();
+        leftGridPane.add(crossSectionPane, 0, 0);
+        double leftGridPaneWidth = Math.max(150 * Geometry.getNumSpan(), TSectionController.getMaxSchemaWidth());
+        leftGridPane.setPrefWidth(leftGridPaneWidth);
+        leftGridPane.setAlignment(Pos.CENTER);
+
+//        VBox rightVBox = new VBox(rebarSelectionBorderPane);
+//        double rightVBoxWidth = Geometry.getNumSpan() * 130 + 230;
+//        rightVBox.setPrefWidth(rightVBoxWidth);
+//        rightVBox.setAlignment(Pos.TOP_RIGHT);
+
+        GridPane rightGridPane = new GridPane();
+        rightGridPane.add(rebarSelectionBorderPane, 0, 0);
+        double rightGridPaneWidth = Geometry.getNumSpan() * 130 + 250;
+        rightGridPane.setPrefWidth(rightGridPaneWidth);
+        rightGridPane.setAlignment(Pos.TOP_RIGHT);
+
+        GridPane containerGridPane = new GridPane();
+        containerGridPane.setAlignment(Pos.CENTER);
+        containerGridPane.add(leftGridPane, 0,0);
+        containerGridPane.add(rightGridPane, 1,0);
+        containerGridPane.setPadding(new Insets(20, 30, 20, 20));
 
         Stage resultStage = new Stage();
         resultStage.setTitle(Main.getBundleText("window.title.rebarChoices"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
-        double sceneWidth = Geometry.getNumSpan() * 110 + 180;
-        double sceneHeight = maxNumOfCases * 110 + 100;
-        Scene scene = new Scene(containerBorderPane, sceneWidth, sceneHeight);
+        double sceneWidth = leftGridPaneWidth + rightGridPaneWidth;
+
+        double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 600);
+        Scene scene = new Scene(containerGridPane, sceneWidth, sceneHeight);
         resultStage.setScene(scene);
+        resultStage.setResizable(false);
         resultStage.show();
     }
 

@@ -49,14 +49,14 @@ public class TSectionController implements Initializable {
     private StringProperty flangeHeightString = new SimpleStringProperty();
     private StringProperty totalHeightString = new SimpleStringProperty();
 
-    private static DoubleProperty sceneWidth = new SimpleDoubleProperty();
+    private static double maxSchemaWidth;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // height of cross section diagram is fixed at 300px
 
-        double fixHeight = 300;
+        double fixHeight = 200;
         double ratio = fixHeight / (Geometry.getSectionHeight() * 100);
 
         displayedTotalHeight.bind(Bindings.multiply(totalHeight, ratio));
@@ -98,7 +98,14 @@ public class TSectionController implements Initializable {
         Bindings.bindBidirectional(flangeHeightString, flangeHeight, ZERODECIMAL.getDecimalFormat());
         Bindings.bindBidirectional(totalHeightString, totalHeight, ZERODECIMAL.getDecimalFormat());
 
-        sceneWidth.bind(Bindings.add(displayedFlangeWidth, 200));
+        DoubleProperty maxDisplayedFlangeWidth = new SimpleDoubleProperty();
+        Reinforcement.getEffectiveWidthPropertyMap().forEach((spanId, effectiveWidthProperty) -> {
+            if(effectiveWidthProperty.get() > maxDisplayedFlangeWidth.get()){
+                maxDisplayedFlangeWidth.set(effectiveWidthProperty.get() * 100 * ratio);
+            }
+        });
+
+        maxSchemaWidth = maxDisplayedFlangeWidth.get() + 200;
 
         for (int span = 1; span < Geometry.getNumSpan() + 1; span++) {
             ColumnConstraints c = new ColumnConstraints();
@@ -128,11 +135,6 @@ public class TSectionController implements Initializable {
                     flangeCompHeight.bind(Bindings.multiply(Reinforcement.getFlangeCompressionsHeightMap().get(spanId),100));
                 }
                 webCompHeight.bind(Bindings.multiply(Reinforcement.getWebCompressionHeightMap().get(spanId),100));
-
-                double actualWindowWidth = button.getScene().getWindow().getWidth();
-                if (actualWindowWidth < getSceneWidth()){
-                    button.getScene().getWindow().setWidth(getSceneWidth());
-                }
             });
         }
     }
@@ -329,11 +331,7 @@ public class TSectionController implements Initializable {
         return displayedCompRegionHeight;
     }
 
-    public static double getSceneWidth() {
-        return sceneWidth.get();
-    }
-
-    public DoubleProperty sceneWidthProperty() {
-        return sceneWidth;
+    public static double getMaxSchemaWidth() {
+        return maxSchemaWidth;
     }
 }
