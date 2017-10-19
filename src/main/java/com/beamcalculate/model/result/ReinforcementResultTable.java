@@ -4,9 +4,7 @@ import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
-import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
-import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,16 +16,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
 import static com.beamcalculate.enums.ReinforcementParam.b_MU;
-import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
 
 public class ReinforcementResultTable {
+
+    private Stage mResultTableStage;
 
     public ReinforcementResultTable(Reinforcement reinforcement) {
 
@@ -59,48 +57,33 @@ public class ReinforcementResultTable {
         Label methodTitle = new Label(tableTitle.toString());
         methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
 
-        // TODO Add a button to the reinforcement result window to show the cross section diagram
-
+        // Show the cross section diagram
         VBox container = new VBox();
         container.setPadding(new Insets(10,20,10,20));
         container.setSpacing(20);
         container.setAlignment(Pos.CENTER);
 
-        Button crossSectionButton = new Button(Main.getBundleText("button.crossSection"));
-        crossSectionButton.setStyle("-fx-font-size:16px;");
-        crossSectionButton.setOnAction(event -> MomentLineChart.getCrossSectionStage().show());
+        container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox);
 
-        Button rebarGenerationButton = new Button(Main.getBundleText("button.rebarGeneration"));
-        rebarGenerationButton.setStyle("-fx-font-size:16px");
-        rebarGenerationButton.setOnAction(event -> {
-
-            Rebar rebar = new Rebar(reinforcement);
-
-            new RebarCaseTable(rebar);
-
-        });
-
-        HBox bottomHBox = new HBox(crossSectionButton, rebarGenerationButton);
-        bottomHBox.setSpacing(15);
-        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
-
-        container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox, bottomHBox);
-
-        Stage resultStage = new Stage();
-        resultStage.setTitle(Main.getBundleText("window.title.result"));
-        resultStage.getIcons().add(new Image("image/reinforcement.png"));
+        mResultTableStage = new Stage();
+        mResultTableStage.setTitle(Main.getBundleText("window.title.reinforcementTable"));
+        mResultTableStage.getIcons().add(new Image("image/reinforcement.png"));
 
         double sceneWidth = Geometry.getNumSpan() * 170 + 400;
-        Scene scene = new Scene(container, sceneWidth, 950);
-        resultStage.setScene(scene);
-        resultStage.show();
+        Scene scene = new Scene(container, sceneWidth, 900);
+        mResultTableStage.setScene(scene);
     }
 
+    public void showStage(){
+        mResultTableStage.show();
+    }
+
+    // TODO It's better to transfer these VBox, HBox to a GridPane
     private VBox getParamNameVBox(Reinforcement reinforcement, String string){
         VBox paramNameVBox = new VBox();
         paramNameVBox.setSpacing(15);
         Label blank = new Label("");
-        blank.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
+        blank.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
         paramNameVBox.getChildren().add(blank);
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
@@ -113,21 +96,29 @@ public class ReinforcementResultTable {
         reinforceParamMap.get(1).forEach((param, value)->{
             if (param == b_MU){
                 Label paramName = new Label(
-                        param.getParaNameBundleKey() + " " + param.getUnit() + " : "
+                        param.getParaName() + getBracketedUnit(param) + " : "
                 );
                 Label pivotParam = new Label(
-                        k_PIVOT.getParaNameBundleKey() + " : "
+                        k_PIVOT.getParaName() + " : "
                 );
                 paramNameVBox.getChildren().addAll(paramName, pivotParam);
             } else {
                 Label paramName = new Label(
-                        param.getParaNameBundleKey() + " " + param.getUnit() + " : "
+                        param.getParaName() + getBracketedUnit(param) + " : "
                 );
                 paramNameVBox.getChildren().add(paramName);
             }
 
         });
         return paramNameVBox;
+    }
+
+    private String getBracketedUnit(ReinforcementParam param) {
+        if (param.getUnit().equals("")){
+            return "";
+        }else {
+            return " (" + param.getUnit() + ")";
+        }
     }
 
     private HBox getParamValuesHBox(Reinforcement reinforcement, String spanOrSupport){

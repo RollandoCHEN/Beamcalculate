@@ -115,29 +115,12 @@ public class Rebar {
                             }
                         }
                     }
-//                    keepMinRebarAreaCaseForSameFirstLayer(rebarCasesList);
                     break;
                 }
                 default: break;
             }
         }
         mRebarCasesMap.put(spanId, rebarCasesList);
-    }
-
-    private void keepMinRebarAreaCaseForSameFirstLayer(List<Map<Integer, RebarType_Number>> rebarCasesList) {
-
-        double secondLayerRebarminDiameter;
-        for (int i = 0; i < rebarCasesList.size(); i++){
-            for (int j = i+1; j < rebarCasesList.size(); j++){
-                if(rebarCasesList.get(i).get(1).getRebarType() == rebarCasesList.get(j).get(1).getRebarType()){
-                    double secondLayerRebarDiameter_i = rebarCasesList.get(i).get(2).getRebarType().getDiameter_mm();
-                    double secondLayerRebarDiameter_j = rebarCasesList.get(j).get(2).getRebarType().getDiameter_mm();
-                    secondLayerRebarminDiameter = Math.min(secondLayerRebarDiameter_i, secondLayerRebarDiameter_j);
-                }
-            }
-        }
-
-
     }
 
     private double getRebarAreaOfSpan(int spanId) {

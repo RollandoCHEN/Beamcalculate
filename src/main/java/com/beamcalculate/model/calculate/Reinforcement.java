@@ -170,9 +170,9 @@ public class Reinforcement {
         paramValueMap.put(f_Z, mLeverArmZ);
 
         switch (mPivot){
-            case PIVOTA: mStrainEpsilonS = 0.9 * mSteelUltimateStrain * 100;
+            case PIVOTA: mStrainEpsilonS = 0.9 * mSteelUltimateStrain * 1000;
                 break;
-            case PIVOTB: mStrainEpsilonS = 0.0035 * (1 - mNeutralAxisAlpha) / mNeutralAxisAlpha * 100;
+            case PIVOTB: mStrainEpsilonS = 0.0035 * (1 - mNeutralAxisAlpha) / mNeutralAxisAlpha * 1000;
                 break;
             case PIVOTC: break;
         }
@@ -189,7 +189,7 @@ public class Reinforcement {
 
     private double getMaxMomentOfSupport(int supportId) {
         double maxMoment;
-        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
             maxMoment = -newSpanMomentFunction.getMinMomentValueOfSupport(supportId);
         }else {
@@ -201,7 +201,7 @@ public class Reinforcement {
 
     private double getMaxMomentOfSpan(int spanId) {
         double maxMoment;
-        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
             maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
         }else {

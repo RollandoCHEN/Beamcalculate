@@ -1,7 +1,7 @@
 package com.beamcalculate.model.calculate.support;
 
 import Jama.Matrix;
-import com.beamcalculate.enums.MyMath;
+import com.beamcalculate.enums.MyMethods;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 
@@ -33,7 +33,7 @@ public class SupportMoment3Moment extends SupportMoment {
         geometry.spansLengthMap().forEach((spanId, spanLength) -> {
             double spanL = spanLength + geometry.supportWidthMap().get(spanId) / 2 + geometry.supportWidthMap().get(spanId + 1) / 2;
 
-            MyMath.round(spanL, 2);
+            MyMethods.round(spanL, 2);
 
             mEffectiveSpansLengthMap.put(spanId, spanL);
         });
@@ -169,7 +169,7 @@ public class SupportMoment3Moment extends SupportMoment {
 
     @Override
     public String getMethod() {
-        return TROIS_MOMENT.getBundleText();
+        return TROIS_MOMENT.getMethodName();
     }
 
     @Override

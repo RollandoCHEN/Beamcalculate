@@ -2,6 +2,7 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
+import com.beamcalculate.enums.MyMethods;
 import com.beamcalculate.enums.RebarType;
 import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,10 +26,10 @@ import java.util.Map;
 import static com.beamcalculate.enums.NumericalFormat.TWODECIMALS;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 
-public class RebarCaseTable {
+public class RebarCasesTable {
     private Rebar mRebar;
 
-    public RebarCaseTable(Rebar rebar) {
+    public RebarCasesTable(Rebar rebar) {
         mRebar = rebar;
         Reinforcement reinforcement = rebar.getReinforcement();
 
@@ -61,7 +63,7 @@ public class RebarCaseTable {
         }
 
         for (int caseNum = 1; caseNum < maxNumOfCases+1; caseNum++){
-            Label caseLabel = new Label("Case " + caseNum);
+            Label caseLabel = new Label(Main.getBundleText("label.case") + " " + caseNum);
             spanGridPane.add(caseLabel, 0, caseNum);
         }
 
@@ -71,9 +73,9 @@ public class RebarCaseTable {
 
             double calculatedArea = reinforcement.getSpanReinforceParam().get(spanId).get(j_A_S);
             Label calculatedAreaLabel = new Label(
-                    j_A_S.getSymbol() + " = " + TWODECIMALS.getDecimalFormat().format(calculatedArea)
+                    j_A_S.getSymbol() + " = " + TWODECIMALS.getDecimalFormat().format(calculatedArea) + " " + Main.getBundleText("unit.area.cm2")
             );
-            calculatedAreaLabel.setStyle("-fx-font-style: italic");
+            calculatedAreaLabel.setStyle("-fx-font-style: italic; -fx-font-weight: bold;");
 
             VBox spanVBox = new VBox(spanIdLabel, calculatedAreaLabel);
 
@@ -82,6 +84,13 @@ public class RebarCaseTable {
 
             List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
             int caseVariable;
+            double minRebarArea = rebar.getTotalRebarAreaListOfSpan(spanId).get(0);
+
+            for (caseVariable = 0; caseVariable < rebarCasesList.size(); caseVariable++){
+                int caseNum = caseVariable;
+                minRebarArea = Math.min(rebar.getTotalRebarAreaListOfSpan(spanId).get(caseNum), minRebarArea);
+            }
+
             for (caseVariable = 0; caseVariable < rebarCasesList.size(); caseVariable++){
                 int caseNum = caseVariable;
                 Button rebarCaseButton = new Button();
@@ -92,38 +101,63 @@ public class RebarCaseTable {
                     }
                     RebarType rebarType = rebarType_number.getRebarType();
                     int number = rebarType_number.getNumberOfRebar();
-                    buttonString.append("Layer ").append(layerNum).append(" : ").append(number).append(rebarType.name());
+                    buttonString.append(MyMethods.getOrdinalNumber(layerNum)).append(Main.getBundleText("label.steelRebarLayer")).append(" : ").append(number).append(rebarType.name());
                 });
                 rebarCaseButton.setText(buttonString.toString());
 
                 double rebarArea = rebar.getTotalRebarAreaListOfSpan(spanId).get(caseNum);
                 Label rebarAreaLabel = new Label(
-                        j_A_S.getSymbol() + " = " + TWODECIMALS.getDecimalFormat().format(rebarArea)
+                        j_A_S.getSymbol() + " = " + TWODECIMALS.getDecimalFormat().format(rebarArea) + " " + Main.getBundleText("unit.area.cm2")
                 );
                 rebarAreaLabel.setStyle("-fx-font-style: italic");
+                if (rebarArea == minRebarArea){
+                    rebarAreaLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                }
 
                 VBox vBox = new VBox(rebarCaseButton, rebarAreaLabel);
                 spanGridPane.add(vBox, columnNum, caseNum + 1);
 
                 rebarCaseButton.setOnAction(event -> {
-                    RebarChart rebarChart = new RebarChart(getRebar(), columnNum, caseNum);
+                    RebarCutChart rebarCutChart = new RebarCutChart(getRebar(), columnNum, caseNum);
                 });
             }
         }
 
-        VBox container = new VBox();
-        container.setPadding(new Insets(10,20,10,20));
-        container.setSpacing(20);
-        container.setAlignment(Pos.CENTER);
-        container.getChildren().addAll(methodTitle, spanGridPane, supportGridPane);
+        VBox contentVBox = new VBox();
+        contentVBox.setPadding(new Insets(10,20,10,20));
+        contentVBox.setSpacing(20);
+        contentVBox.setAlignment(Pos.CENTER);
+        contentVBox.getChildren().addAll(spanGridPane, supportGridPane);
+
+        Button rebarGenerationButton = new Button(Main.getBundleText("button.rebarCalculateTable"));
+        rebarGenerationButton.setStyle("-fx-font-size:14px");
+        rebarGenerationButton.setOnAction(event -> {
+
+            ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
+            reinforcementResult.showStage();
+
+        });
+
+        VBox topVBox = new VBox(methodTitle);
+        topVBox.setAlignment(Pos.CENTER);
+
+        HBox bottomHBox = new HBox(rebarGenerationButton);
+        bottomHBox.setSpacing(15);
+        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
+
+        BorderPane containerBorderPane = new BorderPane();
+        containerBorderPane.setPadding(new Insets(20, 20, 20, 20));
+        containerBorderPane.setTop(topVBox);
+        containerBorderPane.setCenter(contentVBox);
+        containerBorderPane.setBottom(bottomHBox);
 
         Stage resultStage = new Stage();
-        resultStage.setTitle(Main.getBundleText("window.title.result"));
+        resultStage.setTitle(Main.getBundleText("window.title.rebarChoices"));
         resultStage.getIcons().add(new Image("image/reinforcement.png"));
 
         double sceneWidth = Geometry.getNumSpan() * 110 + 180;
         double sceneHeight = maxNumOfCases * 110 + 100;
-        Scene scene = new Scene(container, sceneWidth, sceneHeight);
+        Scene scene = new Scene(containerBorderPane, sceneWidth, sceneHeight);
         resultStage.setScene(scene);
         resultStage.show();
     }
