@@ -133,7 +133,7 @@
                         <Label text="%unit.load" />
                     </HBox>
                     <HBox styleClass="hbox">
-                        <Label text="%label.ductilibilityClass" />
+                        <Label text="%label.ductibilityClass" />
                         <NamedChoiceBox fx:id="ductibilityClass_chcb">
                             <items>
                                 <FXCollections fx:factory="observableArrayList">

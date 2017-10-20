@@ -11,7 +11,7 @@ public enum OrdinalNumber {
     SIXTH(""),
     SEVENTH(""),
     EIGHTH(""),
-    NINETH(""),
+    NINTH(""),
     TENTH("");
 
     private String mBundleTextKey;

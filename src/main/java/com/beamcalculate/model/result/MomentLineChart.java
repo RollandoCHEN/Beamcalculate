@@ -2,7 +2,7 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
-import com.beamcalculate.controllers.TSectionController;
+import com.beamcalculate.controllers.RebarCasesController;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Rebar;
@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -212,7 +213,38 @@ public class MomentLineChart {
             Reinforcement reinforcement = new Reinforcement(mMethodChoiceMap.get(mMethodChoiceValue.get()));
             Rebar rebar = new Rebar(reinforcement);
 
-            new RebarCasesTable(rebar);
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/rebar_cases.fxml"),
+                        Main.getResourceBundle());
+                Parent root = fxmlLoader.load();
+
+                RebarCasesController controller = fxmlLoader.getController();
+
+                controller.setRebar(rebar);
+                controller.generateRebarSelectionCasesTable();
+
+                int maxNumOfCases = 1;
+                for (int spanId=1; spanId < Geometry.getNumSpan()+1; spanId++) {
+                    int rebarCases = rebar.getRebarCasesListOfSpan(spanId).size();
+                    maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
+                }
+                // 60 is the padding in the grid pane, around the left and right grid pane
+                double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
+
+                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 530);
+
+                Scene scene = new Scene(root, sceneWidth, sceneHeight);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.setResizable(false);
+
+                stage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
 
         });
 

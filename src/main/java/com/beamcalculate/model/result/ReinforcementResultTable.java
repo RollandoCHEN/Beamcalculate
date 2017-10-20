@@ -70,7 +70,7 @@ public class ReinforcementResultTable {
         mResultTableStage.getIcons().add(new Image("image/reinforcement.png"));
 
         double sceneWidth = Geometry.getNumSpan() * 180 + 430;
-        Scene scene = new Scene(container, sceneWidth, 900);
+        Scene scene = new Scene(container, sceneWidth, 860);
         mResultTableStage.setScene(scene);
     }
 

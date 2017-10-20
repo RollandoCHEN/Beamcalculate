@@ -20,7 +20,7 @@ public class MyMethods {
             case 6: return SIXTH.getOrdinalNumber();
             case 7: return SEVENTH.getOrdinalNumber();
             case 8: return EIGHTH.getOrdinalNumber();
-            case 9: return NINETH.getOrdinalNumber();
+            case 9: return NINTH.getOrdinalNumber();
             case 10: return TENTH.getOrdinalNumber();
             default: return "";
         }
