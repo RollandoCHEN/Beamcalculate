@@ -10,10 +10,12 @@ import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.result.RebarCutChart;
 import com.beamcalculate.model.result.ReinforcementResultTable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -33,6 +35,7 @@ public class RebarCasesController implements Initializable {
     @FXML private Label methodNameLabel = new Label();
     @FXML private GridPane spanGridPane = new GridPane();
     @FXML private GridPane supportGridPane = new GridPane();
+    @FXML private Insets coverThicknessInsets;
 
     private Rebar mRebar;
     private Reinforcement mReinforcement;
@@ -60,11 +63,15 @@ public class RebarCasesController implements Initializable {
     private DoubleProperty leftGridPaneWidth = new SimpleDoubleProperty();
     private DoubleProperty rightGridPaneWidth = new SimpleDoubleProperty();
 
+    private DoubleProperty rebarDiameter = new SimpleDoubleProperty();
+
     private StringProperty compRegionHeightString = new SimpleStringProperty();
     private StringProperty webCompWidthString = new SimpleStringProperty();
     private StringProperty flangeWidthString = new SimpleStringProperty();
     private StringProperty flangeHeightString = new SimpleStringProperty();
     private StringProperty totalHeightString = new SimpleStringProperty();
+
+    private double mRatio;
 
 
     @Override
@@ -72,17 +79,17 @@ public class RebarCasesController implements Initializable {
 
         // height of cross section diagram is fixed at 200px
         double fixHeight = 200;
-        double ratio = fixHeight / (Geometry.getSectionHeight() * 100);
+        mRatio = fixHeight / (Geometry.getSectionHeight() * 100);
 
-        displayedTotalHeight.bind(Bindings.multiply(totalHeight, ratio));
-        displayedWebWidth.bind(Bindings.multiply(webWidth, ratio));
-        displayedWebCompHeight.bind(Bindings.multiply(webCompHeight, ratio));
-        displayedWebCompWidth.bind(Bindings.multiply(webCompWidth, ratio));
-        displayedCompRegionHeight.bind(Bindings.multiply(compRegionHeight, ratio));
-        displayedFlangeWidth.bind(Bindings.multiply(flangeWidth, ratio));
-        displayedFlangeHeight.bind(Bindings.multiply(flangeHeight, ratio));
-        displayedFlangeCompHeight.bind(Bindings.multiply(flangeCompHeight, ratio));
-        displayedFlangeCompWidth.bind(Bindings.multiply(flangeCompWidth, ratio));
+        displayedTotalHeight.bind(Bindings.multiply(totalHeight, mRatio));
+        displayedWebWidth.bind(Bindings.multiply(webWidth, mRatio));
+        displayedWebCompHeight.bind(Bindings.multiply(webCompHeight, mRatio));
+        displayedWebCompWidth.bind(Bindings.multiply(webCompWidth, mRatio));
+        displayedCompRegionHeight.bind(Bindings.multiply(compRegionHeight, mRatio));
+        displayedFlangeWidth.bind(Bindings.multiply(flangeWidth, mRatio));
+        displayedFlangeHeight.bind(Bindings.multiply(flangeHeight, mRatio));
+        displayedFlangeCompHeight.bind(Bindings.multiply(flangeCompHeight, mRatio));
+        displayedFlangeCompWidth.bind(Bindings.multiply(flangeCompWidth, mRatio));
 
         totalHeight.bind(Bindings.multiply(Geometry.sectionHeightProperty(),100));
         webWidth.bind(Bindings.multiply(Geometry.sectionWidthProperty(),100));
@@ -116,7 +123,7 @@ public class RebarCasesController implements Initializable {
         DoubleProperty maxDisplayedFlangeWidth = new SimpleDoubleProperty();
         Reinforcement.getEffectiveWidthPropertyMap().forEach((spanId, effectiveWidthProperty) -> {
             if(effectiveWidthProperty.get() > maxDisplayedFlangeWidth.get()){
-                maxDisplayedFlangeWidth.set(effectiveWidthProperty.get() * 100 * ratio);
+                maxDisplayedFlangeWidth.set(effectiveWidthProperty.get() * 100 * mRatio);
             }
         });
         double maxSchemaWidth = maxDisplayedFlangeWidth.get() + 230;
@@ -204,7 +211,7 @@ public class RebarCasesController implements Initializable {
                 spanGridPane.add(vBox, columnNum, caseNum + 1);
 
                 rebarCaseButton.setOnAction(event -> {
-                    RebarCutChart rebarCutChart = new RebarCutChart(getRebar(), columnNum, caseNum);
+//                    RebarCutChart rebarCutChart = new RebarCutChart(getRebar(), columnNum, caseNum);
 
                     setTitleLabel(columnNum);
 
@@ -213,6 +220,10 @@ public class RebarCasesController implements Initializable {
                         flangeCompHeight.bind(Bindings.multiply(Reinforcement.getFlangeCompressionsHeightMap().get(columnNum),100));
                     }
                     webCompHeight.bind(Bindings.multiply(Reinforcement.getWebCompressionHeightMap().get(columnNum),100));
+
+                    rebarDiameter.set(mRebar.getRebarCasesListOfSpan(columnNum).get(caseNum).get(1).getRebarType().getDiameter_mm()/10 * mRatio);
+                    coverThicknessInsets = new Insets(3);
+//                    vBox.paddingProperty().bind(Bindings.createObjectBinding(() -> new Insets(percentage.doubleValue()), percentage));
                 });
             }
         }
@@ -431,6 +442,15 @@ public class RebarCasesController implements Initializable {
     public DoubleProperty rightGridPaneWidthProperty() {
         return rightGridPaneWidth;
     }
+
+    public double getRebarDiameter() {
+        return rebarDiameter.get();
+    }
+
+    public DoubleProperty rebarDiameterProperty() {
+        return rebarDiameter;
+    }
+
 
     public Rebar getRebar() {
         return mRebar;
