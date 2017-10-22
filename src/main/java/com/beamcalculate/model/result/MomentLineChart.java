@@ -231,14 +231,16 @@ public class MomentLineChart {
                 // 60 is the padding in the grid pane, around the left and right grid pane
                 double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
 
-                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 530);
+                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 700);
 
-                Scene scene = new Scene(root, sceneWidth, sceneHeight);
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setResizable(false);
+                Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
+                Stage rebarSelectionStage = new Stage();
+                rebarSelectionStage.setTitle(Main.getBundleText("window.title.rebarChoices"));
+                rebarSelectionStage.getIcons().add(new Image("image/rebar.png"));
+                rebarSelectionStage.setScene(rebarSelectionScene);
+                rebarSelectionStage.setResizable(false);
 
-                stage.show();
+                rebarSelectionStage.show();
 
             } catch (IOException e) {
                 e.printStackTrace();

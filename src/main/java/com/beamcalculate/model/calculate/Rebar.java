@@ -74,7 +74,7 @@ public class Rebar {
                         Map<Integer, RebarType_Number> layer_rebarMap = new HashMap<>();
 
                         if (rebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) > rebarAreaAs
-                                && rebarType.getDiameter_mm() < mMaxDiameter) {
+                                && rebarType.getDiameter_mm() <= mMaxDiameter) {
 
                             RebarType_Number type_numberMap = new RebarType_Number(rebarType, mMaxNumOfRebarPerLayer);
 
@@ -91,7 +91,7 @@ public class Rebar {
                 }
                 case 2: {
                     for (RebarType firstLayerRebarType : RebarType.values()) {
-                        if (firstLayerRebarType.getDiameter_mm() < mMaxDiameter &&
+                        if (firstLayerRebarType.getDiameter_mm() <= mMaxDiameter &&
                                 firstLayerRebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) < rebarAreaAs)
                         {
                             // when we have the same first layer rebar, we need only the min rebar diameter case for the second layer
