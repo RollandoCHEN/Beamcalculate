@@ -2,9 +2,10 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
-import com.beamcalculate.controllers.TSectionController;
+import com.beamcalculate.controllers.RebarCasesController;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
+import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
 import com.beamcalculate.model.calculate.span.SpanMomentFunction;
@@ -13,8 +14,6 @@ import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -22,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -51,8 +51,8 @@ public class MomentLineChart {
     private HBox mHBoxMethod;
     private BooleanBinding mDisableSpinner;
     private StringProperty mMethodChoiceValue = new SimpleStringProperty();
-    private NumberAxis xAxis = new NumberAxis();
-    private NumberAxis yAxis = new NumberAxis();
+    private NumberAxis mXAxis = new NumberAxis();
+    private NumberAxis mYAxis = new NumberAxis();
     private ChoiceBox<String> mMethodChoice;
     private Map<String, AbstractSpanMoment> mMethodChoiceMap = new HashMap<>();
     private GridPane mGridPaneTop;
@@ -92,12 +92,12 @@ public class MomentLineChart {
 
 //        defining the axes
 
-        xAxis = defineAxis(spanMomentFunction).get(0);
-        yAxis = defineAxis(spanMomentFunction).get(1);
+        mXAxis = defineAxis(spanMomentFunction).get(0);
+        mYAxis = defineAxis(spanMomentFunction).get(1);
 
 //        creating the chart
 
-        mLineChart = new LineChart<>(xAxis, yAxis);
+        mLineChart = new LineChart<>(mXAxis, mYAxis);
 
         mLineChart.setTitle("");
         mLineChart.setCursor(Cursor.CROSSHAIR);
@@ -176,7 +176,7 @@ public class MomentLineChart {
 
         calculateYButton.setOnAction(e -> {
             double maxY, minY;
-            if (mMethodChoiceValue.get().equals(TROIS_MOMENT_R.getBundleText())){
+            if (mMethodChoiceValue.get().equals(TROIS_MOMENT_R.getMethodName())){
                 SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase)mMethodChoiceMap.get(mMethodChoiceValue.get());
                 maxY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                         Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX
@@ -211,36 +211,43 @@ public class MomentLineChart {
         );
         rebarCalculatingButton.setOnAction(event -> {
             Reinforcement reinforcement = new Reinforcement(mMethodChoiceMap.get(mMethodChoiceValue.get()));
-            ReinforcementResultTable reinforcementResult = new ReinforcementResultTable(reinforcement);
+            Rebar rebar = new Rebar(reinforcement);
 
-            // TODO Add windows to show the T shaped cross section for each span
-
-            Scene scene = null;
             try {
-                Pane container = FXMLLoader.load(
-                        getClass().getResource("/fxml/section.fxml"),
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/rebar_cases.fxml"),
                         Main.getResourceBundle());
+                Parent root = fxmlLoader.load();
 
-                /*I wander if it's better to pass the reinforcement instance to the fxml controller
-                * as like:
-                * TSectionController controller = fxmlLoader.<TSectionController>getController();
-                * controller.setReinforcement(reinforcement);*/
+                RebarCasesController controller = fxmlLoader.getController();
 
-                double initialSceneWidth;
+                controller.setRebar(rebar);
+                controller.generateRebarSelectionCasesTable();
 
-                /* initial scene width is according to the flange width (flange width + 200px)
-                 or according to num of buttons for spans (N° spans * 130)
-                 initial scene height is fix, cause the cross section diagram is fixed at 300px*/
-                initialSceneWidth = Math.max(TSectionController.getSceneWidth(), 130 * Geometry.getNumSpan());
-                scene = new Scene(container, initialSceneWidth, 700);
+                int maxNumOfCases = 1;
+                for (int spanId=1; spanId < Geometry.getNumSpan()+1; spanId++) {
+                    int rebarCases = rebar.getRebarCasesListOfSpan(spanId).size();
+                    maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
+                }
+                // 60 is the padding in the grid pane, around the left and right grid pane
+                double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
+
+                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 700);
+
+                Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
+                Stage rebarSelectionStage = new Stage();
+                rebarSelectionStage.setTitle(Main.getBundleText("window.title.rebarChoices"));
+                rebarSelectionStage.getIcons().add(new Image("image/rebar.png"));
+                rebarSelectionStage.setScene(rebarSelectionScene);
+                rebarSelectionStage.setResizable(false);
+
+                rebarSelectionStage.show();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            mCrossSectionStage.setTitle(Main.getBundleText("window.title.crossSection"));
-            mCrossSectionStage.getIcons().add(new Image("image/section.png"));
-            mCrossSectionStage.setScene(scene);
-//            mCrossSectionStage.show();
+
+
         });
 
         HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
@@ -327,7 +334,7 @@ public class MomentLineChart {
 
 //        if the methode of calculate is "3 moment", add redistribution for the methode
 
-        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
                 && !MainController.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
@@ -425,17 +432,17 @@ public class MomentLineChart {
 
 //        add margin to the y axis
 
-        double maxMomentValue = -Math.max(-yAxis.getLowerBound(), 1.2 * combination.getUltimateMomentValue(MAX));
-        double minMomentValue = -Math.min(-yAxis.getUpperBound(), 1.2 * combination.getUltimateMomentValue(MIN));
+        double maxSpanMomentValue = -Math.max(-mYAxis.getLowerBound(), 1.2 * combination.getUltimateMomentValue(MAX));
+        double maxSupportMomentValue = -Math.min(-mYAxis.getUpperBound(), 1.2 * combination.getUltimateMomentValue(MIN));
 
-        yAxis.lowerBoundProperty().set(maxMomentValue);
-        yAxis.upperBoundProperty().set(minMomentValue);
+        mYAxis.lowerBoundProperty().set(maxSpanMomentValue);
+        mYAxis.upperBoundProperty().set(maxSupportMomentValue);
 
         mMethodChoice.getItems().add(spanMomentFunction.getMethod());
 
         //        if the method of calculate is "3 moment", add redistribution for the method
 
-        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getBundleText())
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
                 && !MainController.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
@@ -469,21 +476,21 @@ public class MomentLineChart {
     }
 
     public static List<NumberAxis> defineAxis(AbstractSpanMoment spanMomentFunction){
-        double maxMomentValue;
-        double minMomentValue;
+        double maxSpanMomentValue;
+        double maxSupportMomentValue;
 
-        if(spanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+        if(spanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) spanMomentFunction;
-            minMomentValue = -newSpanMomentFunction.getUltimateMomentValue(MIN);
-            maxMomentValue = newSpanMomentFunction.getUltimateMomentValue(MAX);
+            maxSupportMomentValue = newSpanMomentFunction.getUltimateMomentValue(MIN);
+            maxSpanMomentValue = newSpanMomentFunction.getUltimateMomentValue(MAX);
         }else {
             ELUCombination combination = new ELUCombination(spanMomentFunction);
-            minMomentValue = -combination.getUltimateMomentValue(MIN);
-            maxMomentValue = combination.getUltimateMomentValue(MAX);
+            maxSupportMomentValue = combination.getUltimateMomentValue(MIN);
+            maxSpanMomentValue = combination.getUltimateMomentValue(MAX);
         }
 
         NumberAxis xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
-        NumberAxis yAxis = new NumberAxis(1.2 * maxMomentValue, 1.2 * minMomentValue, 0.05);
+        NumberAxis yAxis = new NumberAxis(- 1.2 * maxSpanMomentValue, - 1.2 * maxSupportMomentValue, 0.05);
 
         xAxis.setLabel(Main.getBundleText("label.abscissa") + " (" + Main.getBundleText("unit.length.m") + ")");
         yAxis.setLabel(Main.getBundleText("label.ordinate") + " (" + Main.getBundleText("unit.moment") + ")");
@@ -507,7 +514,7 @@ public class MomentLineChart {
             double spanLocalX = 0;
             double globalX = 0;
 
-            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getBundleText())) {
+            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getMethodName())) {
                 for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                     double preX;
                     if (preSpanId == 0) {
@@ -577,7 +584,7 @@ public class MomentLineChart {
         series.setName(Main.getBundleText("label."
                 + ultimateCase.toString().toLowerCase())
                 + " - "
-                + TROIS_MOMENT_R.getBundleText());
+                + TROIS_MOMENT_R.getMethodName());
     }
 
 
@@ -613,7 +620,7 @@ public class MomentLineChart {
         calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
 
         //TODO This is not the correct way to add method to the method choice box
-        mMethodChoice.getItems().add(TROIS_MOMENT_R.getBundleText());
+        mMethodChoice.getItems().add(TROIS_MOMENT_R.getMethodName());
 
         rdsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
             XYChart.Series maxELUSeries = new XYChart.Series();
@@ -641,17 +648,17 @@ public class MomentLineChart {
                 });
 
 
-                mStringSeriesMap.put(TROIS_MOMENT.getBundleText() + "_ReducedMAX", maxELUSeries);
-                mStringSeriesMap.put(TROIS_MOMENT.getBundleText() + "_ReducedMIN", minELUSeries);
+                mStringSeriesMap.put(TROIS_MOMENT.getMethodName() + "_ReducedMAX", maxELUSeries);
+                mStringSeriesMap.put(TROIS_MOMENT.getMethodName() + "_ReducedMIN", minELUSeries);
 
                 mLineChart.getData().addAll(
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMAX"),
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMIN")
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMAX"),
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMIN")
                 );
             } else {
                 mLineChart.getData().removeAll(
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMAX"),
-                        mStringSeriesMap.get(TROIS_MOMENT.getBundleText() + "_ReducedMIN")
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMAX"),
+                        mStringSeriesMap.get(TROIS_MOMENT.getMethodName() + "_ReducedMIN")
                 );
 
             }

@@ -153,7 +153,7 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
     @Override
     public String getMethod() {
         //TODO To generate getMethod function
-        return TROIS_MOMENT_R.getBundleText();
+        return TROIS_MOMENT_R.getMethodName();
     }
 
     @Override

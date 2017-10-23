@@ -55,14 +55,14 @@
                             </ChoiceBox>
                         </HBox>
                         <HBox styleClass="hbox">
-                            <Label text="%ifSupportEqual" />
+                            <Label text="%label.ifSupportEqual" />
                             <CheckBox fx:id="equalSupport_chkb" onAction="#disableOrEnableSupportWidth" />
                             <Label text="%label.supportWidth" />
                             <NamedTextField fx:id="equalSupportWidth_tf" disable="${controller.notEqualSupport}" />
                             <Label text="%unit.length.m" />
                         </HBox>
                         <HBox styleClass="hbox">
-                            <Label text="%ifSpanEqual" />
+                            <Label text="%label.ifSpanEqual" />
                             <CheckBox fx:id="equalSpan_chkb" onAction="#disableOrEnableSpanLength" />
                             <Label text="%label.spanLength" />
                             <NamedTextField fx:id="equalSpanLength_tf" disable="${controller.notEqualSpan}" />
@@ -133,7 +133,7 @@
                         <Label text="%unit.load" />
                     </HBox>
                     <HBox styleClass="hbox">
-                        <Label text="%label.ductilibilityClass" />
+                        <Label text="%label.ductibilityClass" />
                         <NamedChoiceBox fx:id="ductibilityClass_chcb">
                             <items>
                                 <FXCollections fx:factory="observableArrayList">

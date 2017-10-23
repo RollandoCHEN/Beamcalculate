@@ -76,7 +76,8 @@ public class Reinforcement {
         DoubleProperty webCompressionHeight = new SimpleDoubleProperty();
 
         flangeCompressionHeight.setValue(0);
-        webCompressionHeight.setValue(paramValueMap.get(d_X));
+        // 0.8 * x is the compressed concrete in which the stress is constant, instead of height of neutral axis x
+        webCompressionHeight.setValue(0.8 * paramValueMap.get(d_X));
 
         mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
         mWebCompressionHeightMap.put(spanId, webCompressionHeight);
@@ -120,7 +121,8 @@ public class Reinforcement {
 
         if (maxMoment < ultimateMomentByFlange){
             paramValueMap = calculateReinforcementParam(maxMoment, effectiveWidthMap.get(spanId));
-            flangeCompressionHeight.setValue(paramValueMap.get(d_X));
+            // 0.8 * x is the compressed concrete in which the stress is constant, instead of height of neutral axis x
+            flangeCompressionHeight.setValue(0.8 * paramValueMap.get(d_X));
             webCompressionHeight.setValue(0);
         } else {
             double forceByFlange = (effectiveWidthMap.get(spanId) - mWidth) * mSlabThickness *  mFcd;
@@ -128,10 +130,11 @@ public class Reinforcement {
                     forceByFlange * (mEffectiveHeight - mSlabThickness/2);
             double momentByWeb = maxMoment - momentByFlange;
             paramValueMap = calculateReinforcementParam(momentByWeb, mWidth);
-            double rebarAreaByFlangeForce = forceByFlange / paramValueMap.get(g_EPSILON_S) * 10000;
+            double rebarAreaByFlangeForce = forceByFlange / paramValueMap.get(i_SIGMA_S) * 10000;
             paramValueMap.put(j_A_S, paramValueMap.get(j_A_S) + rebarAreaByFlangeForce);
             flangeCompressionHeight.setValue(mSlabThickness);
-            webCompressionHeight.setValue(paramValueMap.get(d_X));
+            // 0.8 * x is the compressed concrete in which the stress is constant, instead of height of neutral axis x
+            webCompressionHeight.setValue(0.8 * paramValueMap.get(d_X));
         }
 
         mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
@@ -170,9 +173,9 @@ public class Reinforcement {
         paramValueMap.put(f_Z, mLeverArmZ);
 
         switch (mPivot){
-            case PIVOTA: mStrainEpsilonS = 0.9 * mSteelUltimateStrain * 100;
+            case PIVOTA: mStrainEpsilonS = 0.9 * mSteelUltimateStrain * 1000;
                 break;
-            case PIVOTB: mStrainEpsilonS = 0.0035 * (1 - mNeutralAxisAlpha) / mNeutralAxisAlpha * 100;
+            case PIVOTB: mStrainEpsilonS = 0.0035 * (1 - mNeutralAxisAlpha) / mNeutralAxisAlpha * 1000;
                 break;
             case PIVOTC: break;
         }
@@ -189,7 +192,7 @@ public class Reinforcement {
 
     private double getMaxMomentOfSupport(int supportId) {
         double maxMoment;
-        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
             maxMoment = -newSpanMomentFunction.getMinMomentValueOfSupport(supportId);
         }else {
@@ -201,7 +204,7 @@ public class Reinforcement {
 
     private double getMaxMomentOfSpan(int spanId) {
         double maxMoment;
-        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getBundleText())) {
+        if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
             maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
         }else {
