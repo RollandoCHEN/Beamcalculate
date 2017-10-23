@@ -76,7 +76,8 @@ public class Reinforcement {
         DoubleProperty webCompressionHeight = new SimpleDoubleProperty();
 
         flangeCompressionHeight.setValue(0);
-        webCompressionHeight.setValue(paramValueMap.get(d_X));
+        // 0.8 * x is the compressed concrete in which the stress is constant, instead of height of neutral axis x
+        webCompressionHeight.setValue(0.8 * paramValueMap.get(d_X));
 
         mFlangeCompressionsHeightMap.put(spanId, flangeCompressionHeight);
         mWebCompressionHeightMap.put(spanId, webCompressionHeight);
