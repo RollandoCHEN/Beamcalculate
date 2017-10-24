@@ -231,7 +231,7 @@ public class MomentLineChart {
                 // 60 is the padding in the grid pane, around the left and right grid pane
                 double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
 
-                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 850);
+                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 950);
 
                 Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
                 Stage rebarSelectionStage = new Stage();
@@ -557,7 +557,8 @@ public class MomentLineChart {
 
     public static double getGlobalX(int spanId, double spanLocalX, String method) {
         double globalX = spanLocalX;
-        if (TROIS_MOMENT.getMethodName().equals(method)) {
+        if (TROIS_MOMENT.getMethodName().equals(method)
+                || TROIS_MOMENT_R.getMethodName().equals(method)) {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {

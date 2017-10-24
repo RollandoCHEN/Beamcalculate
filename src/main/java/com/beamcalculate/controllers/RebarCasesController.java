@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 import java.net.URL;
 import java.util.Collections;
@@ -39,7 +40,8 @@ public class RebarCasesController implements Initializable {
     @FXML private Label methodNameText = new Label();
     @FXML private GridPane spanRebarSelectionGridPane = new GridPane();
     @FXML private GridPane supportRebarselectionGridPane = new GridPane();
-    @FXML private VBox rebarVBox = new VBox();
+    @FXML private VBox crossSectionRebarVBox = new VBox();
+    @FXML private VBox elevationRebarVBox = new VBox();
     @FXML private HBox flangeWidthHBox = new HBox();
     @FXML private VBox flangeHeightVBox = new VBox();
     @FXML private VBox widthVBox = new VBox();
@@ -68,6 +70,8 @@ public class RebarCasesController implements Initializable {
     private DoubleProperty compRegionHeight = new SimpleDoubleProperty();
     private DoubleProperty displayedCompRegionHeight = new SimpleDoubleProperty();
 
+    private DoubleProperty totalLength = new SimpleDoubleProperty();
+
     private DoubleProperty leftGridPaneWidth = new SimpleDoubleProperty();
     private DoubleProperty rightGridPaneWidth = new SimpleDoubleProperty();
 
@@ -76,9 +80,6 @@ public class RebarCasesController implements Initializable {
     private StringProperty flangeWidthString = new SimpleStringProperty();
     private StringProperty flangeHeightString = new SimpleStringProperty();
     private StringProperty totalHeightString = new SimpleStringProperty();
-
-    private DoubleProperty secondLayerRebarStartPoint = new SimpleDoubleProperty();
-    private DoubleProperty secondLayerRebarLength = new SimpleDoubleProperty();
 
     private double mSectionViewRatio;
     private double mElevationViewRatio;
@@ -90,8 +91,8 @@ public class RebarCasesController implements Initializable {
 
         // height of cross section diagram is fixed at 200px
         mCoverThickness_cm = 3;
-        double fixHeight = 300;
-        mSectionViewRatio = fixHeight / (Geometry.getSectionHeight() * 100);
+        double fixedDisplayedHeight = 300;
+        mSectionViewRatio = fixedDisplayedHeight / (Geometry.getSectionHeight() * 100);
 
         displayedTotalHeight.bind(Bindings.multiply(totalHeight, mSectionViewRatio));
         displayedWebWidth.bind(Bindings.multiply(webWidth, mSectionViewRatio));
@@ -152,6 +153,8 @@ public class RebarCasesController implements Initializable {
 
         leftGridPaneWidth.set(maxSchemaWidth + 200);
         rightGridPaneWidth.set(Geometry.getNumSpan() * 140 + 130);
+
+        totalLength.set(0.8 * (leftGridPaneWidth.get() + rightGridPaneWidth.get()));
     }
 
     public void generateRebarSelectionCasesTable() {
@@ -213,7 +216,7 @@ public class RebarCasesController implements Initializable {
                     }
                     webCompHeight.bind(Bindings.multiply(Reinforcement.getWebCompressionHeightMap().get(columnNum),100));
                     webCompWidth.bind(webWidth);
-                    rebarVBox.getChildren().clear();
+                    crossSectionRebarVBox.getChildren().clear();
                 });
             } else {
                 double minRebarArea = Collections.min(mRebar .getTotalRebarAreaListOfSpan(spanId));
@@ -246,9 +249,44 @@ public class RebarCasesController implements Initializable {
                     rebarCaseButton.setOnAction(event -> {
 
                         RebarCutChart rebarCutChart = new RebarCutChart(getRebar(), columnNum, caseNum);
+                        double spanLength_cm = rebarCutChart.getCalculateLengthOfSpan(columnNum) * 100;
+                        double leftSupportWidth_cm = Geometry.supportWidthMap().get(columnNum) * 100;
+                        double rightSupportWidth_cm = Geometry.supportWidthMap().get(columnNum + 1) * 100;
 
-                        rebarCutChart.getSecondLayerRebarStart();
-                        rebarCutChart.getSecondLayerRebarEnd();
+                        mElevationViewRatio = totalLength.get() / (spanLength_cm + leftSupportWidth_cm + rightSupportWidth_cm);
+
+                        elevationRebarVBox.setPadding(
+                                new Insets(0,0,mCoverThickness_cm * mElevationViewRatio,leftSupportWidth_cm / 2 * mElevationViewRatio)
+                        );
+                        elevationRebarVBox.setSpacing(2 * mElevationViewRatio);
+
+                        for (int layerNum = rebarCasesList.get(caseNum).size(); layerNum > 0; layerNum--) {
+                            RebarType_Number rebarType_number = rebarCasesList.get(caseNum).get(layerNum);
+                            double rebarDiameter_cm = rebarType_number.getRebarType().getDiameter_mm()/10;
+                            double rebarLength_cm = (rebarCutChart.getSecondLayerRebarEnd() - rebarCutChart.getSecondLayerRebarStart()) * 100;
+                            double rebarLeftIndent_cm = rebarCutChart.getSecondLayerRebarStart() * 100;
+
+                            VBox thisLayerRebarVBox = new VBox();
+                            if (layerNum == 1){
+                                Line rebarLine = new Line();
+                                rebarLine.setEndX(
+                                        (spanLength_cm - leftSupportWidth_cm/2 - rightSupportWidth_cm/2) * mElevationViewRatio
+                                );
+                                rebarLine.setStroke(Paint.valueOf("red"));
+                                rebarLine.setStrokeWidth(rebarDiameter_cm);
+                                thisLayerRebarVBox.getChildren().add(rebarLine);
+                            } else {
+                                thisLayerRebarVBox.setPadding(
+                                        new Insets(0,0,0,rebarLeftIndent_cm * mElevationViewRatio)
+                                );
+                                Line rebarLine = new Line();
+                                rebarLine.setEndX(rebarLength_cm * mElevationViewRatio);
+                                rebarLine.setStroke(Paint.valueOf("red"));
+                                rebarLine.setStrokeWidth(rebarDiameter_cm);
+                                thisLayerRebarVBox.getChildren().add(rebarLine);
+                            }
+                            elevationRebarVBox.getChildren().add(thisLayerRebarVBox);
+                        }
 
                         // switch the cross section
                         setCurrentSectionNameLabel(columnNum);
@@ -262,7 +300,7 @@ public class RebarCasesController implements Initializable {
                         webCompWidth.bind(webWidth);
 
                         // add rebar to the cross section figure
-                        rebarVBox.getChildren().clear();
+                        crossSectionRebarVBox.getChildren().clear();
                         for (int layerNum = rebarCasesList.get(caseNum).size(); layerNum > 0; layerNum--){
                             RebarType_Number rebarType_number = rebarCasesList.get(caseNum).get(layerNum);
                             int numberOfRebar = rebarType_number.getNumberOfRebar();
@@ -288,7 +326,7 @@ public class RebarCasesController implements Initializable {
                                 thisLayerRebarHBox.getChildren().add(rebar);
                             }
 
-                            rebarVBox.getChildren().add(thisLayerRebarHBox);
+                            crossSectionRebarVBox.getChildren().add(thisLayerRebarHBox);
                         }
 
                     });
@@ -528,6 +566,14 @@ public class RebarCasesController implements Initializable {
 
     public DoubleProperty rightGridPaneWidthProperty() {
         return rightGridPaneWidth;
+    }
+
+    public double getTotalLength() {
+        return totalLength.get();
+    }
+
+    public DoubleProperty totalLengthProperty() {
+        return totalLength;
     }
 
     public Rebar getRebar() {

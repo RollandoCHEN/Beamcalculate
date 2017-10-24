@@ -25,7 +25,8 @@
 
          <HBox spacing="15" alignment="CENTER_RIGHT">
             <padding><Insets right="50"/></padding>
-            <Button fx:id="calculateDetailButton" text="%button.rebarCalculateTable" onAction="#showCalculateDetail" styleClass="promptText"/>
+            <Button fx:id="calculateDetailButton" text="%button.rebarCalculateTable" styleClass="promptText"
+                    onAction="#showCalculateDetail"/>
          </HBox>
       </VBox>
    </top>
@@ -95,7 +96,7 @@
                                     </StackPane.margin>
                                  </Rectangle>
 
-                                 <VBox fx:id="rebarVBox" alignment="BOTTOM_CENTER" maxWidth="${controller.displayedWebWidth}">
+                                 <VBox fx:id="crossSectionRebarVBox" alignment="BOTTOM_CENTER" maxWidth="${controller.displayedWebWidth}">
                                  </VBox>
                               </StackPane>
 
@@ -178,25 +179,14 @@
 
          <VBox alignment="CENTER">
             <StackPane>
-               <Rectangle fill="SILVER" height="100.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
-               <VBox alignment="BOTTOM_LEFT" maxWidth="600.0" spacing="3.0">
-                  <VBox fx:id="moreThanOneLayerVBox" alignment="CENTER_LEFT" maxWidth="400.0">
-                     <Line endX="400.0" stroke="RED" strokeWidth="2.0" />
-                     <padding>
-                        <Insets left="95.0" />
-                     </padding>
-                  </VBox>
-                  <VBox fx:id="firstLayerVBox">
-                     <Line endX="580.0" stroke="RED" strokeWidth="2.0" />
-                  </VBox>
+               <Rectangle  height="${controller.displayedTotalHeight}" width="${controller.totalLength}"
+                           fill="SILVER" stroke="BLACK" strokeType="INSIDE"/>
+               <VBox fx:id="elevationRebarVBox" alignment="BOTTOM_LEFT" maxWidth="${controller.totalLength}">
 
-                  <padding>
-                     <Insets bottom="5.0" left="10.0" />
-                  </padding>
                </VBox>
             </StackPane>
 
-            <GridPane alignment="CENTER" maxWidth="600.0">
+            <GridPane alignment="CENTER" maxWidth="${controller.totalLength}">
                <columnConstraints>
                   <ColumnConstraints percentWidth="50"/>
                   <ColumnConstraints percentWidth="50"/>
@@ -211,7 +201,7 @@
                </HBox>
             </GridPane>
 
-            <GridPane maxWidth="600.0">
+            <GridPane maxWidth="${controller.totalLength}">
                <columnConstraints>
                   <ColumnConstraints percentWidth="50"/>
                   <ColumnConstraints percentWidth="50"/>

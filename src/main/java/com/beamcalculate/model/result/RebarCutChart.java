@@ -312,6 +312,10 @@ public class RebarCutChart {
         mAnchorageLength_mm = anchorageLength_mm;
     }
 
+    public double getCalculateLengthOfSpan(int spanId){
+        return mSpanMoment.getCalculateSpanLengthMap().get(spanId);
+    }
+
     public double getSecondLayerRebarEnd() {
         return mSecondLayerRebarEnd;
     }
