@@ -588,7 +588,7 @@ public class MomentLineChart {
     public static double getSpanLocalX(int spanId, double globalX, String method) {
         double spanLocalX = globalX;
         if (TROIS_MOMENT.getMethodName().equals(method)) {
-            for (int preSpanId = spanId - 1; preSpanId >= 0; preSpanId--) {
+            for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {
                     preX = Geometry.supportWidthMap().get(1) / 2;
@@ -598,7 +598,7 @@ public class MomentLineChart {
                 spanLocalX -= preX;
             }
         } else {
-            for (int preSpanId = spanId - 1; preSpanId >= 0; preSpanId--) {
+            for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preSpanLength = 0;
                 double preSupportLength;
                 if (preSpanId == 0) {

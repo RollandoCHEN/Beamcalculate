@@ -179,7 +179,7 @@
 
          <VBox alignment="CENTER">
             <StackPane>
-               <Rectangle  height="${controller.displayedTotalHeight}" width="${controller.totalLength}"
+               <Rectangle  height="${controller.displayedElevationTotalHeight}" width="${controller.totalLength}"
                            fill="SILVER" stroke="BLACK" strokeType="INSIDE"/>
                <VBox fx:id="elevationRebarVBox" alignment="BOTTOM_LEFT" maxWidth="${controller.totalLength}">
 
@@ -193,11 +193,11 @@
                </columnConstraints>
                <HBox alignment="TOP_LEFT"
                      GridPane.columnIndex="0" GridPane.rowIndex="0">
-                  <Rectangle fill="SILVER" height="30.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                  <Rectangle fill="SILVER" height="40.0" stroke="BLACK" strokeType="INSIDE" width="${controller.displayedLeftSupportWidth}" />
                </HBox>
                <HBox alignment="TOP_RIGHT"
                      GridPane.columnIndex="1" GridPane.rowIndex="0">
-                  <Rectangle fill="SILVER" height="30.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                  <Rectangle fill="SILVER" height="40.0" stroke="BLACK" strokeType="INSIDE" width="${controller.displayedRightSupportWidth}" />
                </HBox>
             </GridPane>
 

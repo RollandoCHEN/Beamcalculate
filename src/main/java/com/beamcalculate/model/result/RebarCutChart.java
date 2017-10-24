@@ -179,8 +179,8 @@ public class RebarCutChart {
                         stackPane.setVisible(false);
                         numberData.setNode(stackPane);
 
-                        secondLayerRebarCutPointsList.add(xValue);
                     } else {
+                        secondLayerRebarCutPointsList.add(xValue);
                         final XYChart.Data<Number, Number> firstLayerIntersectionData = new XYChart.Data<>(xValue, getFirstLayerMoment());
                         firstLayerIntersectionData.setNode(new HoveredThresholdNode(xValue, xValue, getFirstLayerMoment()));
                         global.getData().add(firstLayerIntersectionData);
