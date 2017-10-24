@@ -118,13 +118,15 @@ public class SupportMomentForfaitaire extends SupportMoment{
     }
 
     private void verifyConditions(Geometry geometry, Load load){
-        boolean liveLoadCond = load.getQMNm() / 6 < 0.005;
-        if (!liveLoadCond){
-            mInvalidateConditions.add(Main.getBundleText("text.conditionA"));
-        }
+        // TODO To add verification for the live load on sol q < 5kN/m²
+        boolean liveLoadCond = true;
+//        boolean liveLoadCond = load.getQMNm() / 6 < 0.005;
+//        if (!liveLoadCond){
+//            mInvalidateConditions.add(Main.getBundleText("text.conditionA"));
+//        }
         boolean live_deadLoadCond = load.getQMNm() < 2*load.getGMNm();
         if(!live_deadLoadCond){
-            mInvalidateConditions.add(Main.getBundleText("text.conditionB"));
+            mInvalidateConditions.add(Main.getBundleText("text.conditionA"));
         }
         boolean spanLengthCond = getSpanLengthCondition(geometry);
         if (!spanLengthCond){
