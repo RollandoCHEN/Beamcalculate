@@ -231,7 +231,7 @@ public class MomentLineChart {
                 // 60 is the padding in the grid pane, around the left and right grid pane
                 double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
 
-                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 700);
+                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 850);
 
                 Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
                 Stage rebarSelectionStage = new Stage();
@@ -512,31 +512,9 @@ public class MomentLineChart {
 
             double spanLength = eluCombination.getSpanMomentFunction().getCalculateSpanLengthMap().get(spanId);
             double spanLocalX = 0;
-            double globalX = 0;
 
-            if (eluCombination.getSpanMomentFunction().getMethod().equals(TROIS_MOMENT.getMethodName())) {
-                for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
-                    double preX;
-                    if (preSpanId == 0) {
-                        preX = Geometry.supportWidthMap().get(1) / 2;
-                    } else {
-                        preX = eluCombination.getSpanMomentFunction().getCalculateSpanLengthMap().get(preSpanId);
-                    }
-                    globalX += preX;
-                }
-            } else {
-                for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
-                    double preSpanLength = 0;
-                    double preSupportLength;
-                    if (preSpanId == 0) {
-                        preSupportLength = Geometry.supportWidthMap().get(1);
-                    } else {
-                        preSpanLength = Geometry.spansLengthMap().get(preSpanId);
-                        preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
-                    }
-                    globalX += (preSpanLength + preSupportLength);
-                }
-            }
+            String calculateMethod = eluCombination.getSpanMomentFunction().getMethod();
+            double globalX = getGlobalX(spanId, spanLocalX, calculateMethod);
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
                 double moment = -eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);         // negative just because can't inverse the Y axis to show the span moment underside of 0 axis
@@ -558,17 +536,7 @@ public class MomentLineChart {
         spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) -> {
             double spanLength = Geometry.getEffectiveSpansLengthMap().get(spanId);
             double spanLocalX = 0;
-            double globalX = 0;
-
-            for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
-                double preX;
-                if (preSpanId == 0) {
-                    preX = Geometry.supportWidthMap().get(1) / 2;
-                } else {
-                    preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
-                }
-                globalX += preX;
-            }
+            double globalX = getGlobalX(spanId, spanLocalX, TROIS_MOMENT.getMethodName());
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
                 double moment = -spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
@@ -585,6 +553,63 @@ public class MomentLineChart {
                 + ultimateCase.toString().toLowerCase())
                 + " - "
                 + TROIS_MOMENT_R.getMethodName());
+    }
+
+    public static double getGlobalX(int spanId, double spanLocalX, String method) {
+        double globalX = spanLocalX;
+        if (TROIS_MOMENT.getMethodName().equals(method)) {
+            for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
+                double preX;
+                if (preSpanId == 0) {
+                    preX = Geometry.supportWidthMap().get(1) / 2;
+                } else {
+                    preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
+                }
+                globalX += preX;
+            }
+        } else {
+            for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
+                double preSpanLength = 0;
+                double preSupportLength;
+                if (preSpanId == 0) {
+                    preSupportLength = Geometry.supportWidthMap().get(1);
+                } else {
+                    preSpanLength = Geometry.spansLengthMap().get(preSpanId);
+                    preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
+                }
+                globalX += (preSpanLength + preSupportLength);
+            }
+        }
+        return globalX;
+    }
+
+    // TODO Simplify this method by removing spanId parameter
+    public static double getSpanLocalX(int spanId, double globalX, String method) {
+        double spanLocalX = globalX;
+        if (TROIS_MOMENT.getMethodName().equals(method)) {
+            for (int preSpanId = spanId - 1; preSpanId >= 0; preSpanId--) {
+                double preX;
+                if (preSpanId == 0) {
+                    preX = Geometry.supportWidthMap().get(1) / 2;
+                } else {
+                    preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
+                }
+                spanLocalX -= preX;
+            }
+        } else {
+            for (int preSpanId = spanId - 1; preSpanId >= 0; preSpanId--) {
+                double preSpanLength = 0;
+                double preSupportLength;
+                if (preSpanId == 0) {
+                    preSupportLength = Geometry.supportWidthMap().get(1);
+                } else {
+                    preSpanLength = Geometry.spansLengthMap().get(preSpanId);
+                    preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
+                }
+                spanLocalX -= (preSpanLength + preSupportLength);
+            }
+        }
+        return spanLocalX;
     }
 
 

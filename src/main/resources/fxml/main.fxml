@@ -158,7 +158,7 @@
 
             <HBox spacing="15.0" alignment="BOTTOM_RIGHT">
                 <Button fx:id="graphGenerate_button" onAction="#GenerateGraph" text="%button.generateEnvelopCurve" disable="true"/>
-                <Button onAction="#DEBUG" text="DEBUG" />
+                <!--<Button onAction="#DEBUG" text="DEBUG" />-->
             </HBox>
         </VBox>
     </bottom>
