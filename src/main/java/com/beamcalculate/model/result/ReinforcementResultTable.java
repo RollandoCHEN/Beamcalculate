@@ -74,10 +74,6 @@ public class ReinforcementResultTable {
         mResultTableStage.setScene(scene);
     }
 
-    public void showStage(){
-        mResultTableStage.show();
-    }
-
     // TODO It's better to transfer these VBox, HBox to a GridPane
     private VBox getParamNameVBox(Reinforcement reinforcement, String string){
         VBox paramNameVBox = new VBox();
@@ -167,5 +163,9 @@ public class ReinforcementResultTable {
             paramValuesHBox.getChildren().add(paramValueVBox);
         });
         return paramValuesHBox;
+    }
+
+    public Stage getStage() {
+        return mResultTableStage;
     }
 }

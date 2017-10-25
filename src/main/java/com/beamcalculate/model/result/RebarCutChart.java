@@ -2,6 +2,7 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.enums.MyMethods;
+import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
@@ -10,16 +11,21 @@ import com.beamcalculate.model.entites.Geometry;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +45,14 @@ public class RebarCutChart {
 
     private NumberAxis mXAxis;
     private NumberAxis mYAxis;
+    private double mSecondLayerRebarEnd;
+    private double mSecondLayerRebarStart;
+
+    private Scene mScene;
 
     public RebarCutChart(Rebar rebar, int spanId, int caseNum) {
         mSpanMoment = rebar.getReinforcement().getSpanMomentFunction();
+        String calculateMethod = mSpanMoment.getMethod();
 
         mXAxis = MomentLineChart.defineAxis(mSpanMoment).get(0);
         mYAxis = MomentLineChart.defineAxis(mSpanMoment).get(1);
@@ -49,7 +60,7 @@ public class RebarCutChart {
         XYChart.Series<Number, Number> maxSeries = new XYChart.Series<>();
         XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
-        if (mSpanMoment.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
+        if (calculateMethod.equals(TROIS_MOMENT_R.getMethodName())) {
             MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
             MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, minSeries);
 
@@ -110,8 +121,10 @@ public class RebarCutChart {
                 break;
             }
             case 2 : {
+                List<Double> secondLayerRebarCutPointsList = new ArrayList<>();
+
                 double secondLayerRebarDiameter = rebar.getRebarCasesListOfSpan(spanId).get(caseNum).get(2).getRebarType().getDiameter_mm();
-                setAnchorageLength_mm(Math.max(40 * secondLayerRebarDiameter, getAnchorageLength_mm()));
+                setAnchorageLength_mm(40 * secondLayerRebarDiameter);
 
                 setFirstLayerMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
                 setCumulativeMoment(getFirstLayerMoment() + layer_rebarArea_map.get(2) * rebarAreaMomentRatio);
@@ -163,14 +176,18 @@ public class RebarCutChart {
                     double xValue = numberData.getXValue().doubleValue();
                     double yValue = numberData.getYValue().doubleValue();
 
-                    // TODO To find a more reliable way to located the intersection point
                     double tolerance = Math.abs(rebar.getReinforcement().getSpanReinforceParam().get(spanId).get(a_M) / 170);
+
+                    // TODO Find a more reliable way to located the intersection point  !!! URGENT !!!
                     if (Math.abs(MyMethods.round(yValue, 4) - MyMethods.round(getFirstLayerMoment(), 4))
-                            > tolerance){
+                            > tolerance)
+                    {
                         StackPane stackPane = new StackPane();
                         stackPane.setVisible(false);
                         numberData.setNode(stackPane);
+
                     } else {
+                        secondLayerRebarCutPointsList.add(xValue);
                         final XYChart.Data<Number, Number> firstLayerIntersectionData = new XYChart.Data<>(xValue, getFirstLayerMoment());
                         firstLayerIntersectionData.setNode(new HoveredThresholdNode(xValue, xValue, getFirstLayerMoment()));
                         global.getData().add(firstLayerIntersectionData);
@@ -200,20 +217,54 @@ public class RebarCutChart {
                     }
                 });
                 global.getData().add(endData);
+
+                if (secondLayerRebarCutPointsList.isEmpty()){
+                    mSecondLayerRebarStart = 0;
+                    mSecondLayerRebarEnd = 0;
+                    System.out.println("No intersection points with second layer moment line !!!");
+
+                } else {
+                    mSecondLayerRebarStart = MomentLineChart.getSpanLocalX(spanId, Collections.min(secondLayerRebarCutPointsList), calculateMethod);
+                    mSecondLayerRebarEnd = MomentLineChart.getSpanLocalX(spanId, Collections.max(secondLayerRebarCutPointsList), calculateMethod);
+                }
             }
         }
 
+        Label titleSpanLabel = new Label(Main.getBundleText("label.span") + " " + spanId + " :");
+        Label titleRebarCaseLabel = new Label();
+        titleSpanLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
+        titleRebarCaseLabel.setText(getRebarCaseString(rebarCasesList, caseNum));
+        titleRebarCaseLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: red;");
+
+        HBox titleHBox = new HBox(titleSpanLabel, titleRebarCaseLabel);
+        titleHBox.setSpacing(10);
+        titleHBox.setAlignment(Pos.CENTER);
+
         BorderPane borderPane = new BorderPane();
+        borderPane.setTop(titleHBox);
         borderPane.setCenter(lineChart);
         borderPane.setPadding(new Insets(20, 20, 20, 20));
 
-        Stage rebarChartStage = new Stage();
-        rebarChartStage.setTitle(Main.getBundleText("window.title.rebarCut"));
-        rebarChartStage.getIcons().add(new Image("image/chart.png"));
+        mScene = new Scene(borderPane, 800, 800);
+    }
 
-        Scene scene = new Scene(borderPane, 800, 800);
-        rebarChartStage.setScene(scene);
-        rebarChartStage.show();
+    private String getRebarCaseString(List<Map<Integer, RebarType_Number>> rebarCasesList, int caseNum) {
+        StringBuilder buttonString = new StringBuilder();
+        int lastLayer = rebarCasesList.get(caseNum).size();
+        for (int layerNum = lastLayer; layerNum > 0; layerNum--){
+            RebarType_Number rebarType_number = rebarCasesList.get(caseNum).get(layerNum);
+
+            if (layerNum != lastLayer){
+                buttonString.append("\n");
+            }
+            String rebarTypeName = rebarType_number.getRebarType().name();
+            int numberOfRebar = rebarType_number.getNumberOfRebar();
+            buttonString.append(MyMethods.getOrdinalNumber(layerNum))
+                    .append(Main.getBundleText("label.steelRebarLayer"))
+                    .append(" : ").append(numberOfRebar).append(rebarTypeName);
+        }
+        return buttonString.toString();
     }
 
     private void addLimitsToLineChart(LineChart<Number, Number> lineChart, double startPoint, double endPoint) {
@@ -272,6 +323,10 @@ public class RebarCutChart {
         return globalX;
     }
 
+    public Scene getScene() {
+        return mScene;
+    }
+
     public double getFirstLayerMoment() {
         return mFirstLayerMoment;
     }
@@ -294,5 +349,17 @@ public class RebarCutChart {
 
     public void setAnchorageLength_mm(double anchorageLength_mm) {
         mAnchorageLength_mm = anchorageLength_mm;
+    }
+
+    public double getCalculateLengthOfSpan(int spanId){
+        return mSpanMoment.getCalculateSpanLengthMap().get(spanId);
+    }
+
+    public double getSecondLayerRebarEnd() {
+        return mSecondLayerRebarEnd;
+    }
+
+    public double getSecondLayerRebarStart() {
+        return mSecondLayerRebarStart;
     }
 }

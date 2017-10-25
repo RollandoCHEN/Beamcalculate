@@ -1,9 +1,9 @@
 .label{
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
 }
 
 .label.title{
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
@@ -19,4 +19,9 @@
 
 .label-black-bold{
     -fx-font-weight: bold;
+}
+
+.button.promptText{
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
 }

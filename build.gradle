@@ -1,4 +1,4 @@
-group 'com.constructioncalculate.beam'
+group 'com.beamcalculate'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
