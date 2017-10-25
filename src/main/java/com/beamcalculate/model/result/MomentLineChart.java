@@ -231,7 +231,7 @@ public class MomentLineChart {
                 // 60 is the padding in the grid pane, around the left and right grid pane
                 double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
 
-                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 950);
+                double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 970);
 
                 Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
                 Stage rebarSelectionStage = new Stage();

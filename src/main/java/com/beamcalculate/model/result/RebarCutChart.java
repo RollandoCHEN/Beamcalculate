@@ -2,6 +2,7 @@ package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
 import com.beamcalculate.enums.MyMethods;
+import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
@@ -10,13 +11,17 @@ import com.beamcalculate.model.entites.Geometry;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -225,11 +230,41 @@ public class RebarCutChart {
             }
         }
 
+        Label titleSpanLabel = new Label(Main.getBundleText("label.span") + " " + spanId + " :");
+        Label titleRebarCaseLabel = new Label();
+        titleSpanLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
+        titleRebarCaseLabel.setText(getRebarCaseString(rebarCasesList, caseNum));
+        titleRebarCaseLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: red;");
+
+        HBox titleHBox = new HBox(titleSpanLabel, titleRebarCaseLabel);
+        titleHBox.setSpacing(10);
+        titleHBox.setAlignment(Pos.CENTER);
+
         BorderPane borderPane = new BorderPane();
+        borderPane.setTop(titleHBox);
         borderPane.setCenter(lineChart);
         borderPane.setPadding(new Insets(20, 20, 20, 20));
 
         mScene = new Scene(borderPane, 800, 800);
+    }
+
+    private String getRebarCaseString(List<Map<Integer, RebarType_Number>> rebarCasesList, int caseNum) {
+        StringBuilder buttonString = new StringBuilder();
+        int lastLayer = rebarCasesList.get(caseNum).size();
+        for (int layerNum = lastLayer; layerNum > 0; layerNum--){
+            RebarType_Number rebarType_number = rebarCasesList.get(caseNum).get(layerNum);
+
+            if (layerNum != lastLayer){
+                buttonString.append("\n");
+            }
+            String rebarTypeName = rebarType_number.getRebarType().name();
+            int numberOfRebar = rebarType_number.getNumberOfRebar();
+            buttonString.append(MyMethods.getOrdinalNumber(layerNum))
+                    .append(Main.getBundleText("label.steelRebarLayer"))
+                    .append(" : ").append(numberOfRebar).append(rebarTypeName);
+        }
+        return buttonString.toString();
     }
 
     private void addLimitsToLineChart(LineChart<Number, Number> lineChart, double startPoint, double endPoint) {
