@@ -25,7 +25,7 @@
 
          <HBox spacing="15" alignment="CENTER_RIGHT">
             <padding><Insets right="50"/></padding>
-            <Button fx:id="calculateDetailButton" text="%button.rebarCalculateTable" styleClass="promptText"
+            <Button fx:id="rebarAreaDetailButton" text="%button.rebarAreaCalculate" styleClass="promptText"
                     onAction="#showCalculateDetail"/>
          </HBox>
       </VBox>
@@ -177,77 +177,111 @@
             </GridPane>
          </GridPane>
 
-         <VBox alignment="CENTER">
-            <StackPane>
-               <Rectangle  height="${controller.displayedElevationTotalHeight}" width="${controller.totalLength}"
-                           fill="SILVER" stroke="BLACK" strokeType="INSIDE"/>
-               <VBox fx:id="elevationRebarVBox" alignment="BOTTOM_LEFT" maxWidth="${controller.totalLength}">
+         <BorderPane>
+             <top>
+                 <HBox spacing="15" alignment="CENTER_RIGHT">
+                     <padding><Insets right="50" bottom="15"/></padding>
+                     <Button fx:id="elevationDetailButton" disable="true"
+                             text="%button.elevationCalculate" styleClass="promptText"
+                             onAction="#showElevationDetail"/>
+                 </HBox>
+             </top>
 
-               </VBox>
-            </StackPane>
+             <center>
+                 <VBox alignment="CENTER">
+                     <StackPane>
+                         <Rectangle  height="${controller.displayedElevationTotalHeight}" width="${controller.totalLength}"
+                                     fill="SILVER" stroke="BLACK" strokeType="INSIDE"/>
+                         <VBox fx:id="elevationRebarVBox" alignment="BOTTOM_LEFT" maxWidth="${controller.totalLength}">
 
-            <GridPane alignment="CENTER" maxWidth="${controller.totalLength}">
-               <columnConstraints>
-                  <ColumnConstraints percentWidth="50"/>
-                  <ColumnConstraints percentWidth="50"/>
-               </columnConstraints>
-               <HBox alignment="TOP_LEFT"
-                     GridPane.columnIndex="0" GridPane.rowIndex="0">
-                  <Rectangle fill="SILVER" height="40.0" stroke="BLACK" strokeType="INSIDE" width="${controller.displayedLeftSupportWidth}" />
-               </HBox>
-               <HBox alignment="TOP_RIGHT"
-                     GridPane.columnIndex="1" GridPane.rowIndex="0">
-                  <Rectangle fill="SILVER" height="40.0" stroke="BLACK" strokeType="INSIDE" width="${controller.displayedRightSupportWidth}" />
-               </HBox>
-            </GridPane>
+                         </VBox>
+                     </StackPane>
 
-            <GridPane maxWidth="${controller.totalLength}">
-               <columnConstraints>
-                  <ColumnConstraints percentWidth="50"/>
-                  <ColumnConstraints percentWidth="50"/>
-               </columnConstraints>
+                     <GridPane alignment="CENTER" maxWidth="${controller.totalLength}">
+                         <columnConstraints>
+                             <ColumnConstraints percentWidth="50"/>
+                             <ColumnConstraints percentWidth="50"/>
+                         </columnConstraints>
+                         <HBox alignment="TOP_LEFT"
+                               GridPane.columnIndex="0" GridPane.rowIndex="0">
+                             <Rectangle fill="SILVER" height="40.0" stroke="BLACK" strokeType="INSIDE" width="${controller.displayedLeftSupportWidth}" />
+                         </HBox>
+                         <HBox alignment="TOP_RIGHT"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0">
+                             <Rectangle fill="SILVER" height="40.0" stroke="BLACK" strokeType="INSIDE" width="${controller.displayedRightSupportWidth}" />
+                         </HBox>
+                     </GridPane>
 
-               <HBox alignment="CENTER_LEFT"
-                     GridPane.columnIndex="0" GridPane.rowIndex="0">
-                  <Line layoutY="-5.0" startY="5.0" />
-                  <VBox alignment="CENTER">
-                     <Label text="95" />
-                     <Line endX="95.0" />
-                     <Label text="  " />
-                  </VBox>
-                  <Line startY="5.0" />
+                     <GridPane fx:id="rebarDimensionAnnoGridPane" alignment="CENTER">
+                         <columnConstraints>
+                             <ColumnConstraints/>
+                             <ColumnConstraints/>
+                             <ColumnConstraints/>
+                         </columnConstraints>
 
-                  <padding>
-                     <Insets left="10.0" />
-                  </padding>
-               </HBox>
+                         <HBox fx:id="rebarLeftIndentHBox" alignment="CENTER_LEFT" visible="false"
+                               GridPane.columnIndex="0" GridPane.rowIndex="0">
+                             <Line layoutY="-5.0" startY="5.0" />
+                             <VBox alignment="CENTER">
+                                 <Label text="95" />
+                                 <Line endX="${controller.displayedRebarLeftIndent}" />
+                                 <Label text="  " />
+                             </VBox>
+                             <Line startY="5.0" />
+                         </HBox>
 
-               <HBox alignment="CENTER_RIGHT"
-                     GridPane.columnIndex="1" GridPane.rowIndex="0">
-                  <Line layoutY="-5.0" startY="5.0" />
-                  <VBox alignment="CENTER">
-                     <Label text="85" />
-                     <Line endX="85.0" />
-                     <Label text="  " />
-                  </VBox>
-                  <Line startY="5.0" />
+                         <HBox fx:id="rebarLengthHBox" alignment="CENTER" visible="false"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0">
+                             <VBox alignment="CENTER">
+                                 <Label text="95" />
+                                 <Line endX="${controller.displayedRebarLength}" />
+                                 <Label text="  " />
+                             </VBox>
+                         </HBox>
 
-                  <padding>
-                     <Insets right="10.0" />
-                  </padding>
-               </HBox>
-            </GridPane>
+                         <HBox fx:id="rebarRightIndentHBox" alignment="CENTER_RIGHT" visible="false"
+                               GridPane.columnIndex="2" GridPane.rowIndex="0">
+                             <Line layoutY="-5.0" startY="5.0" />
+                             <VBox alignment="CENTER">
+                                 <Label text="85" />
+                                 <Line endX="${controller.displayedRebarRightIndent}" />
+                                 <Label text="  " />
+                             </VBox>
+                             <Line startY="5.0" />
+                         </HBox>
+                     </GridPane>
 
-            <HBox alignment="CENTER">
-               <Line layoutY="-5.0" startY="5.0" />
-               <VBox alignment="CENTER">
-                  <Label text="600" />
-                  <Line endX="600.0" />
-                  <Label text="  " />
-               </VBox>
-               <Line startY="5.0" />
-            </HBox>
-         </VBox>
+                     <HBox alignment="CENTER">
+                         <HBox alignment="CENTER">
+                             <Line layoutY="-5.0" startY="5.0" />
+                             <VBox alignment="CENTER">
+                                 <Label text="20" />
+                                 <Line endX="${controller.displayedLeftSupportWidth}" />
+                                 <Label text="  " />
+                             </VBox>
+                             <Line startY="5.0" />
+                         </HBox>
+                         <HBox alignment="CENTER">
+                             <VBox alignment="CENTER">
+                                 <Label text="600" />
+                                 <Line endX="${controller.displayedSpanLength}" />
+                                 <Label text="  " />
+                             </VBox>
+                         </HBox>
+                         <HBox alignment="CENTER">
+                             <Line layoutY="-5.0" startY="5.0" />
+                             <VBox alignment="CENTER">
+                                 <Label text="20" />
+                                 <Line endX="${controller.displayedRightSupportWidth}" />
+                                 <Label text="  " />
+                             </VBox>
+                             <Line startY="5.0" />
+                         </HBox>
+                     </HBox>
+                 </VBox>
+             </center>
+         </BorderPane>
+
       </VBox>
    </center>
 

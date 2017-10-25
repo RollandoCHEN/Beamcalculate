@@ -20,3 +20,8 @@
 .label-black-bold{
     -fx-font-weight: bold;
 }
+
+.button.promptText{
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+}
