@@ -3,6 +3,7 @@ package com.beamcalculate;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -14,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,6 +35,20 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(borderPane, 1020, 930));
         primaryStage.getIcons().add(new Image("image/main.png"));
         primaryStage.setResizable(false);
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle(Main.getBundleText("window.title.love"));
+//                alert.setHeaderText(null);
+//                alert.setContentText(Main.getBundleText("message.love"));
+//                alert.setGraphic(new ImageView("image/my love.png"));
+//                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//                stage.getIcons().add(new Image("image/love.png"));
+//                alert.showAndWait();
+            }
+        });
+
         primaryStage.show();
     }
 
@@ -95,15 +111,6 @@ public class Main extends Application {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//        alert.setTitle(Main.getBundleText("window.title.love"));
-//        alert.setHeaderText(null);
-//        alert.setContentText(Main.getBundleText("message.love"));
-//        alert.setGraphic(new ImageView("image/my love.png"));
-//        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-//        stage.getIcons().add(new Image("image/love.png"));
-//        alert.showAndWait();
     }
 
     public static class AppSettings {
