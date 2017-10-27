@@ -241,8 +241,9 @@ public class MainController implements Initializable {
             missingParamWarningSet.forEach (missingParameterName -> missingParamNamesStringBuffer.append("\n- " + missingParameterName));
             String infoMessage = Main.getBundleText("message.inputWarning") + missingParamNamesStringBuffer;
             alert.setContentText(infoMessage);
+            alert.setGraphic(new ImageView("image/warning-icon 64x64.png"));
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.getIcons().add(new Image("image/warning-icon.png"));
+            stage.getIcons().add(new Image("image/warning-icon 256x256.png"));
             alert.showAndWait();
             missingParamWarningSet.clear();
         }

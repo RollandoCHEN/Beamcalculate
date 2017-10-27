@@ -96,14 +96,14 @@ public class Main extends Application {
             ex.printStackTrace();
         }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(Main.getBundleText("window.title.love"));
-        alert.setHeaderText(null);
-        alert.setContentText(Main.getBundleText("message.love"));
-        alert.setGraphic(new ImageView("image/my love.png"));
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("image/love.png"));
-        alert.showAndWait();
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle(Main.getBundleText("window.title.love"));
+//        alert.setHeaderText(null);
+//        alert.setContentText(Main.getBundleText("message.love"));
+//        alert.setGraphic(new ImageView("image/my love.png"));
+//        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//        stage.getIcons().add(new Image("image/love.png"));
+//        alert.showAndWait();
     }
 
     public static class AppSettings {
