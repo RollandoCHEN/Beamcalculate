@@ -42,7 +42,7 @@ public class Main extends Application {
 //                alert.setTitle(Main.getBundleText("window.title.love"));
 //                alert.setHeaderText(null);
 //                alert.setContentText(Main.getBundleText("message.love"));
-//                alert.setGraphic(new ImageView("image/my love.png"));
+//                alert.setGraphic(new ImageView("image/my_love.png"));
 //                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 //                stage.getIcons().add(new Image("image/love.png"));
 //                alert.showAndWait();
