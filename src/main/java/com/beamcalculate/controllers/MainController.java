@@ -27,6 +27,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
@@ -104,7 +105,8 @@ public class MainController implements Initializable {
     }
 
     private BooleanBinding turnTextFieldsIsEmptyGridToBooleanBinding(GridPane gridPane){
-//    由于foreach的lambda中只能出现final的参数，orConjunction = orConjunction.or(...)不能出现，所以用了for (Node node : gridPane.getChildren())
+//      foreach lambda doesn't accept non-final parameter，orConjunction = orConjunction.or(...) could not be used
+//      so I used for (Node node : gridPane.getChildren())
         BooleanBinding orConjunction = Bindings.isEmpty(permanentLoad_tf.textProperty()).or(Bindings.isEmpty(variableLoad_tf.textProperty()));
         for (Node node : gridPane.getChildren()){
             TextInputControl textInputNode = (TextInputControl)node;
@@ -239,6 +241,8 @@ public class MainController implements Initializable {
             missingParamWarningSet.forEach (missingParameterName -> missingParamNamesStringBuffer.append("\n- " + missingParameterName));
             String infoMessage = Main.getBundleText("message.inputWarning") + missingParamNamesStringBuffer;
             alert.setContentText(infoMessage);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("image/warning-icon.png"));
             alert.showAndWait();
             missingParamWarningSet.clear();
         }

@@ -5,10 +5,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -93,6 +95,15 @@ public class Main extends Application {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(Main.getBundleText("window.title.love"));
+        alert.setHeaderText(null);
+        alert.setContentText(Main.getBundleText("message.love"));
+        alert.setGraphic(new ImageView("image/my love.png"));
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image("image/love.png"));
+        alert.showAndWait();
     }
 
     public static class AppSettings {
