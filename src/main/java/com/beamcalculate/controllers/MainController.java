@@ -102,6 +102,8 @@ public class MainController implements Initializable {
 
         notOnTSection.bind(Bindings.not(onTSection_chkb.selectedProperty()));
         onTSection.bind(onTSection_chkb.selectedProperty());
+
+
     }
 
     private BooleanBinding turnTextFieldsIsEmptyGridToBooleanBinding(GridPane gridPane){
