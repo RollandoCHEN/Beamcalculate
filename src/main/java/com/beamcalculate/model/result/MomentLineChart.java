@@ -20,6 +20,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -229,7 +231,7 @@ public class MomentLineChart {
                     maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
                 }
                 // 60 is the padding in the grid pane, around the left and right grid pane
-                double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
+                double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 80;
 
                 double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 970);
 
@@ -238,7 +240,15 @@ public class MomentLineChart {
                 rebarSelectionStage.setTitle(Main.getBundleText("window.title.rebarChoices"));
                 rebarSelectionStage.getIcons().add(new Image("image/rebar.png"));
                 rebarSelectionStage.setScene(rebarSelectionScene);
-                rebarSelectionStage.setResizable(false);
+                rebarSelectionStage.setResizable(true);
+
+                Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+                if (primaryScreenBounds.getHeight() < rebarSelectionStage.getScene().getHeight()){
+                    rebarSelectionStage.setHeight(primaryScreenBounds.getHeight());
+                }
+                if (primaryScreenBounds.getWidth() < rebarSelectionStage.getScene().getWidth()){
+                    rebarSelectionStage.setHeight(primaryScreenBounds.getWidth());
+                }
 
                 rebarSelectionStage.show();
 
