@@ -1,8 +1,8 @@
 package com.beamcalculate.controllers;
 
 import com.beamcalculate.Main;
-import com.beamcalculate.enums.MyMethods;
-import com.beamcalculate.model.RebarType_Number;
+import com.beamcalculate.custom.MyMethods;
+import com.beamcalculate.custom.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
@@ -292,7 +292,7 @@ public class RebarCasesController implements Initializable {
                         rebarAreaLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-font-style: italic;");
                     }
 
-                    //add button and area label to the span rebar selection grid pane
+                    //add button and area label to the span_function rebar selection grid pane
                     VBox vBox = new VBox(rebarCaseButton, rebarAreaLabel);
                     spanRebarSelectionGridPane.add(vBox, columnNum, caseNum + 1);
 

@@ -3,16 +3,16 @@ package com.beamcalculate;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,22 +28,26 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         borderPane.setTop(createMenuBar());
         loadView(Locale.getDefault());
+        ScrollPane scrollPane = new ScrollPane(borderPane);
+        scrollPane.setFitToWidth(true);
         primaryStage.titleProperty().bind(windowTitle);
-        primaryStage.setScene(new Scene(borderPane, 1020, 930));
+        primaryStage.setScene(new Scene(scrollPane, 1050, 950));
         primaryStage.getIcons().add(new Image("image/main.png"));
-        primaryStage.setResizable(false);
 
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent we) {
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        if (primaryScreenBounds.getHeight() < primaryStage.getScene().getHeight()){
+            primaryStage.setHeight(primaryScreenBounds.getHeight());
+        }
+
+        primaryStage.setOnCloseRequest(we -> {
 //                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                alert.setTitle(Main.getBundleText("window.title.love"));
+//                alert.setTitle(Main.getBundleText("info.title.love"));
 //                alert.setHeaderText(null);
-//                alert.setContentText(Main.getBundleText("message.love"));
-//                alert.setGraphic(new ImageView("image/my love.png"));
+//                alert.setContentText(Main.getBundleText("info.content.love"));
+//                alert.setGraphic(new ImageView("image/my_love.png"));
 //                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 //                stage.getIcons().add(new Image("image/love.png"));
 //                alert.showAndWait();
-            }
         });
 
         primaryStage.show();

@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.support;
+package com.beamcalculate.model.calculate.support_moment;
 
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
@@ -14,13 +14,13 @@ public class SupportMomentCaquot extends SupportMoment {
     private final Geometry mGeometry;
     private Map<Integer, Double> mReducedSpansLengthMap = new HashMap();
     private double mReduceCoef;
-    private boolean conditionsMatched;
+    private CaquotReductionConditionVerifier conditionVerifier;
 
     public SupportMomentCaquot(Geometry geometry, Load load){
         mGeometry = geometry;
+        conditionVerifier = new CaquotReductionConditionVerifier(load);
 
-        verifyConditions(load);
-        if (conditionsMatched){
+        if (conditionVerifier.isVerified()){
             mReduceCoef = 2.0/3.0;
         }else {
             mReduceCoef = 1.0;
@@ -36,7 +36,7 @@ public class SupportMomentCaquot extends SupportMoment {
             mSupportMomentMap.put(i+1, loadCaseMomentMap);
         }
 
-        // calculate reduced length for each span
+        // calculate reduced length for each span_function
 
         geometry.spansLengthMap().forEach((k, v)->{
             if (k ==1 || k ==geometry.getNumSpan()) {
@@ -46,7 +46,7 @@ public class SupportMomentCaquot extends SupportMoment {
             }
         });
 
-        // calculate moment of support
+        // calculate moment of support_moment
 
         mSupportMomentMap.forEach((supportId, loadCaseMomentMap)->{
             if (supportId==1||supportId== mSupportMomentMap.size()){
@@ -84,14 +84,8 @@ public class SupportMomentCaquot extends SupportMoment {
 
     }
 
-    private void verifyConditions(Load load){
-        boolean liveLoadCond = load.getQMNm() / 6 < 0.005;
-        boolean live_deadLoadCond = load.getQMNm() < 2*load.getGMNm();
-        conditionsMatched = liveLoadCond && live_deadLoadCond;
-    }
-
     private Double caquotFormula(Double loadL, Double loadR, Double lengthL, Double lengthR){
-        return -(loadL*Math.pow(lengthL, 3)+loadR*Math.pow(lengthR, 3))/(8.5*(lengthL+lengthR));
+        return -(loadL * Math.pow(lengthL, 3) + loadR * Math.pow(lengthR, 3)) / (8.5 * (lengthL + lengthR));
     }
 
     private Double getLeftSpanReducedLength(Integer supportId){
@@ -100,14 +94,6 @@ public class SupportMomentCaquot extends SupportMoment {
 
     private Double getRightSpanReducedLength(Integer supportId){
         return mReducedSpansLengthMap.getOrDefault(supportId, 0.0);
-    }
-
-
-    public void printSupportMomentMap(){
-        mSupportMomentMap.forEach((supportId, loadCaseMomentMap)->{
-            System.out.printf("For the support %d:\n", supportId);
-            loadCaseMomentMap.forEach((key, value)-> System.out.printf("In the load case %d, the moment is %.4f\n",key, value));
-        });
     }
 
     @Override
@@ -124,7 +110,7 @@ public class SupportMomentCaquot extends SupportMoment {
 
     @Override
     public String getMethod() {
-        if (conditionsMatched){
+        if (conditionVerifier.isVerified()){
             return CAQUOT_MINOREE.getMethodName();
         } else {
             return CAQUOT.getMethodName();

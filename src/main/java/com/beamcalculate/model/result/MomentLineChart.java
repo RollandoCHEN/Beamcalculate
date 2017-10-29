@@ -3,13 +3,15 @@ package com.beamcalculate.model.result;
 import com.beamcalculate.Main;
 import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.controllers.RebarCasesController;
+import com.beamcalculate.custom.alert.InfoMessage;
+import com.beamcalculate.custom.node.HoveredThresholdNode;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
-import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span.SpanMomentFunction;
-import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
+import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
+import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
 import javafx.beans.binding.Bindings;
@@ -20,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,6 +32,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -229,7 +233,7 @@ public class MomentLineChart {
                     maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
                 }
                 // 60 is the padding in the grid pane, around the left and right grid pane
-                double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 60;
+                double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 80;
 
                 double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 970);
 
@@ -238,7 +242,15 @@ public class MomentLineChart {
                 rebarSelectionStage.setTitle(Main.getBundleText("window.title.rebarChoices"));
                 rebarSelectionStage.getIcons().add(new Image("image/rebar.png"));
                 rebarSelectionStage.setScene(rebarSelectionScene);
-                rebarSelectionStage.setResizable(false);
+                rebarSelectionStage.setResizable(true);
+
+                Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+                if (primaryScreenBounds.getHeight() < rebarSelectionStage.getScene().getHeight()){
+                    rebarSelectionStage.setHeight(primaryScreenBounds.getHeight());
+                }
+                if (primaryScreenBounds.getWidth() < rebarSelectionStage.getScene().getWidth()){
+                    rebarSelectionStage.setHeight(primaryScreenBounds.getWidth());
+                }
 
                 rebarSelectionStage.show();
 
@@ -290,26 +302,24 @@ public class MomentLineChart {
             }
         });
 
-        Label conditionsInfos = new Label(Main.getBundleText("label.methodCondition"));
-        setClickableStyle(conditionsInfos);
+        Label conditionsInfo = new Label(Main.getBundleText("info.title.methodConditions"));
+        setClickableStyle(conditionsInfo);
 
-        conditionsInfos.setOnMouseClicked(e -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(Main.getBundleText("label.methodCondition"));
-            alert.setHeaderText(Main.getBundleText("alert.head.message"));
-            alert.setContentText(Main.getBundleText("alert.message"));
-            alert.showAndWait();
-        });
+        conditionsInfo.setOnMouseClicked(e -> new InfoMessage(
+                "info.title.methodConditions",
+                "info.head.methodConditions",
+                "info.content.methodConditions"
+        ));
 
 
-//        prepare method hbox
+//        prepare method HBox
 
         mHBoxMethod = new HBox(methodCheck, methodLabel);
         mHBoxMethod.setSpacing(5);
         mHBoxMethod.setAlignment(Pos.CENTER);
 
 
-        VBox methodVBox = new VBox(mHBoxMethod, conditionsInfos);
+        VBox methodVBox = new VBox(mHBoxMethod, conditionsInfo);
         methodVBox.setSpacing(5);
         methodVBox.setAlignment(Pos.CENTER);
 
@@ -517,7 +527,7 @@ public class MomentLineChart {
             double globalX = getGlobalX(spanId, spanLocalX, calculateMethod);
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
-                double moment = -eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);         // negative just because can't inverse the Y axis to show the span moment underside of 0 axis
+                double moment = -eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);         // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
                 final XYChart.Data<Number, Number> data = new XYChart.Data<>(globalX, moment);
                 data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
                 series.getData().add(data);
@@ -541,7 +551,7 @@ public class MomentLineChart {
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
                 double moment = -spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                         spanLocalX, spanId, ultimateCase
-                );         // negative just because can't inverse the Y axis to show the span moment underside of 0 axis
+                );         // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
                 final XYChart.Data<Double, Double> data = new XYChart.Data<>(globalX, moment);
                 data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
                 series.getData().add(data);

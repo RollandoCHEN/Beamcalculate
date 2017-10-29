@@ -2,7 +2,7 @@ package com.beamcalculate.model.calculate;
 
 import com.beamcalculate.enums.SpecialLoadCase;
 import com.beamcalculate.enums.UltimateCase;
-import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 
 import java.util.HashMap;
@@ -87,7 +87,7 @@ public class ELUCombination {
                 break;
         }
 
-        // TODO When span numb is 1, there is NullPointerException
+        // TODO When span_function numb is 1, there is NullPointerException
         xPositionMomentFunctionMap.forEach((loadCase, momentFunction) -> {
             double loadCaseObjectMoment = 0.0;
             mMomentBeforeCombination = momentFunction.apply(x);

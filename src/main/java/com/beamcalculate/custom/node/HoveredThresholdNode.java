@@ -1,4 +1,4 @@
-package com.beamcalculate.model.result;
+package com.beamcalculate.custom.node;
 
 import com.beamcalculate.Main;
 import javafx.event.EventHandler;
