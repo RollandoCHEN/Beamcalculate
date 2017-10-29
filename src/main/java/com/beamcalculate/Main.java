@@ -4,13 +4,13 @@ import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,10 +27,28 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         borderPane.setTop(createMenuBar());
         loadView(Locale.getDefault());
+        ScrollPane scrollPane = new ScrollPane(borderPane);
+        scrollPane.setFitToWidth(true);
         primaryStage.titleProperty().bind(windowTitle);
-        primaryStage.setScene(new Scene(borderPane, 1020, 930));
+        primaryStage.setScene(new Scene(scrollPane, 1050, 950));
         primaryStage.getIcons().add(new Image("image/main.png"));
-        primaryStage.setResizable(false);
+
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        if (primaryScreenBounds.getHeight() < primaryStage.getScene().getHeight()){
+            primaryStage.setHeight(primaryScreenBounds.getHeight());
+        }
+
+        primaryStage.setOnCloseRequest(we -> {
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle(Main.getBundleText("info.title.love"));
+//                alert.setHeaderText(null);
+//                alert.setContentText(Main.getBundleText("info.content.love"));
+//                alert.setGraphic(new ImageView("image/my_love.png"));
+//                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//                stage.getIcons().add(new Image("image/love.png"));
+//                alert.showAndWait();
+        });
+
         primaryStage.show();
     }
 
