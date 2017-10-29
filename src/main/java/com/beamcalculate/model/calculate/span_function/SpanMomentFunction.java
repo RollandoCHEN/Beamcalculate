@@ -1,6 +1,6 @@
-package com.beamcalculate.model.calculate.span;
+package com.beamcalculate.model.calculate.span_function;
 
-import com.beamcalculate.model.calculate.support.SupportMoment;
+import com.beamcalculate.model.calculate.support_moment.SupportMoment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 
@@ -23,7 +23,7 @@ public class SpanMomentFunction extends AbstractSpanMoment {
             mSpanMomentFunctionMap.put(i + 1, loadCaseMomentFunctionMap);
         }
 
-        // add span moment function to the mSpanMomentFunctionMap
+        // add span_function moment function to the mSpanMomentFunctionMap
 
         mSpanMomentFunctionMap.forEach((spanId, loadCaseMomentFunctionMap) -> {
             for (int loadCase = 0; loadCase < loadCaseMomentFunctionMap.size(); loadCase++) {

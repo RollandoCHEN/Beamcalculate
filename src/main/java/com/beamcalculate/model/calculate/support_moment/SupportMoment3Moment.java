@@ -1,7 +1,7 @@
-package com.beamcalculate.model.calculate.support;
+package com.beamcalculate.model.calculate.support_moment;
 
 import Jama.Matrix;
-import com.beamcalculate.enums.MyMethods;
+import com.beamcalculate.custom.MyMethods;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 
@@ -17,7 +17,7 @@ public class SupportMoment3Moment extends SupportMoment {
     private Map<Integer, Double> mEffectiveSpansLengthMap = new HashMap();
 
     public SupportMoment3Moment(Geometry geometry, Load load) {
-
+        mEffectiveSpansLengthMap = geometry.getEffectiveSpansLengthMap();
         // add supportId and Map to mSupportMomentMap
 
         for (int supportId = 1; supportId < Geometry.getNumSupport() + 1; supportId++) {
@@ -27,16 +27,6 @@ public class SupportMoment3Moment extends SupportMoment {
             }
             mSupportMomentMap.put(supportId, loadCaseMomentMap);
         }
-
-        // calculate effective length for each span
-
-        geometry.spansLengthMap().forEach((spanId, spanLength) -> {
-            double spanL = spanLength + geometry.supportWidthMap().get(spanId) / 2 + geometry.supportWidthMap().get(spanId + 1) / 2;
-
-            MyMethods.round(spanL, 2);
-
-            mEffectiveSpansLengthMap.put(spanId, spanL);
-        });
 
         for (int loadCase = 0; loadCase < Geometry.getNumSpan() + 1; loadCase++) {
 

@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.span;
+package com.beamcalculate.model.calculate.span_function;
 
 import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.enums.UltimateCase;

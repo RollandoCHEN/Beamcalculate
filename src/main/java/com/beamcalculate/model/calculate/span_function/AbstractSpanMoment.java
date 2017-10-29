@@ -1,6 +1,6 @@
-package com.beamcalculate.model.calculate.span;
+package com.beamcalculate.model.calculate.span_function;
 
-import com.beamcalculate.model.calculate.support.SupportMoment;
+import com.beamcalculate.model.calculate.support_moment.SupportMoment;
 
 import java.util.HashMap;
 import java.util.Map;

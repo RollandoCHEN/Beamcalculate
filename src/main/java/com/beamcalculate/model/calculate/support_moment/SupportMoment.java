@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.support;
+package com.beamcalculate.model.calculate.support_moment;
 
 
 import java.util.HashMap;

@@ -17,8 +17,8 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.geometry.Insets?>
-<?import com.beamcalculate.model.NamedChoiceBox?>
-<?import com.beamcalculate.model.NamedTextField?>
+<?import com.beamcalculate.custom.node.NamedChoiceBox?>
+<?import com.beamcalculate.custom.node.NamedTextField?>
 <BorderPane fx:id="container"
             stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/8.0.111"
@@ -56,14 +56,14 @@
                             </HBox>
                             <HBox styleClass="hbox">
                                 <Label text="%label.ifSupportEqual" />
-                                <CheckBox fx:id="equalSupport_chkb" onAction="#disableOrEnableSupportWidth" />
+                                <CheckBox fx:id="equalSupport_chkb"/>
                                 <Label text="%label.supportWidth" />
                                 <NamedTextField fx:id="equalSupportWidth_tf" disable="${controller.notEqualSupport}" />
                                 <Label text="%unit.length.m" />
                             </HBox>
                             <HBox styleClass="hbox">
                                 <Label text="%label.ifSpanEqual" />
-                                <CheckBox fx:id="equalSpan_chkb" onAction="#disableOrEnableSpanLength" />
+                                <CheckBox fx:id="equalSpan_chkb"/>
                                 <Label text="%label.spanLength" />
                                 <NamedTextField fx:id="equalSpanLength_tf" disable="${controller.notEqualSpan}" />
                                 <Label text="%unit.length.m" />

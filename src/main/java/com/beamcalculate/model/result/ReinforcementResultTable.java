@@ -33,15 +33,15 @@ public class ReinforcementResultTable {
         spanParamHBox.setSpacing(20);
         spanParamHBox.setAlignment(Pos.CENTER);
 
-        spanParamHBox.getChildren().add(getParamNameVBox(reinforcement, "span"));
-        spanParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "span"));
+        spanParamHBox.getChildren().add(getParamNameVBox(reinforcement, "span_function"));
+        spanParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "span_function"));
 
         HBox supportParamHBox = new HBox();
         supportParamHBox.setSpacing(20);
         supportParamHBox.setAlignment(Pos.CENTER);
 
-        supportParamHBox.getChildren().add(getParamNameVBox(reinforcement, "support"));
-        supportParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "support"));
+        supportParamHBox.getChildren().add(getParamNameVBox(reinforcement, "support_moment"));
+        supportParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "support_moment"));
 
         StringBuilder tableTitle = new StringBuilder();
         tableTitle.append(
@@ -83,7 +83,7 @@ public class ReinforcementResultTable {
         paramNameVBox.getChildren().add(blank);
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
-        if (string.equals("span")){
+        if (string.equals("span_function")){
             reinforceParamMap = reinforcement.getSpanReinforceParam();
         } else {
             reinforceParamMap = reinforcement.getSupportReinforceParam();
@@ -124,7 +124,7 @@ public class ReinforcementResultTable {
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
         Map<Integer, Pivots> pivotMap;
-        if (spanOrSupport.equals("span")){
+        if (spanOrSupport.equals("span_function")){
             reinforceParamMap = reinforcement.getSpanReinforceParam();
             pivotMap = reinforcement.getSpanPivotMap();
             sectionLabelString = Main.getBundleText("label.span");
@@ -136,8 +136,8 @@ public class ReinforcementResultTable {
 
         reinforceParamMap.forEach((sectionId, paramValueMap)->{
             VBox paramValueVBox = new VBox();
-            if (spanOrSupport.equals("support") && sectionId != 1 && sectionId != Geometry.getNumSupport()
-                    || spanOrSupport.equals("span")){
+            if (spanOrSupport.equals("support_moment") && sectionId != 1 && sectionId != Geometry.getNumSupport()
+                    || spanOrSupport.equals("span_function")){
                 paramValueVBox.setSpacing(15);
                 Label crossSectionLabel = new Label(sectionLabelString + " " + sectionId);
                 crossSectionLabel.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");

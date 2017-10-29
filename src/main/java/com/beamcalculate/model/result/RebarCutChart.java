@@ -1,12 +1,13 @@
 package com.beamcalculate.model.result;
 
 import com.beamcalculate.Main;
-import com.beamcalculate.enums.MyMethods;
-import com.beamcalculate.model.RebarType_Number;
+import com.beamcalculate.custom.node.HoveredThresholdNode;
+import com.beamcalculate.custom.MyMethods;
+import com.beamcalculate.custom.RebarType_Number;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.Rebar;
-import com.beamcalculate.model.calculate.span.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span.SpanMomentFunction_SpecialLoadCase;
+import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -17,12 +18,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,7 +68,7 @@ public class RebarCutChart {
             MomentLineChart.createMomentSeries(300, combination, MIN, minSeries);
         }
 
-        //for all series, take date, each data has Node (symbol) for representing point
+        //for all series, take date, each data has node (symbol) for representing point
         removeLineChartPoints(maxSeries);
         removeLineChartPoints(minSeries);
 

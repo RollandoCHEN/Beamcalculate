@@ -33,10 +33,10 @@ public class MomentRedistribution {
 
         for (int supportId = 1; supportId < Geometry.getNumSupport()+1; supportId++) {
 
-//        get support moment values before redistribution
+//        get support_moment moment values before redistribution
             mSupportMomentMap_BR.put(supportId, combination.getMinMomentValueOfSupport(supportId));
 
-//        get support Mu values before redistribution
+//        get support_moment Mu values before redistribution
 
             double maxMoment = - combination.getMinMomentValueOfSupport(supportId);
             double supportMuValue = maxMoment / (Geometry.getSectionWidth() * Math.pow(Geometry.getEffectiveHeight(), 2.0) * Material.getFcd());
@@ -52,7 +52,7 @@ public class MomentRedistribution {
             mMinRedistributionCoef = 0.7;
         }
 
-//        calculate redistribution coefficient according to the support Mu value before redistribution
+//        calculate redistribution coefficient according to the support_moment Mu value before redistribution
         mSupportMuMap_BR.forEach((supportId, supportMuValue)->{
             if (supportMuValue == 0 || supportMuValue > mMuUpperBound){
                 mRedistributionCoefMap.put(supportId, 1.0);
@@ -68,14 +68,14 @@ public class MomentRedistribution {
 
         mRedistributionCoefMap.forEach((supportId, redistributionCoef)->{
 
-//        calculate support moment after redistribution
+//        calculate support_moment moment after redistribution
             mSupportMomentMap_AR.put(supportId, redistributionCoef * mSupportMomentMap_BR.get(supportId));
 
-//        calculate support Mu after redistribution
+//        calculate support_moment Mu after redistribution
             mSupportMuMap_AR.put(supportId, redistributionCoef * mSupportMuMap_BR.get(supportId));
         });
 
-        // TODO When span numb is 1, there is NullPointerException
+        // TODO When span_function numb is 1, there is NullPointerException
         mRedistributionCoefMap.forEach((supportId, redistributionCoef)->{
             double supportMomentWhenSpanMomentMax = Math.min(
                     combination.getSupportMomentWhenSpanMomentMax(supportId, 1),
