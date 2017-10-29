@@ -5,7 +5,6 @@ import com.beamcalculate.controllers.MainController;
 import com.beamcalculate.controllers.RebarCasesController;
 import com.beamcalculate.custom.alert.InfoMessage;
 import com.beamcalculate.custom.node.HoveredThresholdNode;
-import com.beamcalculate.controllers.TSectionController;
 import com.beamcalculate.enums.NumericalFormat;
 import com.beamcalculate.model.NamedDoubleProperty;
 import com.beamcalculate.model.NamedStringProperty;

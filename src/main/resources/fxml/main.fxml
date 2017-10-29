@@ -153,7 +153,7 @@
             <VBox spacing="10">
                 <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
                 <HBox alignment="CENTER_RIGHT">
-                    <Text styleClass="promptText" text="%prompt"/>
+                    <Text styleClass="promptText" text="%label.prompt"/>
                 </HBox>
 
                 <HBox spacing="15.0" alignment="BOTTOM_RIGHT">

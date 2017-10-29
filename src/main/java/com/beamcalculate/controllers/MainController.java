@@ -122,12 +122,11 @@ public class MainController implements Initializable {
         Material.ductibilityClassProperty().setParameterName(resources.getString("parameter.ductilityClass"));
         Material.steelUltimateStrainProperty().setParameterName(resources.getString("result.moment.paraName.steelUltimateStrain"));
 
-        allTextField.addAll(Arrays.asList(
+        mRealNumberControllerAdder.addRealNumberControllerTo(Arrays.asList(
                 equalSupportWidth_tf, equalSpanLength_tf,
                 sectionWidth_tf, sectionHeight_tf, perpendicularSpacing_tf, slabThickness_tf,
                 permanentLoad_tf, variableLoad_tf, fck_tf, fyk_tf
         ));
-        addRealNumberValidation(allTextField);
 
         // T-shaped section treatment
         notOnTSection.bind(Bindings.not(onTSection_chkb.selectedProperty()));
