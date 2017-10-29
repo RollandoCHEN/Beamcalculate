@@ -9,10 +9,13 @@ import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -58,12 +61,28 @@ public class ReinforcementResultTable {
         methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
 
         // Show the cross section diagram
-        VBox container = new VBox();
-        container.setPadding(new Insets(10,20,10,20));
-        container.setSpacing(20);
-        container.setAlignment(Pos.CENTER);
+        VBox containerVBox = new VBox();
+        containerVBox.setPadding(new Insets(10,20,10,20));
+        containerVBox.setSpacing(20);
+        containerVBox.setAlignment(Pos.CENTER);
 
-        container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox);
+        containerVBox.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox);
+
+        ImageView love = new ImageView("image/love-icon_16x16.png");
+        love.setOnMouseClicked(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(Main.getBundleText("info.title.love"));
+            alert.setHeaderText(null);
+            alert.setContentText(Main.getBundleText("info.content.love"));
+            alert.setGraphic(new ImageView("image/my_love.png"));
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("image/love.png"));
+            alert.showAndWait();
+        });
+        HBox loveBox = new HBox(love);
+        loveBox.setAlignment(Pos.BOTTOM_RIGHT);
+        loveBox.setPadding(new Insets(0, 5, 5, 0));
+        StackPane container = new StackPane(containerVBox, loveBox);
 
         mResultTableStage = new Stage();
         mResultTableStage.setTitle(Main.getBundleText("window.title.reinforcementTable"));

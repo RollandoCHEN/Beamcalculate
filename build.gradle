@@ -1,5 +1,5 @@
 group 'com.beamcalculate'
-version '1.0.1-SNAPSHOT'
+version '1.0.0-SNAPSHOT-joking'
 
 apply plugin: 'java'
 

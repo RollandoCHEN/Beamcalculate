@@ -257,9 +257,6 @@ public class MomentLineChart {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
-
         });
 
         HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
