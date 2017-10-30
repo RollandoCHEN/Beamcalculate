@@ -18,27 +18,28 @@ import java.util.*;
 
 public class Main extends Application {
 
-    private BorderPane borderPane = new BorderPane();
-    private StringProperty windowTitle = new SimpleStringProperty();
-    private StringProperty menuText = new SimpleStringProperty();
-    private Map<Locale,StringProperty> languagesItems = new HashMap<>();
+    private BorderPane mBorderPane = new BorderPane();
+    private StringProperty mWindowTitle = new SimpleStringProperty();
+    private StringProperty mMenuText = new SimpleStringProperty();
+    private Map<Locale,StringProperty> mLanguagesItems = new HashMap<>();
+    private static Stage mPrimaryStage = new Stage();
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        borderPane.setTop(createMenuBar());
+    public void start(Stage stage) throws Exception{
+        mBorderPane.setTop(createMenuBar());
         loadView(Locale.getDefault());
-        ScrollPane scrollPane = new ScrollPane(borderPane);
+        ScrollPane scrollPane = new ScrollPane(mBorderPane);
         scrollPane.setFitToWidth(true);
-        primaryStage.titleProperty().bind(windowTitle);
-        primaryStage.setScene(new Scene(scrollPane, 1050, 950));
-        primaryStage.getIcons().add(new Image("image/main.png"));
+        mPrimaryStage.titleProperty().bind(mWindowTitle);
+        mPrimaryStage.setScene(new Scene(scrollPane, 1050, 950));
+        mPrimaryStage.getIcons().add(new Image("image/main.png"));
 
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        if (primaryScreenBounds.getHeight() < primaryStage.getScene().getHeight()){
-            primaryStage.setHeight(primaryScreenBounds.getHeight());
+        if (primaryScreenBounds.getHeight() < mPrimaryStage.getScene().getHeight()){
+            mPrimaryStage.setHeight(primaryScreenBounds.getHeight());
         }
 
-        primaryStage.setOnCloseRequest(we -> {
+        mPrimaryStage.setOnCloseRequest(we -> {
 //                Alert alert = new Alert(Alert.AlertType.INFORMATION);
 //                alert.setTitle(Main.getBundleText("info.title.love"));
 //                alert.setHeaderText(null);
@@ -49,17 +50,17 @@ public class Main extends Application {
 //                alert.showAndWait();
         });
 
-        primaryStage.show();
+        mPrimaryStage.show();
     }
 
     private MenuBar createMenuBar() {
         MenuBar menuBar = new MenuBar();
         Menu menu = new Menu();
-        menu.textProperty().bind(menuText);
+        menu.textProperty().bind(mMenuText);
         getSupportedLocales().forEach(locale -> {
             MenuItem item = new MenuItem();
             StringProperty languageItem = new SimpleStringProperty();
-            languagesItems.put(locale,languageItem);
+            mLanguagesItems.put(locale,languageItem);
             item.textProperty().bind(languageItem);
 
             item.setOnAction(event -> {
@@ -91,11 +92,11 @@ public class Main extends Application {
                     getClass().getResource("/fxml/main.fxml"),
                     ResourceBundle.getBundle("UIResources", locale)
             );
-            borderPane.setCenter(pane);
+            mBorderPane.setCenter(pane);
             AppSettings.currentLocal = locale;
-            windowTitle.setValue(getBundleText("window.title.main"));
-            menuText.setValue(getBundleText("menu.languages"));
-            languagesItems.forEach((itemLocale, languageItem) -> {
+            mWindowTitle.setValue(getBundleText("window.title.main"));
+            mMenuText.setValue(getBundleText("menu.languages"));
+            mLanguagesItems.forEach((itemLocale, languageItem) -> {
                 if(locale.equals(itemLocale)){
                     languageItem.setValue(getBundleText("menuItem." + itemLocale.getLanguage()));
 
@@ -113,9 +114,14 @@ public class Main extends Application {
         }
     }
 
+    public static Stage stage_returner() {
+        return mPrimaryStage;
+    }
+
     public static class AppSettings {
         public static Locale currentLocal;
     }
+
 
 
     public static void main(String[] args) {
