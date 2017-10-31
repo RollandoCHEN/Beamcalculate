@@ -49,7 +49,7 @@ public class MainController implements Initializable {
     @FXML private NamedTextField fck_tf;
     @FXML private NamedTextField fyk_tf;
     @FXML private NamedChoiceBox ductibilityClass_chcb;
-    @FXML private Button graphGenerate_button;
+    @FXML private Button diagramGenerate_button;
 
 
     private Geometry newGeometry = new Geometry();
@@ -200,7 +200,7 @@ public class MainController implements Initializable {
         );
 
 //        bind graph generating button to the text fields
-        graphGenerate_button.disableProperty().bind(
+        diagramGenerate_button.disableProperty().bind(
                 mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(permanentLoad_tf, variableLoad_tf)
                         .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(spansLength_gp))
                         .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(supportsWidth_gp))
@@ -213,7 +213,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void GenerateGraph(ActionEvent actionEvent) {
+    private void GenerateDiagram(ActionEvent actionEvent) {
         getInputs();
         mInputValueGetter.showInputWarning();
         mConditionVerifier = new ForfaitaireConditionVerifier(newGeometry, newLoad);

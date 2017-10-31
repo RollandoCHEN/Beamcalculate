@@ -114,15 +114,9 @@ public class Main extends Application {
         }
     }
 
-    public static Stage stage_returner() {
-        return mPrimaryStage;
-    }
-
     public static class AppSettings {
         public static Locale currentLocal;
     }
-
-
 
     public static void main(String[] args) {
         launch(args);

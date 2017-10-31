@@ -1,50 +1,39 @@
 package com.beamcalculate.gui;
 
-import com.beamcalculate.Main;
+import com.beamcalculate.TestFXBase;
+import com.beamcalculate.pages.InputPage;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.testfx.api.FxRobot;
-import org.testfx.api.FxToolkit;
 import org.testfx.matcher.base.NodeMatchers;
 
-
+import static com.beamcalculate.JavaFXIds.DIAGRAM_BUTTON;
 import static org.testfx.api.FxAssert.verifyThat;
 
-public class MainTest extends FxRobot {
 
+public class MainTest extends TestFXBase {
+    private InputPage mInputPage;
 
     @Before
-    public void setUp() throws Exception  {
-        FxToolkit.registerPrimaryStage();
-        FxToolkit.setupApplication(Main.class);
+    public void beforeEachTest(){
+        mInputPage = new InputPage(this);
     }
-
 
     @Test
-    public void button_should_enabled() {
-        clickOn("#numSpans_chcb").clickOn("3");
-        clickOn("#equalSupport_chkb").clickOn("#equalSupportWidth_tf").write("0.2");
-        clickOn("#equalSpan_chkb").clickOn("#equalSpanLength_tf").write("5.0");
-//        clickOn("#sectionWidth_tf").write("0.5");
-//        clickOn("#sectionHeight_tf").write("0.6");
-        clickOn("#permanentLoad_tf").write("3.4");
-        clickOn("#variableLoad_tf").write("5.8");
-//        clickOn("#fck_tf").write("25");
-//        clickOn("#fyk_tf").write("500");
-//        clickOn("#ductibilityClass_chcb").clickOn("B");
-        clickOn("#graphGenerate_button");
+    public void buttonShouldDisabled(){
+        clickOn(DIAGRAM_BUTTON);
 
-        // expect:
-        verifyThat("#graphGenerate_button", NodeMatchers.isEnabled());
+        verifyThat(DIAGRAM_BUTTON, NodeMatchers.isDisabled());
     }
 
-    @After
-    public void tearDown () throws Exception {
-        FxToolkit.hideStage();
-        release(new KeyCode[]{});
-        release(new MouseButton[]{});
+    @Test
+    public void alertMessageShouldShownWhenFillInOnlyGeometryAndLoad(){
+        mInputPage.getNSpansBeam(3, new Double[]{5.1, 4.8, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2});
+        mInputPage.setLoad(3.8, 5.9);
+        clickOn(DIAGRAM_BUTTON);
+        clickOn("OK");
+        clickOn("OK");
+
     }
+
 }
