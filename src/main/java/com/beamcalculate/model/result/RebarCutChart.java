@@ -1,6 +1,6 @@
 package com.beamcalculate.model.result;
 
-import com.beamcalculate.Main;
+import com.beamcalculate.BeamCalculatorApp;
 import com.beamcalculate.custom.node.HoveredThresholdNode;
 import com.beamcalculate.custom.MyMethods;
 import com.beamcalculate.custom.RebarType_Number;
@@ -111,7 +111,7 @@ public class RebarCutChart {
                 XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series();
                 cumulativeSeries.getData().addAll(data3, data4);
                 removeLineChartPoints(cumulativeSeries);
-                cumulativeSeries.setName(Main.getBundleText("legend.momentRst_1stLayer"));
+                cumulativeSeries.setName(BeamCalculatorApp.getBundleText("legend.momentRst_1stLayer"));
 
                 mYAxis.setLowerBound(1.2 * getCumulativeMoment());
 
@@ -132,14 +132,14 @@ public class RebarCutChart {
                 XYChart.Series<Number, Number> firstLayerSeries = new XYChart.Series();
                 firstLayerSeries.getData().addAll(data1, data2);
                 removeLineChartPoints(firstLayerSeries);
-                firstLayerSeries.setName(Main.getBundleText("legend.momentRst_1stLayer"));
+                firstLayerSeries.setName(BeamCalculatorApp.getBundleText("legend.momentRst_1stLayer"));
 
                 XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
                 XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
                 XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series();
                 cumulativeSeries.getData().addAll(data3, data4);
                 removeLineChartPoints(cumulativeSeries);
-                cumulativeSeries.setName(Main.getBundleText("legend.momentRst_1+2Layer"));
+                cumulativeSeries.setName(BeamCalculatorApp.getBundleText("legend.momentRst_1+2Layer"));
 
                 mYAxis.setLowerBound(1.2 * getCumulativeMoment());
 
@@ -160,13 +160,13 @@ public class RebarCutChart {
                         }
                     }
                 });
-                offsetMaxSeries.setName(Main.getBundleText("legend.offsetEnvelopCurve"));
+                offsetMaxSeries.setName(BeamCalculatorApp.getBundleText("legend.offsetEnvelopCurve"));
                 lineChart.getData().add(offsetMaxSeries);
 
                 XYChart.Data<Number, Number> startData = new XYChart.Data<>(startPoint, getFirstLayerMoment());
                 XYChart.Data<Number, Number> endData = new XYChart.Data<>(endPoint, getFirstLayerMoment());
                 XYChart.Series<Number, Number> global = new XYChart.Series();
-                global.setName(Main.getBundleText("legend.momentRst_global"));
+                global.setName(BeamCalculatorApp.getBundleText("legend.momentRst_global"));
                 lineChart.getData().add(global);
 
                 global.getData().add(startData);
@@ -228,7 +228,7 @@ public class RebarCutChart {
             }
         }
 
-        Label titleSpanLabel = new Label(Main.getBundleText("label.span") + " " + spanId + " :");
+        Label titleSpanLabel = new Label(BeamCalculatorApp.getBundleText("label.span") + " " + spanId + " :");
         Label titleRebarCaseLabel = new Label();
         titleSpanLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
         List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
@@ -259,7 +259,7 @@ public class RebarCutChart {
             String rebarTypeName = rebarType_number.getRebarType().name();
             int numberOfRebar = rebarType_number.getNumberOfRebar();
             buttonString.append(MyMethods.getOrdinalNumber(layerNum))
-                    .append(Main.getBundleText("label.steelRebarLayer"))
+                    .append(BeamCalculatorApp.getBundleText("label.steelRebarLayer"))
                     .append(" : ").append(numberOfRebar).append(rebarTypeName);
         }
         return buttonString.toString();

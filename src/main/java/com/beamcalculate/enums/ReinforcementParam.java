@@ -1,6 +1,6 @@
 package com.beamcalculate.enums;
 
-import com.beamcalculate.Main;
+import com.beamcalculate.BeamCalculatorApp;
 
 public enum ReinforcementParam {
     a_M("result.moment.paraName.maxMoment", "M_max", "unit.moment"),
@@ -31,7 +31,7 @@ public enum ReinforcementParam {
     }
 
     public String getParaName() {
-        return Main.getBundleText(mParaNameBundleKey);
+        return BeamCalculatorApp.getBundleText(mParaNameBundleKey);
     }
 
     public String getSymbol() {
@@ -44,7 +44,7 @@ public enum ReinforcementParam {
 
     public String getUnit() {
         if (!mUnitBundleKey.equals("")) {
-            return Main.getBundleText(mUnitBundleKey);
+            return BeamCalculatorApp.getBundleText(mUnitBundleKey);
         } else {
             return "";
         }

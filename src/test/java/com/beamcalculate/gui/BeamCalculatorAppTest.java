@@ -11,7 +11,7 @@ import static com.beamcalculate.JavaFXIds.DIAGRAM_BUTTON;
 import static org.testfx.api.FxAssert.verifyThat;
 
 
-public class MainTest extends TestFXBase {
+public class BeamCalculatorAppTest extends TestFXBase {
     private InputPage mInputPage;
 
     @Before
@@ -31,8 +31,6 @@ public class MainTest extends TestFXBase {
         mInputPage.getNSpansBeam(3, new Double[]{5.1, 4.8, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2});
         mInputPage.setLoad(3.8, 5.9);
         clickOn(DIAGRAM_BUTTON);
-        clickOn("OK");
-        clickOn("OK");
 
     }
 

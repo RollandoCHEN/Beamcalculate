@@ -1,12 +1,8 @@
 package com.beamcalculate.pages;
 
-import com.beamcalculate.Main;
 import com.beamcalculate.TestFXBase;
-import com.beamcalculate.custom.input_manager.InputTextFieldsTreater;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.GridPane;
-import org.testfx.util.WaitForAsyncUtils;
 
 import static com.beamcalculate.JavaFXIds.*;
 
@@ -19,10 +15,6 @@ public class InputPage {
 
     public InputPage(TestFXBase driver) {
         this.driver = driver;
-//        if(!driver.getPrimaryStage().getTitle().
-//                equals(Main.getBundleText("window.title.main"))){
-//            throw new IllegalArgumentException("Did not receive the Input Stage to test");
-//        }
     }
 
     public InputPage enterValue(double value, String targetField){
@@ -74,7 +66,7 @@ public class InputPage {
     }
 
     public InputPage setMeterial(double fck, double fyk, Character ductibility){
-        enterValue(fck, CONCRET_STRENGTH_FIELD).
+        enterValue(fck, CONCRETE_STRENGTH_FIELD).
                 enterValue(fyk, STEEL_STRENGTH_FIELD).
                 chooseValue(ductibility, DUCTIBILITY_CLASS_CHOICE);
         return this;

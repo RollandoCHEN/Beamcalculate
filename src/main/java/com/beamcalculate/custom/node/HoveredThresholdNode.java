@@ -1,6 +1,6 @@
 package com.beamcalculate.custom.node;
 
-import com.beamcalculate.Main;
+import com.beamcalculate.BeamCalculatorApp;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -18,27 +18,27 @@ public class HoveredThresholdNode extends StackPane {
         Label labelX;
         if (globelX == relativeX){
             labelX = new Label(
-                    Main.getBundleText("label.abscissa")
+                    BeamCalculatorApp.getBundleText("label.abscissa")
                             + " : "
                             + TWODECIMALS.getDecimalFormat().format(globelX)
-                            + Main.getBundleText("unit.length.m")
+                            + BeamCalculatorApp.getBundleText("unit.length.m")
             );
         }else {
             labelX = new Label(
-                    Main.getBundleText("label.abscissa")
+                    BeamCalculatorApp.getBundleText("label.abscissa")
                             + " G (R) : "
                             + TWODECIMALS.getDecimalFormat().format(globelX) +
                             " (" + TWODECIMALS.getDecimalFormat().format(relativeX) + ") "
-                            + Main.getBundleText("unit.length.m")
+                            + BeamCalculatorApp.getBundleText("unit.length.m")
             );
         }
 
         Label labelY = new Label(
-                Main.getBundleText("label.moment")
+                BeamCalculatorApp.getBundleText("label.moment")
                         + " : "
                         + FOURDECIMALS.getDecimalFormat().format(y)
                         + " "
-                        + Main.getBundleText("unit.moment")
+                        + BeamCalculatorApp.getBundleText("unit.moment")
         );
 
         VBox vbox = new VBox(labelX, labelY);

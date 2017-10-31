@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
-public class Main extends Application {
+public class BeamCalculatorApp extends Application {
 
     private BorderPane mBorderPane = new BorderPane();
     private StringProperty mWindowTitle = new SimpleStringProperty();
@@ -41,9 +41,9 @@ public class Main extends Application {
 
         mPrimaryStage.setOnCloseRequest(we -> {
 //                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                alert.setTitle(Main.getBundleText("info.title.love"));
+//                alert.setTitle(BeamCalculatorApp.getBundleText("info.title.love"));
 //                alert.setHeaderText(null);
-//                alert.setContentText(Main.getBundleText("info.content.love"));
+//                alert.setContentText(BeamCalculatorApp.getBundleText("info.content.love"));
 //                alert.setGraphic(new ImageView("image/my_love.png"));
 //                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 //                stage.getIcons().add(new Image("image/love.png"));
@@ -73,12 +73,12 @@ public class Main extends Application {
     }
 
     public static ResourceBundle getResourceBundle(){
-        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", Main.AppSettings.currentLocal);
+        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
         return bundle;
     }
 
     public static String getBundleText(String key){
-        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", Main.AppSettings.currentLocal);
+        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
         return bundle.getString(key);
     }
 

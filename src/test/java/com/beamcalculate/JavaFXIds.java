@@ -15,7 +15,7 @@ public class JavaFXIds {
     public final static String SECTION_HEIGHT_FIELD = "#sectionHeight_tf";
     public final static String DEAD_LOAD_FIELD = "#permanentLoad_tf";
     public final static String LIVE_LOAD_FIELD = "#variableLoad_tf";
-    public final static String CONCRET_STRENGTH_FIELD = "#fck_tf";
+    public final static String CONCRETE_STRENGTH_FIELD = "#fck_tf";
     public final static String STEEL_STRENGTH_FIELD = "#fyk_tf";
     public final static String DUCTIBILITY_CLASS_CHOICE = "#ductibilityClass_chcb";
     public final static String DIAGRAM_BUTTON = "#diagramGenerate_button";

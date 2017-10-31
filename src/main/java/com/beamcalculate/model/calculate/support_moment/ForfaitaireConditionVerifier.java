@@ -1,6 +1,6 @@
 package com.beamcalculate.model.calculate.support_moment;
 
-import com.beamcalculate.Main;
+import com.beamcalculate.BeamCalculatorApp;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 
@@ -21,15 +21,15 @@ public class ForfaitaireConditionVerifier {
         boolean liveLoadCond = true;
 //        boolean liveLoadCond = load.getQMNm() / 6 < 0.005;
 //        if (!liveLoadCond){
-//            mInvalidateConditions.add(Main.getBundleText("text.conditionA"));
+//            mInvalidateConditions.add(BeamCalculatorApp.getBundleText("text.conditionA"));
 //        }
         boolean live_deadLoadCond = load.getQMNm() <= 2*load.getGMNm();
         if(!live_deadLoadCond){
-            mInvalidateConditions.add(Main.getBundleText("text.conditionA"));
+            mInvalidateConditions.add(BeamCalculatorApp.getBundleText("text.conditionA"));
         }
         boolean spanLengthCond = getSpanLengthCondition(geometry);
         if (!spanLengthCond){
-            mInvalidateConditions.add(Main.getBundleText("text.conditionC"));
+            mInvalidateConditions.add(BeamCalculatorApp.getBundleText("text.conditionC"));
         }
         mConditionsVerified = liveLoadCond && live_deadLoadCond && spanLengthCond;
     }
