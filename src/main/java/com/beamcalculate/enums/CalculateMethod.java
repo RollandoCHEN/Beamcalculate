@@ -1,6 +1,7 @@
 package com.beamcalculate.enums;
 
 import com.beamcalculate.BeamCalculatorApp;
+import com.beamcalculate.model.LanguageManager;
 
 public enum CalculateMethod {
     CAQUOT("enum.method.caquot"),
@@ -16,6 +17,6 @@ public enum CalculateMethod {
     }
 
     public String getMethodName() {
-        return BeamCalculatorApp.getBundleText(mBundleTextKey);
+        return LanguageManager.getBundleText(mBundleTextKey);
     }
 }

@@ -23,14 +23,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 
 import java.net.URL;
 import java.util.*;
 
 
-public class MainController implements Initializable {
+public class InputPageController implements Initializable {
+    @FXML private AnchorPane anchorPane;
     @FXML private CheckBox onTSection_chkb;
     @FXML private ChoiceBox numSpans_chcb;
     @FXML private CheckBox equalSupport_chkb;
@@ -52,9 +52,9 @@ public class MainController implements Initializable {
     @FXML private Button diagramGenerate_button;
 
 
-    private Geometry newGeometry = new Geometry();
-    private Load newLoad = new Load();
-    private Material newMaterial = new Material();
+    private Geometry mGeometry = new Geometry();
+    private Load mLoad = new Load();
+    private Material mMaterial = new Material();
 
     private SupportMomentCaquot mSupportMomentCaquot;
     public static SupportMoment3Moment mSupportMoment3Moment;
@@ -76,6 +76,8 @@ public class MainController implements Initializable {
     private InputTextFieldsTreater mInputTextFieldsTreater = new InputTextFieldsTreater();
     private InputValueGetter mInputValueGetter = new InputValueGetter();
     private ForfaitaireConditionVerifier mConditionVerifier;
+
+    private MainAccessController mMainAccessController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -147,11 +149,11 @@ public class MainController implements Initializable {
         mInputValueGetter.getInputValue(supportsWidth_gp, Geometry.supportWidthMap());
         mInputValueGetter.getInputValue(sectionHeight_tf, Geometry.sectionHeightProperty());
         mInputValueGetter.getInputValue(sectionWidth_tf, Geometry.sectionWidthProperty());
-        mInputValueGetter.getInputValue(permanentLoad_tf, newLoad.gTmProperty());
-        mInputValueGetter.getInputValue(variableLoad_tf, newLoad.qTmProperty());
-        mInputValueGetter.getInputValue(fck_tf, newMaterial.fckProperty());
-        mInputValueGetter.getInputValue(fyk_tf, newMaterial.fykProperty());
-        mInputValueGetter.getInputValue(ductibilityClass_chcb, newMaterial.ductibilityClassProperty());
+        mInputValueGetter.getInputValue(permanentLoad_tf, mLoad.gTmProperty());
+        mInputValueGetter.getInputValue(variableLoad_tf, mLoad.qTmProperty());
+        mInputValueGetter.getInputValue(fck_tf, mMaterial.fckProperty());
+        mInputValueGetter.getInputValue(fyk_tf, mMaterial.fykProperty());
+        mInputValueGetter.getInputValue(ductibilityClass_chcb, mMaterial.ductibilityClassProperty());
         if (isOnTSection()) {
             mInputValueGetter.getInputValue(slabThickness_tf, Geometry.slabThicknessProperty());
             mInputValueGetter.getInputValue(perpendicularSpacing_tf, Geometry.perpendicularSpacingProperty());
@@ -159,42 +161,37 @@ public class MainController implements Initializable {
     }
 
     private void calculateMoments(){
-        mSupportMomentCaquot = new SupportMomentCaquot(newGeometry, newLoad);
+        mSupportMomentCaquot = new SupportMomentCaquot(mGeometry, mLoad);
         mSpanMomentFunctionCaquot = new SpanMomentFunction(mSupportMomentCaquot);
-        mSupportMoment3Moment = new SupportMoment3Moment(newGeometry, newLoad);
+        mSupportMoment3Moment = new SupportMoment3Moment(mGeometry, mLoad);
         mSpanMomentFunction3Moment = new SpanMomentFunction(mSupportMoment3Moment);
         if (mConditionVerifier.isVerified()) {
-            mSupportMomentForfaitaire = new SupportMomentForfaitaire(newGeometry, newLoad);
+            mSupportMomentForfaitaire = new SupportMomentForfaitaire(mGeometry, mLoad);
             mSpanMomentFunctionForfaitaire = new SpanMomentFunction(mSupportMomentForfaitaire);
         }
     }
 
     @FXML
-    public void clickOnTSectionCheck(MouseEvent mouseEvent) {
-        onTSection_chkb.selectedProperty().setValue(!onTSection_chkb.isSelected());
-    }
-
-    @FXML
     private void generateGeometryDiagram(ActionEvent actionEvent) {
 
-        mInputValueGetter.getInputValue(numSpans_chcb, newGeometry.numSpanProperty());
-        double hGapValue = (880-newGeometry.getNumSpan()*69)/newGeometry.getNumSpan();
+        mInputValueGetter.getInputValue(numSpans_chcb, mGeometry.numSpanProperty());
+        double hGapValue = (880- mGeometry.getNumSpan()*69)/ mGeometry.getNumSpan();
 
         spansLength_gp.getChildren().clear();
         supportsWidth_gp.getChildren().clear();
-        newGeometry.spansLengthMap().clear();
-        newGeometry.supportWidthMap().clear();
+        mGeometry.spansLengthMap().clear();
+        mGeometry.supportWidthMap().clear();
 
         mInputTextFieldsTreater.addTextFieldToGrid(
-                newGeometry.getNumSpan(), hGapValue,
+                mGeometry.getNumSpan(), hGapValue,
                 equalSpan_chkb, equalSpanLength_tf,
                 spansLength_gp
         );
 
-        beamDiagram.setImage(getBeamDiagram(newGeometry.getNumSpan()));
+        beamDiagram.setImage(getBeamDiagram(mGeometry.getNumSpan()));
 
         mInputTextFieldsTreater.addTextFieldToGrid(
-                newGeometry.getNumSupport(), hGapValue,
+                mGeometry.getNumSupport(), hGapValue,
                 equalSupport_chkb, equalSupportWidth_tf,
                 supportsWidth_gp
         );
@@ -216,28 +213,31 @@ public class MainController implements Initializable {
     private void GenerateDiagram(ActionEvent actionEvent) {
         getInputs();
         mInputValueGetter.showInputWarning();
-        mConditionVerifier = new ForfaitaireConditionVerifier(newGeometry, newLoad);
+        mConditionVerifier = new ForfaitaireConditionVerifier(mGeometry, mLoad);
         calculateMoments();
         MomentLineChart lineChart;
         if (mConditionVerifier.isVerified()) {
             lineChart = new MomentLineChart(
-                    mSpanMomentFunctionCaquot,
-                    mSpanMomentFunctionForfaitaire,
-                    mSpanMomentFunction3Moment
+                    getSpanNumSpinner(), getMethodsCheckHBox(), getConditionInfoLabel(), getRedistributionCheck(),
+                    getConfigurationButton(), getMethodsChoiceBox(), getRebarCalculateButton(), getSpanChoiceBox(),
+                    getAbscissaField(), getMomentCalculateButton(), getMaxCaseMomentValue(),getMinCaseMomentValue(),
+                    getBorderPaneContainer(),
+                    mSpanMomentFunctionCaquot, mSpanMomentFunctionForfaitaire, mSpanMomentFunction3Moment
             );
         } else {
             lineChart = new MomentLineChart(
-                    mSpanMomentFunctionCaquot,
-                    mSpanMomentFunction3Moment
+                    getSpanNumSpinner(), getMethodsCheckHBox(), getConditionInfoLabel(), getRedistributionCheck(),
+                    getConfigurationButton(), getMethodsChoiceBox(), getRebarCalculateButton(), getSpanChoiceBox(),
+                    getAbscissaField(), getMomentCalculateButton(), getMaxCaseMomentValue(),getMinCaseMomentValue(),
+                    getBorderPaneContainer(),
+                    mSpanMomentFunctionCaquot, mSpanMomentFunction3Moment
             );
             Set<String> messageInputSet = mConditionVerifier.getInvalidatedConditions();
             new WarningMessage(messageInputSet, "warning.content.conditionWarning");
         }
-    }
 
-    @FXML
-    private void DEBUG(ActionEvent actionEvent) throws Exception {
-
+        mMainAccessController.getMomentPageButton().setDisable(false);
+        mMainAccessController.getMomentPageButton().setSelected(true);
     }
 
     public boolean isNotEqualSpan() {
@@ -279,4 +279,60 @@ public class MainController implements Initializable {
     public BooleanProperty onTSectionProperty() {
         return onTSection;
     }
+
+    public AnchorPane getAnchorPane() { return anchorPane; }
+
+    //Get main controller
+    public void injectMainController(MainAccessController mainAccessController) {
+        mMainAccessController = mainAccessController;
+    }
+
+    //Get nodes from moment page controller through the main controller
+    public Spinner<Integer> getSpanNumSpinner(){
+        return mMainAccessController.getSpanNumSpinner();
+    }
+
+    public HBox getMethodsCheckHBox() {
+        return mMainAccessController.getMethodsCheckHBox();
+    }
+
+    public Label getConditionInfoLabel() { return mMainAccessController.getConditionInfoLabel(); }
+
+    public CheckBox getRedistributionCheck() {
+        return mMainAccessController.getRedistributionCheck();
+    }
+
+    public Button getConfigurationButton() {
+        return mMainAccessController.getConfigurationButton();
+    }
+
+    public ChoiceBox<String> getMethodsChoiceBox() {
+        return mMainAccessController.getMethodsChoiceBox();
+    }
+
+    public Button getRebarCalculateButton() {
+        return mMainAccessController.getRebarCalculateButton();
+    }
+
+    public ChoiceBox<Integer> getSpanChoiceBox() {
+        return mMainAccessController.getSpanChoiceBox();
+    }
+
+    public TextField getAbscissaField() {
+        return mMainAccessController.getAbscissaField();
+    }
+
+    public Button getMomentCalculateButton() {
+        return mMainAccessController.getMomentCalculateButton();
+    }
+
+    public Label getMaxCaseMomentValue() {
+        return mMainAccessController.getMaxCaseMomentValue();
+    }
+
+    public Label getMinCaseMomentValue() {
+        return mMainAccessController.getMinCaseMomentValue();
+    }
+
+    public BorderPane getBorderPaneContainer(){return mMainAccessController.getBorderPaneContainer();}
 }

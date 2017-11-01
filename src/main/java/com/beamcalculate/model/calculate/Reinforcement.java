@@ -1,6 +1,6 @@
 package com.beamcalculate.model.calculate;
 
-import com.beamcalculate.controllers.MainController;
+import com.beamcalculate.controllers.InputPageController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
@@ -220,7 +220,7 @@ public class Reinforcement {
         mSpanMomentFunction = spanMomentFunction;
 
         for (int spanId = 1; spanId < Geometry.getNumSpan()+1; spanId++){
-            if (MainController.isOnTSection()) {
+            if (InputPageController.isOnTSection()) {
                 calculateReinforcementParamWithTSection(spanId);
             } else {
                 calculateReinforcementOfSpan(spanId);

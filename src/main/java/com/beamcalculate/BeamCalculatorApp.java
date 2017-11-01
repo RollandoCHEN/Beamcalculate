@@ -1,19 +1,17 @@
 package com.beamcalculate;
 
+import static com.beamcalculate.model.LanguageManager.AppSettings;
+
+import com.beamcalculate.model.LanguageManager;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.*;
 
 public class BeamCalculatorApp extends Application {
@@ -23,21 +21,24 @@ public class BeamCalculatorApp extends Application {
     private StringProperty mMenuText = new SimpleStringProperty();
     private Map<Locale,StringProperty> mLanguagesItems = new HashMap<>();
     private static Stage mPrimaryStage = new Stage();
+    private LanguageManager mLanguageManager = new LanguageManager();
 
     @Override
     public void start(Stage stage) throws Exception{
-        mBorderPane.setTop(createMenuBar());
-        loadView(Locale.getDefault());
-        ScrollPane scrollPane = new ScrollPane(mBorderPane);
-        scrollPane.setFitToWidth(true);
-        mPrimaryStage.titleProperty().bind(mWindowTitle);
-        mPrimaryStage.setScene(new Scene(scrollPane, 1050, 950));
-        mPrimaryStage.getIcons().add(new Image("image/main.png"));
+//        mBorderPane.setTop(createMenuBar());
+//        loadView(Locale.getDefault());
+//        ScrollPane scrollPane = new ScrollPane(mBorderPane);
+//        scrollPane.setFitToWidth(true);
 
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        if (primaryScreenBounds.getHeight() < mPrimaryStage.getScene().getHeight()){
-            mPrimaryStage.setHeight(primaryScreenBounds.getHeight());
-        }
+        mLanguageManager.setAppLanguage(AppSettings.currentLocal);
+        mPrimaryStage.setTitle("BeamCalculator 1.1.0-SNAPSHOT");
+        mPrimaryStage.getIcons().add(new Image("image/icon.png"));
+        mPrimaryStage.setMaximized(true);
+
+//        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+//        if (primaryScreenBounds.getHeight() < mPrimaryStage.getScene().getHeight()){
+//            mPrimaryStage.setHeight(primaryScreenBounds.getHeight());
+//        }
 
         mPrimaryStage.setOnCloseRequest(we -> {
 //                Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -52,72 +53,77 @@ public class BeamCalculatorApp extends Application {
 
         mPrimaryStage.show();
     }
+//
+//    private MenuBar createMenuBar() {
+//        MenuBar menuBar = new MenuBar();
+//        Menu menu = new Menu();
+//        menu.textProperty().bind(mMenuText);
+//        getSupportedLocales().forEach(locale -> {
+//            MenuItem item = new MenuItem();
+//            StringProperty languageItem = new SimpleStringProperty();
+//            mLanguagesItems.put(locale,languageItem);
+//            item.textProperty().bind(languageItem);
+//
+//            item.setOnAction(event -> {
+//                loadView(locale);
+//            });
+//            menu.getItems().add(item);
+//        });
+//        menuBar.getMenus().addAll(menu);
+//        return menuBar;
+//    }
 
-    private MenuBar createMenuBar() {
-        MenuBar menuBar = new MenuBar();
-        Menu menu = new Menu();
-        menu.textProperty().bind(mMenuText);
-        getSupportedLocales().forEach(locale -> {
-            MenuItem item = new MenuItem();
-            StringProperty languageItem = new SimpleStringProperty();
-            mLanguagesItems.put(locale,languageItem);
-            item.textProperty().bind(languageItem);
+//    public static ResourceBundle getResourceBundle(){
+//        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
+//        return bundle;
+//    }
+//
+//    public static String getBundleText(String key){
+//        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
+//        return bundle.getString(key);
+//    }
+//
+//    public static List<Locale> getSupportedLocales() {
+//        return new ArrayList<>(Arrays.asList(Locale.US, Locale.FRANCE, Locale.CHINA));
+//    }
+//
+//    private void loadView(Locale locale) {
+//        try {
+//            Pane pane = FXMLLoader.load(
+//                    getClass().getResource("/fxml/InputPage.fxml"),
+//                    ResourceBundle.getBundle("UIResources", locale)
+//            );
+//            mBorderPane.setCenter(pane);
+//            AppSettings.currentLocal = locale;
+//            mWindowTitle.setValue(getBundleText("window.title.main"));
+//            mMenuText.setValue(getBundleText("menu.languages"));
+//            mLanguagesItems.forEach((itemLocale, languageItem) -> {
+//                if(locale.equals(itemLocale)){
+//                    languageItem.setValue(getBundleText("menuItem." + itemLocale.getLanguage()));
+//
+//                } else {
+//                    languageItem.setValue(
+//                            ResourceBundle.getBundle("UIResources", itemLocale).getString("menuItem." + itemLocale.getLanguage())
+//                                    + "("
+//                                    + getBundleText("menuItem." + itemLocale.getLanguage())
+//                                    + ")"
+//                    );
+//                }
+//            });
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+//
+//
+//    public static class AppSettings {
+//        public static Locale currentLocal;
+//
+//    }
 
-            item.setOnAction(event -> {
-                loadView(locale);
-            });
-            menu.getItems().add(item);
-        });
-        menuBar.getMenus().addAll(menu);
-        return menuBar;
+    public static Stage getPrimaryStage(){
+        return mPrimaryStage;
     }
-
-    public static ResourceBundle getResourceBundle(){
-        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
-        return bundle;
-    }
-
-    public static String getBundleText(String key){
-        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
-        return bundle.getString(key);
-    }
-
-    public static List<Locale> getSupportedLocales() {
-        return new ArrayList<>(Arrays.asList(Locale.US, Locale.FRANCE, Locale.CHINA));
-    }
-
-    private void loadView(Locale locale) {
-        try {
-            Pane pane = FXMLLoader.load(
-                    getClass().getResource("/fxml/main.fxml"),
-                    ResourceBundle.getBundle("UIResources", locale)
-            );
-            mBorderPane.setCenter(pane);
-            AppSettings.currentLocal = locale;
-            mWindowTitle.setValue(getBundleText("window.title.main"));
-            mMenuText.setValue(getBundleText("menu.languages"));
-            mLanguagesItems.forEach((itemLocale, languageItem) -> {
-                if(locale.equals(itemLocale)){
-                    languageItem.setValue(getBundleText("menuItem." + itemLocale.getLanguage()));
-
-                } else {
-                    languageItem.setValue(
-                            ResourceBundle.getBundle("UIResources", itemLocale).getString("menuItem." + itemLocale.getLanguage())
-                                    + "("
-                                    + getBundleText("menuItem." + itemLocale.getLanguage())
-                                    + ")"
-                    );
-                }
-            });
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static class AppSettings {
-        public static Locale currentLocal;
-    }
-
     public static void main(String[] args) {
         launch(args);
     }

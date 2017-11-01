@@ -1,6 +1,6 @@
 package com.beamcalculate.controllers;
 
-import com.beamcalculate.BeamCalculatorApp;
+import static com.beamcalculate.model.LanguageManager.getBundleText;
 import com.beamcalculate.custom.MyMethods;
 import com.beamcalculate.custom.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
@@ -36,7 +36,7 @@ import static com.beamcalculate.enums.NumericalFormat.TWODECIMALS;
 import static com.beamcalculate.enums.NumericalFormat.ZERODECIMAL;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 
-public class RebarCasesController implements Initializable {
+public class RebarCasesPageController implements Initializable {
     @FXML private Label currentSectionNameLabel = new Label();
     @FXML private Label currentSpanNameLabel = new Label();
     @FXML private Label currentRebarCase = new Label();
@@ -145,7 +145,7 @@ public class RebarCasesController implements Initializable {
         setCurrentSpanSectionLabel(1);
 
         // cross section schema
-        if (MainController.isOnTSection()) {
+        if (InputPageController.isOnTSection()) {
             flangeHeight.bind(Bindings.multiply(Geometry.slabThicknessProperty(),100));
             flangeWidth.bind(Bindings.multiply(Reinforcement.getEffectiveWidthPropertyMap().get(1),100));
             flangeCompHeight.bind(Bindings.multiply(Reinforcement.getFlangeCompressionsHeightMap().get(1),100));
@@ -176,7 +176,7 @@ public class RebarCasesController implements Initializable {
             }
         });
         double maxSchemaWidth;
-        if(MainController.isOnTSection()){
+        if(InputPageController.isOnTSection()){
             maxSchemaWidth = maxDisplayedFlangeWidth.get();
         } else {
             maxSchemaWidth = displayedWebWidth.get();
@@ -213,13 +213,13 @@ public class RebarCasesController implements Initializable {
 
         StringBuilder tableTitle = new StringBuilder();
         tableTitle.append(
-                BeamCalculatorApp.getBundleText("label.momentCalculateMethod") +
+                getBundleText("label.momentCalculateMethod") +
                         " : " +
                         mReinforcement.getSpanMomentFunction().getMethod()
         );
-        if (MainController.isOnTSection()){
+        if (InputPageController.isOnTSection()){
             tableTitle.append(
-                    " (" + BeamCalculatorApp.getBundleText("title.onTSection") + ")"
+                    " (" + getBundleText("title.onTSection") + ")"
             );
         }
 
@@ -232,17 +232,17 @@ public class RebarCasesController implements Initializable {
         }
 
         for (int caseNum = 1; caseNum < maxNumOfCases+1; caseNum++){
-            Label caseLabel = new Label(BeamCalculatorApp.getBundleText("label.case") + " " + caseNum);
+            Label caseLabel = new Label(getBundleText("label.case") + " " + caseNum);
             spanRebarSelectionGridPane.add(caseLabel, 0, caseNum);
         }
 
         for (int spanId = 1; spanId < Geometry.getNumSpan()+1; spanId++) {
-            Label spanIdLabel = new Label(BeamCalculatorApp.getBundleText("label.span") + " " + spanId);
+            Label spanIdLabel = new Label(getBundleText("label.span") + " " + spanId);
             spanIdLabel.setStyle("-fx-font-weight: bold;");
 
             double calculatedArea = mReinforcement.getSpanReinforceParam().get(spanId).get(j_A_S);
             Label calculatedAreaLabel = new Label(
-                    j_A_S.getSymbol() + " = " + TWODECIMALS.getDecimalFormat().format(calculatedArea) + " " + BeamCalculatorApp.getBundleText("unit.area.cm2")
+                    j_A_S.getSymbol() + " = " + TWODECIMALS.getDecimalFormat().format(calculatedArea) + " " + getBundleText("unit.area.cm2")
             );
             calculatedAreaLabel.setStyle("-fx-font-style: italic; -fx-font-weight: bold;");
 
@@ -261,7 +261,7 @@ public class RebarCasesController implements Initializable {
                 rebarCaseButton.setOnAction(event -> {
                     // switch the cross section
                     setCurrentSpanSectionLabel(columnNum);
-                    if (MainController.isOnTSection()) {
+                    if (InputPageController.isOnTSection()) {
                         flangeWidth.bind(Bindings.multiply(Reinforcement.getEffectiveWidthPropertyMap().get(columnNum),100));
                         flangeCompHeight.bind(Bindings.multiply(Reinforcement.getFlangeCompressionsHeightMap().get(columnNum),100));
                     }
@@ -285,7 +285,7 @@ public class RebarCasesController implements Initializable {
                     Label rebarAreaLabel = new Label(
                             j_A_S.getSymbol() + " = "
                                     + TWODECIMALS.getDecimalFormat().format(rebarArea)
-                                    + " " + BeamCalculatorApp.getBundleText("unit.area.cm2")
+                                    + " " + getBundleText("unit.area.cm2")
                     );
                     rebarAreaLabel.setStyle("-fx-font-style: italic");
                     if (rebarArea == minRebarArea){
@@ -379,7 +379,7 @@ public class RebarCasesController implements Initializable {
                         setCurrentSpanSectionLabel(columnNum);
                         currentRebarCase.setText(rebarCaseButton.getText());
 
-                        if (MainController.isOnTSection()) {
+                        if (InputPageController.isOnTSection()) {
                             flangeWidth.bind(Bindings.multiply(Reinforcement.getEffectiveWidthPropertyMap().get(columnNum),100));
                             flangeCompHeight.bind(Bindings.multiply(Reinforcement.getFlangeCompressionsHeightMap().get(columnNum),100));
                         }
@@ -424,7 +424,7 @@ public class RebarCasesController implements Initializable {
     }
 
     private void prepareRebarCutCalculateDetails() {
-        mRebarChartStage.setTitle(BeamCalculatorApp.getBundleText("window.title.rebarCut"));
+        mRebarChartStage.setTitle(getBundleText("window.title.rebarCut"));
         mRebarChartStage.getIcons().add(new Image("image/chart.png"));
         mRebarChartStage.setScene(mRebarCutChart.getScene());
         elevationDetailButton.disableProperty().bind(mRebarChartStage.showingProperty());
@@ -442,7 +442,7 @@ public class RebarCasesController implements Initializable {
             String rebarTypeName = rebarType_number.getRebarType().name();
             int numberOfRebar = rebarType_number.getNumberOfRebar();
             buttonString.append(MyMethods.getOrdinalNumber(layerNum))
-                    .append(BeamCalculatorApp.getBundleText("label.steelRebarLayer"))
+                    .append(getBundleText("label.steelRebarLayer"))
                     .append(" : ").append(numberOfRebar).append(rebarTypeName);
         }
         return buttonString.toString();
@@ -450,15 +450,15 @@ public class RebarCasesController implements Initializable {
 
     private void setCurrentSpanSectionLabel(int spanId) {
         currentSectionNameLabel.setText(
-                BeamCalculatorApp.getBundleText("title.crossSection") +
-                        " (" + BeamCalculatorApp.getBundleText("unit.length.cm") + ")" +
-                        " - " + BeamCalculatorApp.getBundleText("label.span") + " " + spanId
+                getBundleText("title.crossSection") +
+                        " (" + getBundleText("unit.length.cm") + ")" +
+                        " - " + getBundleText("label.span") + " " + spanId
         );
 
         currentSpanNameLabel.setText(
-                BeamCalculatorApp.getBundleText("title.sectionalElevation") +
-                        " (" + BeamCalculatorApp.getBundleText("unit.length.cm") + ")" +
-                        " - " + BeamCalculatorApp.getBundleText("label.span") + " " + spanId
+                getBundleText("title.sectionalElevation") +
+                        " (" + getBundleText("unit.length.cm") + ")" +
+                        " - " + getBundleText("label.span") + " " + spanId
         );
     }
 

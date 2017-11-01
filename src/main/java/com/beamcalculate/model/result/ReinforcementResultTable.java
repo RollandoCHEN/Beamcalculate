@@ -1,7 +1,7 @@
 package com.beamcalculate.model.result;
 
-import com.beamcalculate.BeamCalculatorApp;
-import com.beamcalculate.controllers.MainController;
+import static com.beamcalculate.model.LanguageManager.getBundleText;
+import com.beamcalculate.controllers.InputPageController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.Reinforcement;
@@ -44,13 +44,13 @@ public class ReinforcementResultTable {
 
         StringBuilder tableTitle = new StringBuilder();
         tableTitle.append(
-                BeamCalculatorApp.getBundleText("label.momentCalculateMethod") +
+                getBundleText("label.momentCalculateMethod") +
                 " : " +
                 reinforcement.getSpanMomentFunction().getMethod()
         );
-        if (MainController.isOnTSection()){
+        if (InputPageController.isOnTSection()){
             tableTitle.append(
-                    " (" + BeamCalculatorApp.getBundleText("title.onTSection") + ")"
+                    " (" + getBundleText("title.onTSection") + ")"
             );
         }
         Label methodTitle = new Label(tableTitle.toString());
@@ -65,7 +65,7 @@ public class ReinforcementResultTable {
         container.getChildren().addAll(methodTitle, spanParamHBox, supportParamHBox);
 
         mResultTableStage = new Stage();
-        mResultTableStage.setTitle(BeamCalculatorApp.getBundleText("window.title.reinforcementTable"));
+        mResultTableStage.setTitle(getBundleText("window.title.reinforcementTable"));
         mResultTableStage.getIcons().add(new Image("image/reinforcement.png"));
 
         double sceneWidth = Geometry.getNumSpan() * 180 + 430;
@@ -126,11 +126,11 @@ public class ReinforcementResultTable {
         if (spanOrSupport.equals("span_function")){
             reinforceParamMap = reinforcement.getSpanReinforceParam();
             pivotMap = reinforcement.getSpanPivotMap();
-            sectionLabelString = BeamCalculatorApp.getBundleText("label.span");
+            sectionLabelString = getBundleText("label.span");
         } else {
             reinforceParamMap = reinforcement.getSupportReinforceParam();
             pivotMap = reinforcement.getSupportPivotMap();
-            sectionLabelString = BeamCalculatorApp.getBundleText("label.support");
+            sectionLabelString = getBundleText("label.support");
         }
 
         reinforceParamMap.forEach((sectionId, paramValueMap)->{

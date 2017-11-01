@@ -18,7 +18,7 @@
             stylesheets="@../css/rebar_cases.css"
             xmlns="http://javafx.com/javafx/8.0.141"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.beamcalculate.controllers.RebarCasesController">
+            fx:controller="com.beamcalculate.controllers.RebarCasesPageController">
     <BorderPane>
         <top>
             <VBox alignment="CENTER">

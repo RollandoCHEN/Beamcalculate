@@ -1,6 +1,6 @@
 package com.beamcalculate.enums;
 
-import com.beamcalculate.BeamCalculatorApp;
+import static com.beamcalculate.model.LanguageManager.getBundleText;
 
 public enum OrdinalNumber {
     FIRST("ordinalNumber.1st"),
@@ -21,6 +21,6 @@ public enum OrdinalNumber {
     }
 
     public String getOrdinalNumber() {
-        return BeamCalculatorApp.getBundleText(mBundleTextKey);
+        return getBundleText(mBundleTextKey);
     }
 }

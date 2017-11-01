@@ -1,6 +1,7 @@
 package com.beamcalculate.custom.alert;
 
 import com.beamcalculate.BeamCalculatorApp;
+import com.beamcalculate.model.LanguageManager;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,13 +20,13 @@ public class WarningMessage {
             Image warningIcon = new Image("image/warning-icon_256x256.png");
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle(BeamCalculatorApp.getBundleText("window.title.warning"));
+            alert.setTitle(LanguageManager.getBundleText("window.title.warning"));
             alert.setHeaderText(null);
 
             StringBuffer messageFromSet = new StringBuffer();
             messageInputSet.forEach (messageItem -> messageFromSet.append("\n- " + messageItem));
 
-            String infoMessage = BeamCalculatorApp.getBundleText(messageBodyKey) + messageFromSet;
+            String infoMessage = LanguageManager.getBundleText(messageBodyKey) + messageFromSet;
             alert.setContentText(infoMessage);
             alert.setGraphic(warningGraphic);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();

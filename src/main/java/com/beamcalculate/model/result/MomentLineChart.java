@@ -1,8 +1,9 @@
 package com.beamcalculate.model.result;
 
-import com.beamcalculate.BeamCalculatorApp;
-import com.beamcalculate.controllers.MainController;
-import com.beamcalculate.controllers.RebarCasesController;
+import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.LanguageManager.getResourceBundle;
+import com.beamcalculate.controllers.InputPageController;
+import com.beamcalculate.controllers.RebarCasesPageController;
 import com.beamcalculate.custom.alert.InfoMessage;
 import com.beamcalculate.custom.node.HoveredThresholdNode;
 import com.beamcalculate.model.calculate.ELUCombination;
@@ -50,14 +51,25 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 
 public class MomentLineChart {
 
+    private BorderPane mBorderPaneContainer;
     private Spinner<Integer> mIntegerSpinner;
+    private HBox mMethodsCheckHBox;
+    private Label mConditionInfoLabel;
+    private CheckBox mRedistributionCheck;
+    private Button mConfigurationButton;
+    private ChoiceBox<String> mMethodChoice;
+    private Button mRebarCalculateButton;
+    private ChoiceBox<Integer> mSpanChoiceBox;
+    private TextField mAbscissaField;
+    private Button mMomentCalculateButton;
+    private Label mMaxMomentLabel;
+    private Label mMinMomentLabel;
+
     private final LineChart<Number, Number> mLineChart;
-    private HBox mHBoxMethod;
-    private BooleanBinding mDisableSpinner;
+    private BooleanBinding mDisableSpinnerBoolean;
     private StringProperty mMethodChoiceValue = new SimpleStringProperty();
     private NumberAxis mXAxis = new NumberAxis();
     private NumberAxis mYAxis = new NumberAxis();
-    private ChoiceBox<String> mMethodChoice;
     private Map<String, AbstractSpanMoment> mMethodChoiceMap = new HashMap<>();
     private GridPane mGridPaneTop;
     private Map<String, XYChart.Series<Number, Number>> mStringSeriesMap = new HashMap<>();
@@ -77,56 +89,65 @@ public class MomentLineChart {
         });
     }
 
-    public MomentLineChart(SpanMomentFunction spanMomentFunction) {
+    public MomentLineChart(
+            SpanMomentFunction spanMomentFunction,
+            Spinner<Integer> numOfSpanSpinner, HBox methodsCheckHBox, Label conditionInfoLabel,
+            CheckBox redistributionCheck, Button configurationButton, ChoiceBox<String> methodChoice,
+            Button rebarCalculateButton, ChoiceBox<Integer> spanChoice, TextField abscissaField,
+            Button momentCalculateButton, Label maxMomentValueLabel, Label minMomentValueLabel,
+            BorderPane borderPaneContainer
+    ) {
+        mIntegerSpinner = numOfSpanSpinner;
+        mMethodsCheckHBox = methodsCheckHBox;
+        mConditionInfoLabel = conditionInfoLabel;
+        mRedistributionCheck = redistributionCheck;
+        mConfigurationButton = configurationButton;
+        mMethodChoice = methodChoice;
+        mRebarCalculateButton = rebarCalculateButton;
+        mSpanChoiceBox = spanChoice;
+        mAbscissaField = abscissaField;
+        mMomentCalculateButton = momentCalculateButton;
+        mMaxMomentLabel = maxMomentValueLabel;
+        mMinMomentLabel = minMomentValueLabel;
+        mBorderPaneContainer = borderPaneContainer;
+
+
         ELUCombination combination = new ELUCombination(spanMomentFunction);
 
         // match the calculate method name to the related spanMomentFunction
         mMethodChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
-
-        Label intSpinnerLabel = new Label(BeamCalculatorApp.getBundleText("label.numberOfSections"));
-        mIntegerSpinner = new Spinner<>(1, 30, 10, 1);
-        mIntegerSpinner.setPrefWidth(70);
-        mIntegerSpinner.setEditable(true);
-
-
-        HBox hBoxSpinner = new HBox(intSpinnerLabel, mIntegerSpinner);
-        hBoxSpinner.setSpacing(15);
-        hBoxSpinner.setAlignment(Pos.CENTER_LEFT);
-
-//        defining the axes
-
+        //defining the axes
         mXAxis = defineAxis(spanMomentFunction).get(0);
         mYAxis = defineAxis(spanMomentFunction).get(1);
 
-//        creating the chart
-
+        //creating the chart
         mLineChart = new LineChart<>(mXAxis, mYAxis);
-
         mLineChart.setTitle("");
         mLineChart.setCursor(Cursor.CROSSHAIR);
 
-//        define series
-
+        //Define series
         XYChart.Series maxELUSeries = new XYChart.Series();
         createMomentSeries(mIntegerSpinner.getValue(), combination, MAX, maxELUSeries);
-        maxELUSeries.setName(BeamCalculatorApp.getBundleText("label.max") + " - " + spanMomentFunction.getMethod());
+        maxELUSeries.setName(getBundleText("label.max") + " - " + spanMomentFunction.getMethod());
 
         XYChart.Series minELUSeries = new XYChart.Series();
         createMomentSeries(mIntegerSpinner.getValue(), combination, MIN, minELUSeries);
-        minELUSeries.setName(BeamCalculatorApp.getBundleText("label.min") + " - " + spanMomentFunction.getMethod());
+        minELUSeries.setName(getBundleText("label.min") + " - " + spanMomentFunction.getMethod());
 
-//        through this mStringSeriesMap to store all the series
-//        when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series ??
+        //through this mStringSeriesMap to store all the series
+        //when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series ??
 
-        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max"), maxELUSeries);
-        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"), minELUSeries);
+        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + getBundleText("label.max"), maxELUSeries);
+        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"), minELUSeries);
 
         mLineChart.getData().addAll(
-                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max")),
-                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"))
+                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.max")),
+                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"))
         );
+        mBorderPaneContainer.setCenter(mLineChart);
 
+        //Set action for the spinner to re-load the moment chart line
         mIntegerSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             maxELUSeries.getData().clear();
             minELUSeries.getData().clear();
@@ -134,95 +155,67 @@ public class MomentLineChart {
             createMomentSeries(mIntegerSpinner.getValue(), combination, MIN, minELUSeries);
         });
 
-//        module to calculate the Y value for the given X value
+        //Calculating Module : moment calculating and rebar calculating
 
-        Label methodText = new Label(BeamCalculatorApp.getBundleText("label.momentCalculateMethod"));
-        mMethodChoice = new ChoiceBox(FXCollections.observableArrayList(spanMomentFunction.getMethod()));
-        mMethodChoice.setPrefWidth(200);
-        Label spanNumText = new Label(BeamCalculatorApp.getBundleText("label.spanNumb"));
-        ChoiceBox<Integer> spanNumChoice = new ChoiceBox(FXCollections.observableArrayList(Geometry.spansLengthMap().keySet()));
-        Label xAbscissaText = new Label(BeamCalculatorApp.getBundleText("label.xOnSpan"));
-        TextField xValueField = new TextField();
-        Label lengthUnitText = new Label(BeamCalculatorApp.getBundleText("unit.length.m"));
-        Button calculateYButton = new Button(BeamCalculatorApp.getBundleText("button.calculateMoment"));
-        Label maxCaseMomentLabel = new Label(
-                BeamCalculatorApp.getBundleText("label.maxMoment")
-                        + " ("
-                        + BeamCalculatorApp.getBundleText("unit.moment")
-                        + ") : "
-        );
-        Label maxCaseMomentValue = new Label("0.0000");
-        Label minCaseMomentLabel = new Label(BeamCalculatorApp.getBundleText("label.minMoment")
-                + " ("
-                + BeamCalculatorApp.getBundleText("unit.moment")
-                + ") : ");
-        Label minCaseMomentValue = new Label("0.0000");
-
+        //Method choice
+        mMethodChoice.setItems(FXCollections.observableArrayList(spanMomentFunction.getMethod()));
         mMethodChoiceValue.bind(mMethodChoice.valueProperty());
 
-        calculateYButton.setDisable(true);
-        calculateYButton.disableProperty().bind(
-                Bindings.isNull(mMethodChoice.valueProperty())
-                        .or(Bindings.isNull(spanNumChoice.valueProperty()))
-                        .or(Bindings.isEmpty(xValueField.textProperty()))
-        );
-
-
-        spanNumChoice.setOnAction(e -> {
-            int selectedSpanId = spanNumChoice.getValue();
-            addMaxValueValidation(xValueField, mMethodChoiceMap.get(mMethodChoiceValue.get()).getCalculateSpanLengthMap().get(selectedSpanId));
+        mSpanChoiceBox.setItems(FXCollections.observableArrayList(Geometry.spansLengthMap().keySet()));
+        mSpanChoiceBox.setOnAction(e -> {
+            int selectedSpanId = mSpanChoiceBox.getValue();
+            addMaxValueValidation(mAbscissaField, mMethodChoiceMap.get(mMethodChoiceValue.get()).getCalculateSpanLengthMap().get(selectedSpanId));
         });
-        spanNumChoice.disableProperty().bind(Bindings.isNull(mMethodChoice.valueProperty()));
+        mSpanChoiceBox.disableProperty().bind(Bindings.isNull(mMethodChoice.valueProperty()));
 
-        xValueField.setMaxWidth(50);
-        xValueField.disableProperty().bind(Bindings.isNull(spanNumChoice.valueProperty()));
+        mAbscissaField.disableProperty().bind(Bindings.isNull(mSpanChoiceBox.valueProperty()));
 
-
-        calculateYButton.setOnAction(e -> {
+        //Moment Calculating Button setting : disable value and on action
+        mMomentCalculateButton.disableProperty().bind(
+                Bindings.isNull(mMethodChoice.valueProperty())
+                        .or(Bindings.isNull(mSpanChoiceBox.valueProperty()))
+                        .or(Bindings.isEmpty(mAbscissaField.textProperty()))
+        );
+        mMomentCalculateButton.setOnAction(e -> {
             double maxY, minY;
+            int chosenSpan = mSpanChoiceBox.getValue();
+            double enteredXValue = Double.parseDouble(mAbscissaField.getText());
             if (mMethodChoiceValue.get().equals(TROIS_MOMENT_R.getMethodName())){
                 SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase)mMethodChoiceMap.get(mMethodChoiceValue.get());
                 maxY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX
+                        enteredXValue, chosenSpan, MAX
                 );
                 minY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN
+                        enteredXValue, chosenSpan, MIN
                 );
             }else{
                 ELUCombination eluCombination = new ELUCombination(mMethodChoiceMap.get(mMethodChoiceValue.get()));
                 maxY = eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MAX
+                        enteredXValue, chosenSpan, MAX
                 );
                 minY = eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                        Double.parseDouble(xValueField.getText()), spanNumChoice.getValue(), MIN
+                        enteredXValue, chosenSpan, MIN
                 );
             }
-            maxCaseMomentValue.setText(FOURDECIMALS.getDecimalFormat().format(maxY));
-            minCaseMomentValue.setText(FOURDECIMALS.getDecimalFormat().format(minY));
+            mMaxMomentLabel.setText(FOURDECIMALS.getDecimalFormat().format(maxY));
+            mMinMomentLabel.setText(FOURDECIMALS.getDecimalFormat().format(minY));
         });
 
-
-        VBox resultVBox = new VBox(
-                new HBox(maxCaseMomentLabel, maxCaseMomentValue),
-                new HBox(minCaseMomentLabel, minCaseMomentValue)
-        );
-
-        Button rebarCalculatingButton = new Button(BeamCalculatorApp.getBundleText("button.calculateRebar"));
-        rebarCalculatingButton.setStyle("-fx-font-weight:bold;");
-        rebarCalculatingButton.disableProperty().bind(
+        //Rebar Calculating Button setting : disable value and on action
+        mRebarCalculateButton.disableProperty().bind(
                 Bindings.isNull(mMethodChoice.valueProperty())
-                        .or(MainController.isDisabledRebarCalculateProperty())
+                        .or(InputPageController.isDisabledRebarCalculateProperty())
         );
-        rebarCalculatingButton.setOnAction(event -> {
+        mRebarCalculateButton.setOnAction(event -> {
             Reinforcement reinforcement = new Reinforcement(mMethodChoiceMap.get(mMethodChoiceValue.get()));
             Rebar rebar = new Rebar(reinforcement);
 
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/rebar_cases.fxml"),
-                        BeamCalculatorApp.getResourceBundle());
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/RebarCasesPage.fxml"),
+                        getResourceBundle());
                 Parent root = fxmlLoader.load();
 
-                RebarCasesController controller = fxmlLoader.getController();
+                RebarCasesPageController controller = fxmlLoader.getController();
 
                 controller.setRebar(rebar);
                 controller.generateRebarSelectionCasesTable();
@@ -239,7 +232,7 @@ public class MomentLineChart {
 
                 Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
                 Stage rebarSelectionStage = new Stage();
-                rebarSelectionStage.setTitle(BeamCalculatorApp.getBundleText("window.title.rebarChoices"));
+                rebarSelectionStage.setTitle(getBundleText("window.title.rebarChoices"));
                 rebarSelectionStage.getIcons().add(new Image("image/rebar.png"));
                 rebarSelectionStage.setScene(rebarSelectionScene);
                 rebarSelectionStage.setResizable(true);
@@ -257,129 +250,66 @@ public class MomentLineChart {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
-
         });
 
-        HBox firstLine = new HBox(methodText, mMethodChoice, spanNumText, spanNumChoice, xAbscissaText, xValueField, lengthUnitText);
-        firstLine.setSpacing(10);
-        firstLine.setAlignment(Pos.CENTER);
-        firstLine.setPadding(new Insets(10, 20, 10, 20));
-
-        HBox secondLine = new HBox(rebarCalculatingButton, calculateYButton, resultVBox);
-        secondLine.setSpacing(10);
-        secondLine.setAlignment(Pos.CENTER);
-        secondLine.setPadding(new Insets(10, 20, 10, 20));
-
-        VBox bottomVBox = new VBox(firstLine, secondLine);
-        bottomVBox.setAlignment(Pos.CENTER);
-        bottomVBox.setPadding(new Insets(10, 20, 10, 20));
-
-//        checkbox to show or hide line chart
-
-        CheckBox methodCheck = new CheckBox();
-        Label methodLabel = new Label(spanMomentFunction.getMethod());
+        //Set checkbox to show or hide line chart
+        CheckBox methodCheck = new CheckBox(spanMomentFunction.getMethod());
         methodCheck.setSelected(true);
-
-        mDisableSpinner = Bindings.not(methodCheck.selectedProperty());
-        mIntegerSpinner.disableProperty().bind(mDisableSpinner);
-
-        methodLabel.setOnMouseClicked(event -> {
-            methodCheck.setSelected(!methodCheck.selectedProperty().get());
-        });
         methodCheck.selectedProperty().addListener((arg0, oldValue, newValue) -> {
             if (newValue) {
                 mLineChart.getData().addAll(
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max")),
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"))
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.max")),
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"))
                 );
             } else {
                 mLineChart.getData().removeAll(
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max")),
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"))
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.max")),
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"))
                 );
             }
         });
+        mMethodsCheckHBox.getChildren().clear();                 //Clear the existed check boxes
+        mMethodsCheckHBox.getChildren().add(methodCheck);
 
-        Label conditionsInfo = new Label(BeamCalculatorApp.getBundleText("info.title.methodConditions"));
-        setClickableStyle(conditionsInfo);
+        mDisableSpinnerBoolean = Bindings.not(methodCheck.selectedProperty());
+        mIntegerSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
-        conditionsInfo.setOnMouseClicked(e -> new InfoMessage(
+        //Methods applying condition label
+        setClickableStyle(mConditionInfoLabel);
+        mConditionInfoLabel.setOnMouseClicked(e -> new InfoMessage(
                 "info.title.methodConditions",
                 "info.head.methodConditions",
                 "info.content.methodConditions"
         ));
 
 
-//        prepare method HBox
-
-        mHBoxMethod = new HBox(methodCheck, methodLabel);
-        mHBoxMethod.setSpacing(5);
-        mHBoxMethod.setAlignment(Pos.CENTER);
-
-
-        VBox methodVBox = new VBox(mHBoxMethod, conditionsInfo);
-        methodVBox.setSpacing(5);
-        methodVBox.setAlignment(Pos.CENTER);
-
-        StackPane methodStackPane = new StackPane();
-        methodStackPane.getChildren().add(methodVBox);
-        methodCheck.setAlignment(Pos.CENTER_RIGHT);
-
-//        add top grid pane
-
-        mGridPaneTop = new GridPane();
-        ColumnConstraints c1 = new ColumnConstraints();
-        c1.setPercentWidth(50);
-        ColumnConstraints c2 = new ColumnConstraints();
-        c2.setPercentWidth(50);
-        ColumnConstraints c3 = new ColumnConstraints();
-        c3.setPercentWidth(50);
-        //mGridPaneTop.getColumnConstraints().add(c3);
-        mGridPaneTop.getColumnConstraints().addAll(c1, c2, c3);
-        mGridPaneTop.add(hBoxSpinner, 0, 0);
-        mGridPaneTop.add(methodStackPane, 1, 0);
-        mGridPaneTop.setPadding(new Insets(10, 20, 10, 20));
-
-//        if the methode of calculate is "3 moment", add redistribution for the methode
-
+        //if the method of calculate is "3 moment", add redistribution for the method
         if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
-                && !MainController.isDisabledRebarCalculate()
+                && !InputPageController.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
         }
 
-//        set border pane
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(mGridPaneTop);
-        borderPane.setCenter(mLineChart);
-        borderPane.setBottom(bottomVBox);
-        borderPane.setPadding(new Insets(20, 20, 20, 20));
-
-//        set mCrossSectionStage and scene
-
-        Stage chartStage = new Stage();
-        chartStage.setTitle(BeamCalculatorApp.getBundleText("window.title.envelop"));
-        chartStage.getIcons().add(new Image("image/chart.png"));
-
-        Scene scene = new Scene(borderPane, 1800, 800);
-        chartStage.setScene(scene);
-        chartStage.show();
     }
 
-    public MomentLineChart(SpanMomentFunction spanMomentFunction1,
-                           SpanMomentFunction spanMomentFunction2) {
-        this(spanMomentFunction1);
-        addNewMomentChart(spanMomentFunction2);
-    }
-
-    public MomentLineChart(SpanMomentFunction spanMomentFunction1,
-                           SpanMomentFunction spanMomentFunction2,
-                           SpanMomentFunction spanMomentFunction3) {
-        this(spanMomentFunction1, spanMomentFunction2);
-        addNewMomentChart(spanMomentFunction3);
+    public MomentLineChart(
+            Spinner<Integer> numOfSpanSpinner, HBox methodsCheckHBox, Label conditionInfoLabel,
+            CheckBox redistributionCheck, Button configurationButton, ChoiceBox<String> methodChoice,
+            Button rebarCalculateButton, ChoiceBox<Integer> spanChoice, TextField abscissaField,
+            Button momentCalculateButton, Label maxMomentValueLabel, Label minMomentValueLabel,
+            BorderPane borderPaneContainer, SpanMomentFunction... spanMomentFunctions
+    ) {
+        this(
+                spanMomentFunctions[0],
+                numOfSpanSpinner, methodsCheckHBox, conditionInfoLabel, redistributionCheck,
+                configurationButton, methodChoice, rebarCalculateButton, spanChoice,
+                abscissaField, momentCalculateButton, maxMomentValueLabel, minMomentValueLabel,
+                borderPaneContainer
+        );
+        for (int i=1; i<spanMomentFunctions.length; i++) {
+            addNewMomentChart(spanMomentFunctions[i]);
+        }
     }
 
     private void addNewMomentChart(SpanMomentFunction spanMomentFunction) {
@@ -397,11 +327,11 @@ public class MomentLineChart {
         XYChart.Series newMinELUSeries = new XYChart.Series();
         createMomentSeries(mIntegerSpinner.getValue(), combination, MIN, newMinELUSeries);
 
-        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max"), newMaxELUSeries);
-        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"), newMinELUSeries);
+        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + getBundleText("label.max"), newMaxELUSeries);
+        mStringSeriesMap.put(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"), newMinELUSeries);
         mLineChart.getData().addAll(
-                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max")),
-                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"))
+                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.max")),
+                mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"))
         );
 
 //        bind the spinner listener to the new series
@@ -415,30 +345,26 @@ public class MomentLineChart {
 
 //        check box to show and hide new series
 
-        CheckBox newMethodCheck = new CheckBox();
-        Label newMethodLabel = new Label(spanMomentFunction.getMethod());
+        CheckBox newMethodCheck = new CheckBox(spanMomentFunction.getMethod());
         newMethodCheck.setSelected(true);
-        mHBoxMethod.getChildren().addAll(newMethodCheck, newMethodLabel);
+        mMethodsCheckHBox.getChildren().addAll(newMethodCheck);
 
-        newMethodLabel.setOnMouseClicked(event -> {
-            newMethodCheck.setSelected(!newMethodCheck.selectedProperty().get());
-        });
         newMethodCheck.selectedProperty().addListener((arg0, oldValue, newValue) -> {
             if (newValue) {
                 mLineChart.getData().addAll(
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max")),
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"))
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.max")),
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"))
                 );
             } else {
                 mLineChart.getData().removeAll(
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.max")),
-                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + BeamCalculatorApp.getBundleText("label.min"))
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.max")),
+                        mStringSeriesMap.get(spanMomentFunction.getMethod() + "_" + getBundleText("label.min"))
                 );
             }
         });
 
-        mDisableSpinner = mDisableSpinner.and(Bindings.not(newMethodCheck.selectedProperty()));
-        mIntegerSpinner.disableProperty().bind(mDisableSpinner);
+        mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(newMethodCheck.selectedProperty()));
+        mIntegerSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
 //        add margin to the y axis
 
@@ -453,7 +379,7 @@ public class MomentLineChart {
         //        if the method of calculate is "3 moment", add redistribution for the method
 
         if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
-                && !MainController.isDisabledRebarCalculate()
+                && !InputPageController.isDisabledRebarCalculate()
                 ) {
             addRedistribution(spanMomentFunction);
         }
@@ -502,8 +428,8 @@ public class MomentLineChart {
         NumberAxis xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
         NumberAxis yAxis = new NumberAxis(- 1.2 * maxSpanMomentValue, - 1.2 * maxSupportMomentValue, 0.05);
 
-        xAxis.setLabel(BeamCalculatorApp.getBundleText("label.abscissa") + " (" + BeamCalculatorApp.getBundleText("unit.length.m") + ")");
-        yAxis.setLabel(BeamCalculatorApp.getBundleText("label.ordinate") + " (" + BeamCalculatorApp.getBundleText("unit.moment") + ")");
+        xAxis.setLabel(getBundleText("label.abscissa") + " (" + getBundleText("unit.length.m") + ")");
+        yAxis.setLabel(getBundleText("label.ordinate") + " (" + getBundleText("unit.moment") + ")");
 
         List<NumberAxis> axisList = new ArrayList<>();
         axisList.add(xAxis);
@@ -535,7 +461,7 @@ public class MomentLineChart {
                 globalX += spanLength / numSection;
             }
         }
-        series.setName(BeamCalculatorApp.getBundleText("label." + ultimateCase.toString().toLowerCase()) + " - " + eluCombination.getSpanMomentFunction().getMethod());
+        series.setName(getBundleText("label." + ultimateCase.toString().toLowerCase()) + " - " + eluCombination.getSpanMomentFunction().getMethod());
     }
 
     public static void createRedistributionMomentSeries(
@@ -559,7 +485,7 @@ public class MomentLineChart {
                 globalX += spanLength / numSection;
             }
         });
-        series.setName(BeamCalculatorApp.getBundleText("label."
+        series.setName(getBundleText("label."
                 + ultimateCase.toString().toLowerCase())
                 + " - "
                 + TROIS_MOMENT_R.getMethodName());
@@ -626,23 +552,8 @@ public class MomentLineChart {
 
     private void addRedistribution(SpanMomentFunction spanMomentFunction) {
 
-        Label rdsLabel = new Label(BeamCalculatorApp.getBundleText("label.redistribution"));
-        CheckBox rdsCheck = new CheckBox();
-        Button rdsConf = new Button(BeamCalculatorApp.getBundleText("button.rdsConfig"));
-
-        rdsLabel.setOnMouseClicked(event -> {
-            rdsCheck.setSelected(!rdsCheck.selectedProperty().get());
-        });
-
-        HBox rdsHBox = new HBox(rdsLabel, rdsCheck, rdsConf);
-        rdsHBox.setSpacing(10);
-        rdsHBox.setAlignment(Pos.CENTER_RIGHT);
-
-
-        mGridPaneTop.add(rdsHBox, 2, 0);
-
-        mDisableSpinner = mDisableSpinner.and(Bindings.not(rdsCheck.selectedProperty()));
-        mIntegerSpinner.disableProperty().bind(mDisableSpinner);
+        mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(mRedistributionCheck.selectedProperty()));
+        mIntegerSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
         ELUCombination combination = new ELUCombination(spanMomentFunction);
         MomentRedistribution momentRedistribution = new MomentRedistribution(combination);
@@ -658,7 +569,7 @@ public class MomentLineChart {
         //TODO This is not the correct way to add method to the method choice box
         mMethodChoice.getItems().add(TROIS_MOMENT_R.getMethodName());
 
-        rdsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        mRedistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
             XYChart.Series maxELUSeries = new XYChart.Series();
             XYChart.Series minELUSeries = new XYChart.Series();
             if (newValue) {
@@ -703,9 +614,9 @@ public class MomentLineChart {
         VBox paramNameVBox = new VBox();
         paramNameVBox.setSpacing(15);
         Label blank = new Label("");
-        Label rdsCoef = new Label(BeamCalculatorApp.getBundleText("label.theoRdsCoef"));
-        Label minRdsCoef = new Label(BeamCalculatorApp.getBundleText("label.minRdsCoef"));
-        Label finalRdsCoef = new Label(BeamCalculatorApp.getBundleText("label.finalRdsCoef"));
+        Label rdsCoef = new Label(getBundleText("label.theoRdsCoef"));
+        Label minRdsCoef = new Label(getBundleText("label.minRdsCoef"));
+        Label finalRdsCoef = new Label(getBundleText("label.finalRdsCoef"));
         blank.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
         paramNameVBox.getChildren().addAll(blank, rdsCoef, minRdsCoef, finalRdsCoef);
 
@@ -716,7 +627,7 @@ public class MomentLineChart {
         calculatedRedCoefMap.forEach((supportId, coef) -> {
             VBox supportParamValueVBox = new VBox();
             supportParamValueVBox.setSpacing(15);
-            Label sectionLabel = new Label(BeamCalculatorApp.getBundleText("label.support") + " " + supportId.toString());
+            Label sectionLabel = new Label(getBundleText("label.support") + " " + supportId.toString());
             sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
             Label rdsCoefValue = new Label(
                     THREEDECIMALS.getDecimalFormat().format(coef)
@@ -745,7 +656,7 @@ public class MomentLineChart {
                             coefValue.setText("");
                         }
                     } catch (Exception exp) {
-                        System.out.println(BeamCalculatorApp.getBundleText("message.enterCoef"));
+                        System.out.println(getBundleText("message.enterCoef"));
                     }
                 }
             });
@@ -765,12 +676,12 @@ public class MomentLineChart {
         HBox bottomHBox = new HBox();
         bottomHBox.setSpacing(20);
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
-        Button confirmButton = new Button(BeamCalculatorApp.getBundleText("button.ok"));
-        Button applyButton = new Button(BeamCalculatorApp.getBundleText("button.apply"));
+        Button confirmButton = new Button(getBundleText("button.ok"));
+        Button applyButton = new Button(getBundleText("button.apply"));
         bottomHBox.getChildren().addAll(applyButton, confirmButton);
         applyButton.setOnAction(event -> {
-            rdsCheck.setSelected(false);
-            rdsCheck.setSelected(true);
+            mRedistributionCheck.setSelected(false);
+            mRedistributionCheck.setSelected(true);
         });
 
         BorderPane container = new BorderPane();
@@ -780,19 +691,19 @@ public class MomentLineChart {
 
 
         Stage configStage = new Stage();
-        configStage.setTitle(BeamCalculatorApp.getBundleText("window.title.redistribution"));
+        configStage.setTitle(getBundleText("window.title.redistribution"));
         configStage.getIcons().add(new Image("image/configuration.png"));
 
         Scene scene = new Scene(container, 1000, 300);
         configStage.setScene(scene);
 
-        rdsConf.setOnAction(event -> {
+        mConfigurationButton.setOnAction(event -> {
             configStage.show();
         });
 
         confirmButton.setOnAction(event -> {
-            rdsCheck.setSelected(false);
-            rdsCheck.setSelected(true);
+            mRedistributionCheck.setSelected(false);
+            mRedistributionCheck.setSelected(true);
             configStage.close();
         });
     }

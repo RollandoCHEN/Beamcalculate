@@ -1,6 +1,7 @@
 package com.beamcalculate.custom.alert;
 
 import com.beamcalculate.BeamCalculatorApp;
+import com.beamcalculate.model.LanguageManager;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,9 +17,9 @@ public class InfoMessage {
         Image infoIcon = new Image("image/info-icon_256x256.png");
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(BeamCalculatorApp.getBundleText(titleKey));
-        alert.setHeaderText(BeamCalculatorApp.getBundleText(headKey));
-        alert.setContentText(BeamCalculatorApp.getBundleText(messageBodyKey));
+        alert.setTitle(LanguageManager.getBundleText(titleKey));
+        alert.setHeaderText(LanguageManager.getBundleText(headKey));
+        alert.setContentText(LanguageManager.getBundleText(messageBodyKey));
         alert.setGraphic(infoGraphic);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(infoIcon);
