@@ -17,8 +17,8 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 
 public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
-    public SpanMomentFunction_SpecialLoadCase(Map<Integer, Map<Integer, Double>> specialLoadCaseSupportMomentMap) {
-
+    public SpanMomentFunction_SpecialLoadCase(Map<Integer, Map<Integer, Double>> specialLoadCaseSupportMomentMap, Geometry geometry) {
+        mGeometry = geometry;
         // add spanId and Map to spanMomentMap
 
         for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
@@ -36,7 +36,7 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
                     double leftSupportMoment = specialLoadCaseSupportMomentMap.get(spanId).get(loadCase);
                     double rightSupportMoment = specialLoadCaseSupportMomentMap.get(spanId + 1).get(loadCase);
-                    double thisSpanLength = Geometry.getEffectiveSpansLengthMap().get(spanId);
+                    double thisSpanLength = mGeometry.getEffectiveSpansLengthMap().get(spanId);
                     double thisSpanLoad;
 
                     if (loadCase < 10) {                 // loadCase == 1, loadCase == 2
@@ -159,5 +159,9 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
     @Override
     public Map<Integer, Double> getCalculateSpanLengthMap() {
         return InputPageController.mSupportMoment3Moment.getCalculateSpanLengthMap();
+    }
+
+    public Geometry getGeometry() {
+        return mGeometry;
     }
 }

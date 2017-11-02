@@ -12,6 +12,7 @@ public class SpanMomentFunction extends AbstractSpanMoment {
 
     public SpanMomentFunction(SupportMoment supportMoment) {
         mSupportMoment = supportMoment;
+        mGeometry = mSupportMoment.getGeometry();
 
         // add spanId and Map to spanMomentMap
 

@@ -16,6 +16,7 @@ public class SupportMomentForfaitaire extends SupportMoment{
     private Map<Integer, Double> mCalculateSpanLengthMap = new HashMap<>();
 
     public SupportMomentForfaitaire(Geometry geometry, Load load) {
+        mGeometry = geometry;
         mCalculateSpanLengthMap = geometry.spansLengthMap();
 
         // add spanId and Map to mSpanRefMomentMap

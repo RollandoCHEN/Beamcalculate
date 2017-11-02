@@ -11,7 +11,6 @@ import static com.beamcalculate.enums.CalculateMethod.CAQUOT_MINOREE;
 
 
 public class SupportMomentCaquot extends SupportMoment {
-    private final Geometry mGeometry;
     private Map<Integer, Double> mReducedSpansLengthMap = new HashMap();
     private double mReduceCoef;
     private CaquotReductionConditionVerifier conditionVerifier;

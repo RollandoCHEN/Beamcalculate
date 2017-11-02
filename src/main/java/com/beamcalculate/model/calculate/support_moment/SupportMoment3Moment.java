@@ -17,6 +17,7 @@ public class SupportMoment3Moment extends SupportMoment {
     private Map<Integer, Double> mEffectiveSpansLengthMap = new HashMap();
 
     public SupportMoment3Moment(Geometry geometry, Load load) {
+        mGeometry = geometry;
         mEffectiveSpansLengthMap = geometry.getEffectiveSpansLengthMap();
         // add supportId and Map to mSupportMomentMap
 

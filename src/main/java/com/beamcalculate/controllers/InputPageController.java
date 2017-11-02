@@ -145,7 +145,7 @@ public class InputPageController implements Initializable {
     }
 
     private void getInputs(){
-        mInputValueGetter.getInputValue(spansLength_gp, Geometry.spansLengthMap());
+        mInputValueGetter.getInputValue(spansLength_gp, mGeometry.spansLengthMap());
         mInputValueGetter.getInputValue(supportsWidth_gp, Geometry.supportWidthMap());
         mInputValueGetter.getInputValue(sectionHeight_tf, Geometry.sectionHeightProperty());
         mInputValueGetter.getInputValue(sectionWidth_tf, Geometry.sectionWidthProperty());
@@ -215,22 +215,16 @@ public class InputPageController implements Initializable {
         mInputValueGetter.showInputWarning();
         mConditionVerifier = new ForfaitaireConditionVerifier(mGeometry, mLoad);
         calculateMoments();
-        MomentLineChart lineChart;
         if (mConditionVerifier.isVerified()) {
-            lineChart = new MomentLineChart(
-                    getSpanNumSpinner(), getMethodsCheckHBox(), getConditionInfoLabel(), getRedistributionCheck(),
-                    getConfigurationButton(), getMethodsChoiceBox(), getRebarCalculateButton(), getSpanChoiceBox(),
-                    getAbscissaField(), getMomentCalculateButton(), getMaxCaseMomentValue(),getMinCaseMomentValue(),
-                    getBorderPaneContainer(),
-                    mSpanMomentFunctionCaquot, mSpanMomentFunctionForfaitaire, mSpanMomentFunction3Moment
+            mMainAccessController.createMomentLineChart(
+                    mSpanMomentFunctionCaquot,
+                    mSpanMomentFunctionForfaitaire,
+                    mSpanMomentFunction3Moment
             );
         } else {
-            lineChart = new MomentLineChart(
-                    getSpanNumSpinner(), getMethodsCheckHBox(), getConditionInfoLabel(), getRedistributionCheck(),
-                    getConfigurationButton(), getMethodsChoiceBox(), getRebarCalculateButton(), getSpanChoiceBox(),
-                    getAbscissaField(), getMomentCalculateButton(), getMaxCaseMomentValue(),getMinCaseMomentValue(),
-                    getBorderPaneContainer(),
-                    mSpanMomentFunctionCaquot, mSpanMomentFunction3Moment
+            mMainAccessController.createMomentLineChart(
+                    mSpanMomentFunctionCaquot,
+                    mSpanMomentFunction3Moment
             );
             Set<String> messageInputSet = mConditionVerifier.getInvalidatedConditions();
             new WarningMessage(messageInputSet, "warning.content.conditionWarning");
@@ -288,51 +282,4 @@ public class InputPageController implements Initializable {
     }
 
     //Get nodes from moment page controller through the main controller
-    public Spinner<Integer> getSpanNumSpinner(){
-        return mMainAccessController.getSpanNumSpinner();
-    }
-
-    public HBox getMethodsCheckHBox() {
-        return mMainAccessController.getMethodsCheckHBox();
-    }
-
-    public Label getConditionInfoLabel() { return mMainAccessController.getConditionInfoLabel(); }
-
-    public CheckBox getRedistributionCheck() {
-        return mMainAccessController.getRedistributionCheck();
-    }
-
-    public Button getConfigurationButton() {
-        return mMainAccessController.getConfigurationButton();
-    }
-
-    public ChoiceBox<String> getMethodsChoiceBox() {
-        return mMainAccessController.getMethodsChoiceBox();
-    }
-
-    public Button getRebarCalculateButton() {
-        return mMainAccessController.getRebarCalculateButton();
-    }
-
-    public ChoiceBox<Integer> getSpanChoiceBox() {
-        return mMainAccessController.getSpanChoiceBox();
-    }
-
-    public TextField getAbscissaField() {
-        return mMainAccessController.getAbscissaField();
-    }
-
-    public Button getMomentCalculateButton() {
-        return mMainAccessController.getMomentCalculateButton();
-    }
-
-    public Label getMaxCaseMomentValue() {
-        return mMainAccessController.getMaxCaseMomentValue();
-    }
-
-    public Label getMinCaseMomentValue() {
-        return mMainAccessController.getMinCaseMomentValue();
-    }
-
-    public BorderPane getBorderPaneContainer(){return mMainAccessController.getBorderPaneContainer();}
 }

@@ -35,7 +35,7 @@ public class ForfaitaireConditionVerifier {
     }
 
     private boolean getSpanLengthCondition(Geometry geometry){
-        Map<Integer, Double> spanLengthMap = Geometry.spansLengthMap();
+        Map<Integer, Double> spanLengthMap = geometry.spansLengthMap();
         boolean b = false;
         for(int spanId = 1; spanId < geometry.getNumSpan(); spanId++){
             boolean b1 = spanLengthMap.get(spanId) / spanLengthMap.get(spanId + 1) < 1.25;

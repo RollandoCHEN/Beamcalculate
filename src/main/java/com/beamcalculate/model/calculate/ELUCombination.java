@@ -17,6 +17,7 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 
 public class ELUCombination {
     private AbstractSpanMoment mSpanMomentFunction;
+    private Geometry mGeometry;
     private double mMomentBeforeCombination;
     private double mMomentAfterCombination;
     private boolean mUnfavorableCondition;
@@ -24,6 +25,7 @@ public class ELUCombination {
 
     public ELUCombination(AbstractSpanMoment spanMomentFunction) {
         mSpanMomentFunction = spanMomentFunction;
+        mGeometry = spanMomentFunction.getGeometry();
     }
 
     public double getCombinedUltimateMomentAtXOfSpan(
@@ -93,7 +95,7 @@ public class ELUCombination {
             mMomentBeforeCombination = momentFunction.apply(x);
             switch (specialLoadCase) {
                 case SPAN_MAX:
-                    loadCaseObjectMoment = ObjectPositionMomentFunctionMap.get(loadCase).apply(Geometry.spansLengthMap().get(loadCaseObject) / 2);
+                    loadCaseObjectMoment = ObjectPositionMomentFunctionMap.get(loadCase).apply(mGeometry.spansLengthMap().get(loadCaseObject) / 2);
                     mUnfavorableCondition = loadCaseObjectMoment > 0;
                     break;
                 case SUPPORT_MIN:

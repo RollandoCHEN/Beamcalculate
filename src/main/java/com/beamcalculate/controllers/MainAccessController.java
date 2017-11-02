@@ -2,6 +2,7 @@ package com.beamcalculate.controllers;
 
 import com.beamcalculate.BeamCalculatorApp;
 import com.beamcalculate.model.LanguageManager;
+import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,6 +27,7 @@ import static com.beamcalculate.model.LanguageManager.getBundleText;
  */
 public class MainAccessController implements Initializable {
     @FXML Menu languageMenu;
+    @FXML AnchorPane leftPartOfSplitPane;
     @FXML TabPane mainPageTabPane;
     @FXML ToggleButton inputPageButton;
     @FXML ToggleButton momentPageButton;
@@ -81,22 +83,19 @@ public class MainAccessController implements Initializable {
         //When the main fxml is loaded, inject the main controller to the input page controller
         inputPageController.injectMainController(this);
 
-        getMomentPageAnchorPane().setMinHeight(760);
-        getMomentPageAnchorPane().setMinWidth(1600);
+        double leftMenuWidth = leftPartOfSplitPane.getMinWidth();
         getMomentPageAnchorPane().prefHeightProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),90)
         );
         getMomentPageAnchorPane().prefWidthProperty().bind(
-                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), 230)
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 30)
         );
 
-        getInputPageAnchorPane().setMinHeight(900);
-        getInputPageAnchorPane().setMinWidth(1040);
         getInputPageAnchorPane().prefHeightProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),90)
         );
         getInputPageAnchorPane().prefWidthProperty().bind(
-                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), 230)
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 30)
         );
     }
 
@@ -153,53 +152,7 @@ public class MainAccessController implements Initializable {
     //Get nodes from moment page controller to pass them to the input page controller
     public AnchorPane getMomentPageAnchorPane() { return momentPageController.getAnchorPane(); }
 
-    public Spinner<Integer> getSpanNumSpinner() {
-        return momentPageController.getSpanNumSpinner();
-    }
-
-    public HBox getMethodsCheckHBox() {
-        return momentPageController.getMethodsCheckHBox();
-    }
-
-    public Label getConditionInfoLabel() { return momentPageController.getConditionInfoLabel(); }
-
-    public CheckBox getRedistributionCheck() {
-        return momentPageController.getRedistributionCheck();
-    }
-
-    public Button getConfigurationButton() {
-        return momentPageController.getConfigurationButton();
-    }
-
-    public ChoiceBox<String> getMethodsChoiceBox() {
-        return momentPageController.getMethodsChoiceBox();
-    }
-
-    public Button getRebarCalculateButton() {
-        return momentPageController.getRebarCalculateButton();
-    }
-
-    public ChoiceBox<Integer> getSpanChoiceBox() {
-        return momentPageController.getSpanChoiceBox();
-    }
-
-    public TextField getAbscissaField() {
-        return momentPageController.getAbscissaField();
-    }
-
-    public Button getMomentCalculateButton() {
-        return momentPageController.getMomentCalculateButton();
-    }
-
-    public Label getMaxCaseMomentValue() {
-        return momentPageController.getMaxCaseMomentValue();
-    }
-
-    public Label getMinCaseMomentValue() {
-        return momentPageController.getMinCaseMomentValue();
-    }
-
-    public BorderPane getBorderPaneContainer(){return  momentPageController.getBorderPaneContainer();}
+    public void createMomentLineChart(SpanMomentFunction... spanMomentFunctions) { momentPageController.createMomentLineChart(spanMomentFunctions);}
 
     @FXML
     public void handleFullScreen(ActionEvent actionEvent) {

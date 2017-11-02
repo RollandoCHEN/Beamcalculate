@@ -26,4 +26,18 @@ public class InputControllerAdder {
     public void addRealNumberControllerTo(List<TextField> list){
         list.forEach(this::addRealNumberControllerTo);
     }
+
+    public void addMaxValueValidation(TextField textField, double maxValue) {
+        textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus lost
+                if (!textField.getText().matches("\\d+\\.\\d+|\\d+")) {
+                    //when it not matches the pattern
+                    //set the textField empty
+                    textField.setText("");
+                } else if (Double.parseDouble(textField.getText()) > maxValue) {
+                    textField.setText("");
+                }
+            }
+        });
+    }
 }

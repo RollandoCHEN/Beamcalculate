@@ -16,10 +16,6 @@ import java.util.*;
 
 public class BeamCalculatorApp extends Application {
 
-    private BorderPane mBorderPane = new BorderPane();
-    private StringProperty mWindowTitle = new SimpleStringProperty();
-    private StringProperty mMenuText = new SimpleStringProperty();
-    private Map<Locale,StringProperty> mLanguagesItems = new HashMap<>();
     private static Stage mPrimaryStage = new Stage();
     private LanguageManager mLanguageManager = new LanguageManager();
 
@@ -53,73 +49,6 @@ public class BeamCalculatorApp extends Application {
 
         mPrimaryStage.show();
     }
-//
-//    private MenuBar createMenuBar() {
-//        MenuBar menuBar = new MenuBar();
-//        Menu menu = new Menu();
-//        menu.textProperty().bind(mMenuText);
-//        getSupportedLocales().forEach(locale -> {
-//            MenuItem item = new MenuItem();
-//            StringProperty languageItem = new SimpleStringProperty();
-//            mLanguagesItems.put(locale,languageItem);
-//            item.textProperty().bind(languageItem);
-//
-//            item.setOnAction(event -> {
-//                loadView(locale);
-//            });
-//            menu.getItems().add(item);
-//        });
-//        menuBar.getMenus().addAll(menu);
-//        return menuBar;
-//    }
-
-//    public static ResourceBundle getResourceBundle(){
-//        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
-//        return bundle;
-//    }
-//
-//    public static String getBundleText(String key){
-//        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", BeamCalculatorApp.AppSettings.currentLocal);
-//        return bundle.getString(key);
-//    }
-//
-//    public static List<Locale> getSupportedLocales() {
-//        return new ArrayList<>(Arrays.asList(Locale.US, Locale.FRANCE, Locale.CHINA));
-//    }
-//
-//    private void loadView(Locale locale) {
-//        try {
-//            Pane pane = FXMLLoader.load(
-//                    getClass().getResource("/fxml/InputPage.fxml"),
-//                    ResourceBundle.getBundle("UIResources", locale)
-//            );
-//            mBorderPane.setCenter(pane);
-//            AppSettings.currentLocal = locale;
-//            mWindowTitle.setValue(getBundleText("window.title.main"));
-//            mMenuText.setValue(getBundleText("menu.languages"));
-//            mLanguagesItems.forEach((itemLocale, languageItem) -> {
-//                if(locale.equals(itemLocale)){
-//                    languageItem.setValue(getBundleText("menuItem." + itemLocale.getLanguage()));
-//
-//                } else {
-//                    languageItem.setValue(
-//                            ResourceBundle.getBundle("UIResources", itemLocale).getString("menuItem." + itemLocale.getLanguage())
-//                                    + "("
-//                                    + getBundleText("menuItem." + itemLocale.getLanguage())
-//                                    + ")"
-//                    );
-//                }
-//            });
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-//
-//
-//    public static class AppSettings {
-//        public static Locale currentLocal;
-//
-//    }
 
     public static Stage getPrimaryStage(){
         return mPrimaryStage;
