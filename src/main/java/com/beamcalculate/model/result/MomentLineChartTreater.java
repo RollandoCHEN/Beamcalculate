@@ -49,31 +49,30 @@ import static com.beamcalculate.enums.NumericalFormat.THREEDECIMALS;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 
-public class MomentLineChart {
+public class MomentLineChartTreater {
 
-    public MomentLineChart() {
+    private static Geometry mGeometry;
 
+    public MomentLineChartTreater(SpanMomentFunction spanMomentFunction) {
+        mGeometry = spanMomentFunction.getGeometry();
     }
 
-    private static Stage mCrossSectionStage = new Stage();
-
-
-    public static List<NumberAxis> defineAxis(AbstractSpanMoment spanMomentFunction){
+    public static List<NumberAxis> defineAxis(AbstractSpanMoment spanMomentFunction) {
         double maxSpanMomentValue;
         double maxSupportMomentValue;
 
-        if(spanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
+        if (spanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) spanMomentFunction;
             maxSupportMomentValue = newSpanMomentFunction.getUltimateMomentValue(MIN);
             maxSpanMomentValue = newSpanMomentFunction.getUltimateMomentValue(MAX);
-        }else {
+        } else {
             ELUCombination combination = new ELUCombination(spanMomentFunction);
             maxSupportMomentValue = combination.getUltimateMomentValue(MIN);
             maxSpanMomentValue = combination.getUltimateMomentValue(MAX);
         }
 
-        NumberAxis xAxis = new NumberAxis(-1, Geometry.getTotalLength() + 1, 1);
-        NumberAxis yAxis = new NumberAxis(- 1.2 * maxSpanMomentValue, - 1.2 * maxSupportMomentValue, 0.05);
+        NumberAxis xAxis = new NumberAxis(-1, mGeometry.getTotalLength() + 1, 1);
+        NumberAxis yAxis = new NumberAxis(-1.2 * maxSpanMomentValue, -1.2 * maxSupportMomentValue, 0.05);
 
         xAxis.setLabel(getBundleText("label.abscissa") + " (" + getBundleText("unit.length.m") + ")");
         yAxis.setLabel(getBundleText("label.ordinate") + " (" + getBundleText("unit.moment") + ")");
@@ -87,10 +86,10 @@ public class MomentLineChart {
 
     public static void createMomentSeries(
             int numSection,
-            ELUCombination eluCombination, UltimateCase ultimateCase,
+            AbstractSpanMoment spanMomentFunction, UltimateCase ultimateCase,
             XYChart.Series<Number, Number> series
     ) {
-
+        ELUCombination eluCombination = new ELUCombination(spanMomentFunction);
         for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
 
             double spanLength = eluCombination.getSpanMomentFunction().getCalculateSpanLengthMap().get(spanId);
@@ -117,7 +116,7 @@ public class MomentLineChart {
             XYChart.Series series
     ) {
         spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) -> {
-            double spanLength = Geometry.getEffectiveSpansLengthMap().get(spanId);
+            double spanLength = mGeometry.getEffectiveSpansLengthMap().get(spanId);
             double spanLocalX = 0;
             double globalX = getGlobalX(spanId, spanLocalX, TROIS_MOMENT.getMethodName());
 
@@ -147,7 +146,7 @@ public class MomentLineChart {
                 if (preSpanId == 0) {
                     preX = Geometry.supportWidthMap().get(1) / 2;
                 } else {
-                    preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
+                    preX = mGeometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
                 globalX += preX;
             }
@@ -158,7 +157,7 @@ public class MomentLineChart {
                 if (preSpanId == 0) {
                     preSupportLength = Geometry.supportWidthMap().get(1);
                 } else {
-                    preSpanLength = Geometry.spansLengthMap().get(preSpanId);
+                    preSpanLength = mGeometry.spansLengthMap().get(preSpanId);
                     preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
                 }
                 globalX += (preSpanLength + preSupportLength);
@@ -176,7 +175,7 @@ public class MomentLineChart {
                 if (preSpanId == 0) {
                     preX = Geometry.supportWidthMap().get(1) / 2;
                 } else {
-                    preX = Geometry.getEffectiveSpansLengthMap().get(preSpanId);
+                    preX = mGeometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
                 spanLocalX -= preX;
             }
@@ -187,7 +186,7 @@ public class MomentLineChart {
                 if (preSpanId == 0) {
                     preSupportLength = Geometry.supportWidthMap().get(1);
                 } else {
-                    preSpanLength = Geometry.spansLengthMap().get(preSpanId);
+                    preSpanLength = mGeometry.spansLengthMap().get(preSpanId);
                     preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
                 }
                 spanLocalX -= (preSpanLength + preSupportLength);
@@ -196,10 +195,6 @@ public class MomentLineChart {
         return spanLocalX;
     }
 
-
-    public static Stage getCrossSectionStage() {
-        return mCrossSectionStage;
-    }
 }
 
 

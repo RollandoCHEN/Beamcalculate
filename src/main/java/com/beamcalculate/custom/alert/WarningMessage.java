@@ -1,7 +1,5 @@
 package com.beamcalculate.custom.alert;
 
-import com.beamcalculate.BeamCalculatorApp;
-import com.beamcalculate.model.LanguageManager;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -23,21 +21,21 @@ public class WarningMessage {
     private ButtonType mButtonTypeOk;
     private ButtonType mButtonTypeCancel;
 
-    public enum IfWithConfirm{
+    public enum WarningMessageOption {
         WITH_CONFIRM(true),
         WITHOUT_CONFIRM(false);
         private boolean withConfirmation;
 
-        IfWithConfirm(boolean withConfirmation) {
+        WarningMessageOption(boolean withConfirmation) {
             this.withConfirmation = withConfirmation;
         }
 
-        public boolean isWithConfirmation() {
+        public boolean withConfirmation() {
             return withConfirmation;
         }
     }
 
-    public WarningMessage(Set<String> messageInputSet, String messageBodyKey, IfWithConfirm ifWithConfirm){
+    public WarningMessage(Set<String> messageInputSet, String messageBodyKey, WarningMessageOption option){
         if(!messageInputSet.isEmpty()) {
             ImageView warningGraphic = new ImageView("image/warning-icon_64x64.png");
             Image warningIcon = new Image("image/warning-icon_256x256.png");
@@ -55,7 +53,7 @@ public class WarningMessage {
             StringBuilder infoMessage = new StringBuilder(getBundleText(messageBodyKey) + messageFromSet);
 
             mButtonTypeOk = new ButtonType(getBundleText("button.ok"), ButtonBar.ButtonData.OK_DONE);
-            if (ifWithConfirm.isWithConfirmation()) {
+            if (option.withConfirmation()) {
                 mButtonTypeCancel = new ButtonType(getBundleText("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 mAlert.getButtonTypes().setAll(mButtonTypeOk, mButtonTypeCancel);
                 infoMessage.append("\n\n").append(getBundleText("warning.content.confirmation"));

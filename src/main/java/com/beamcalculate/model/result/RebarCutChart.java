@@ -4,7 +4,6 @@ import static com.beamcalculate.model.LanguageManager.getBundleText;
 import com.beamcalculate.custom.node.HoveredThresholdNode;
 import com.beamcalculate.custom.MyMethods;
 import com.beamcalculate.custom.RebarType_Number;
-import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
@@ -32,6 +31,7 @@ import static com.beamcalculate.enums.ReinforcementParam.a_M;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.model.result.MomentLineChartTreater.*;
 
 public class RebarCutChart {
 
@@ -52,20 +52,19 @@ public class RebarCutChart {
         mSpanMoment = rebar.getReinforcement().getSpanMomentFunction();
         String calculateMethod = mSpanMoment.getMethod();
 
-        mXAxis = MomentLineChart.defineAxis(mSpanMoment).get(0);
-        mYAxis = MomentLineChart.defineAxis(mSpanMoment).get(1);
+        mXAxis = defineAxis(mSpanMoment).get(0);
+        mYAxis = defineAxis(mSpanMoment).get(1);
 
         XYChart.Series<Number, Number> maxSeries = new XYChart.Series<>();
         XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
         if (calculateMethod.equals(TROIS_MOMENT_R.getMethodName())) {
-            MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
-            MomentLineChart.createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, minSeries);
+            createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
+            createRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, minSeries);
 
         } else {
-            ELUCombination combination = new ELUCombination(mSpanMoment);
-            MomentLineChart.createMomentSeries(300, combination, MAX, maxSeries);
-            MomentLineChart.createMomentSeries(300, combination, MIN, minSeries);
+            createMomentSeries(300, mSpanMoment, MAX, maxSeries);
+            createMomentSeries(300, mSpanMoment, MIN, minSeries);
         }
 
         //for all series, take date, each data has node (symbol) for representing point
@@ -222,8 +221,8 @@ public class RebarCutChart {
                     System.out.println("No intersection points with second layer moment line !!!");
 
                 } else {
-                    mSecondLayerRebarStart = MomentLineChart.getSpanLocalX(spanId, Collections.min(secondLayerRebarCutPointsList), calculateMethod);
-                    mSecondLayerRebarEnd = MomentLineChart.getSpanLocalX(spanId, Collections.max(secondLayerRebarCutPointsList), calculateMethod);
+                    mSecondLayerRebarStart = getSpanLocalX(spanId, Collections.min(secondLayerRebarCutPointsList), calculateMethod);
+                    mSecondLayerRebarEnd = getSpanLocalX(spanId, Collections.max(secondLayerRebarCutPointsList), calculateMethod);
                 }
             }
         }

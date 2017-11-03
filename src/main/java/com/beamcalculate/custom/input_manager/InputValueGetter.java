@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.beamcalculate.custom.alert.WarningMessage.IfWithConfirm.WITH_CONFIRM;
+import static com.beamcalculate.custom.alert.WarningMessage.WarningMessageOption.WITH_CONFIRM;
 
 /**
  * Created by Ruolin on 29/10/2017 for Beamcalculate.
@@ -42,9 +42,9 @@ public class InputValueGetter {
         }
     }
 
-    public void getInputValue(NamedChoiceBox sourceChoiceBox, StringProperty goalProperty){
+    public void getInputValue(NamedChoiceBox<String> sourceChoiceBox, StringProperty goalProperty){
         try {
-            goalProperty.set((String)sourceChoiceBox.getValue());
+            goalProperty.set(sourceChoiceBox.getValue());
             if(sourceChoiceBox.getValue() == null){
                 mMissingParamWarningSet.add(sourceChoiceBox.getParameterName());
             }
@@ -53,12 +53,8 @@ public class InputValueGetter {
         }
     }
 
-    public void getInputValue(ChoiceBox sourceChoiceBox, IntegerProperty goalProperty){
-        try {
-            goalProperty.set((Integer)sourceChoiceBox.getValue());
-        } catch (Exception e) {
-            mMissingParamWarningSet.add(sourceChoiceBox.getId());
-        }
+    public void getInputValue(ChoiceBox<Integer> sourceChoiceBox, IntegerProperty goalProperty){
+        goalProperty.set(sourceChoiceBox.getValue());
     }
 
     public boolean continueAfterShowingWarning(){

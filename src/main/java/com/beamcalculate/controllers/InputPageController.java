@@ -27,13 +27,14 @@ import javafx.scene.layout.*;
 import java.net.URL;
 import java.util.*;
 
-import static com.beamcalculate.custom.alert.WarningMessage.IfWithConfirm.WITHOUT_CONFIRM;
+import static com.beamcalculate.custom.alert.WarningMessage.WarningMessageOption.WITHOUT_CONFIRM;
 
 
 public class InputPageController implements Initializable {
     @FXML private AnchorPane anchorPane;
     @FXML private CheckBox onTSection_chkb;
-    @FXML private ChoiceBox numSpans_chcb;
+    @FXML private CheckBox sampleInputs_chkb;
+    @FXML private ChoiceBox<Integer> numSpans_chcb;
     @FXML private CheckBox equalSupport_chkb;
     @FXML private CheckBox equalSpan_chkb;
     @FXML private GridPane spansLength_gp;
@@ -49,7 +50,7 @@ public class InputPageController implements Initializable {
     @FXML private NamedTextField variableLoad_tf;
     @FXML private NamedTextField fck_tf;
     @FXML private NamedTextField fyk_tf;
-    @FXML private NamedChoiceBox ductibilityClass_chcb;
+    @FXML private NamedChoiceBox<String> ductibilityClass_chcb;
     @FXML private Button diagramGenerate_button;
 
 
@@ -82,7 +83,8 @@ public class InputPageController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // set the parameter name for the text fields and choice box in order to show the correct parameter name in the missing param warning message
+         /* set the parameter name for the text fields and choice box
+          * in order to show the correct parameter name in the missing param warning message*/
         ductibilityClass_chcb.setParameterName(resources.getString("parameter.ductilityClass"));
         sectionWidth_tf.setParameterName(resources.getString("parameter.sectionWidth"));
         sectionHeight_tf.setParameterName(resources.getString("parameter.sectionHeight"));
@@ -104,6 +106,50 @@ public class InputPageController implements Initializable {
         // T-shaped section treatment
         notOnTSection.bind(Bindings.not(onTSection_chkb.selectedProperty()));
         onTSection.bind(onTSection_chkb.selectedProperty());
+
+        // Sample data check box treatment
+        sampleInputs_chkb.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue){
+                onTSection_chkb.setSelected(true);
+                numSpans_chcb.getSelectionModel().select(2);
+                sectionWidth_tf.setText("0.4");
+                sectionHeight_tf.setText("0.6");
+                slabThickness_tf.setText("0.18");
+                perpendicularSpacing_tf.setText("3");
+                permanentLoad_tf.setText("4.2");
+                variableLoad_tf.setText("5.4");
+                fck_tf.setText("25");
+                fyk_tf.setText("500");
+                ductibilityClass_chcb.getSelectionModel().select("B");
+                double[] spanLengths = {5.2, 4.5, 6.1};
+                double[] supportWidths = {0.25, 0.20, 0.20, 0.3};
+                for (int i=0; i<numSpans_chcb.getValue();i++){
+                    TextField textField = (TextField)spansLength_gp.getChildren().get(i);
+                    textField.setText(String.valueOf(spanLengths[i]));
+                }
+                for (int i=0; i<numSpans_chcb.getValue()+1;i++){
+                    TextField textField = (TextField)supportsWidth_gp.getChildren().get(i);
+                    textField.setText(String.valueOf(supportWidths[i]));
+                }
+            } else {
+                onTSection_chkb.setSelected(false);
+                numSpans_chcb.getSelectionModel().clearSelection();
+                sectionWidth_tf.clear();
+                sectionHeight_tf.clear();
+                slabThickness_tf.clear();
+                perpendicularSpacing_tf.clear();
+                permanentLoad_tf.clear();
+                variableLoad_tf.clear();
+                fck_tf.clear();
+                fyk_tf.clear();
+                spansLength_gp.getChildren().forEach(node -> {
+                    ((TextField) node).clear();
+                });
+                supportsWidth_gp.getChildren().forEach(node -> {
+                    ((TextField) node).clear();
+                });
+            }
+        }));
 
         // equal span_function or equal support_moment treatment
         notEqualSpan.bind(Bindings.not(equalSpan_chkb.selectedProperty()));
@@ -174,40 +220,41 @@ public class InputPageController implements Initializable {
 
     @FXML
     private void generateGeometryDiagram(ActionEvent actionEvent) {
+        if (!numSpans_chcb.getSelectionModel().isEmpty()) {
+            mInputValueGetter.getInputValue(numSpans_chcb, mGeometry.numSpanProperty());
+            double hGapValue = (880 - mGeometry.getNumSpan() * 69) / mGeometry.getNumSpan();
 
-        mInputValueGetter.getInputValue(numSpans_chcb, mGeometry.numSpanProperty());
-        double hGapValue = (880- mGeometry.getNumSpan()*69)/ mGeometry.getNumSpan();
+            spansLength_gp.getChildren().clear();
+            supportsWidth_gp.getChildren().clear();
+            mGeometry.spansLengthMap().clear();
+            mGeometry.supportWidthMap().clear();
 
-        spansLength_gp.getChildren().clear();
-        supportsWidth_gp.getChildren().clear();
-        mGeometry.spansLengthMap().clear();
-        mGeometry.supportWidthMap().clear();
+            mInputTextFieldsTreater.addTextFieldToGrid(
+                    mGeometry.getNumSpan(), hGapValue,
+                    equalSpan_chkb, equalSpanLength_tf,
+                    spansLength_gp
+            );
 
-        mInputTextFieldsTreater.addTextFieldToGrid(
-                mGeometry.getNumSpan(), hGapValue,
-                equalSpan_chkb, equalSpanLength_tf,
-                spansLength_gp
-        );
+            beamDiagram.setImage(getBeamDiagram(mGeometry.getNumSpan()));
 
-        beamDiagram.setImage(getBeamDiagram(mGeometry.getNumSpan()));
-
-        mInputTextFieldsTreater.addTextFieldToGrid(
-                mGeometry.getNumSupport(), hGapValue,
-                equalSupport_chkb, equalSupportWidth_tf,
-                supportsWidth_gp
-        );
+            mInputTextFieldsTreater.addTextFieldToGrid(
+                    mGeometry.getNumSupport(), hGapValue,
+                    equalSupport_chkb, equalSupportWidth_tf,
+                    supportsWidth_gp
+            );
 
 //        bind graph generating button to the text fields
-        diagramGenerate_button.disableProperty().bind(
-                mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(permanentLoad_tf, variableLoad_tf)
-                        .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(spansLength_gp))
-                        .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(supportsWidth_gp))
-        );
+            diagramGenerate_button.disableProperty().bind(
+                    mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(permanentLoad_tf, variableLoad_tf)
+                            .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(spansLength_gp))
+                            .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(supportsWidth_gp))
+            );
 //        bind rebar calculate button to the text fields
-        isDisabledRebarCalculate.bind(
-                mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(sectionWidth_tf, sectionHeight_tf, fck_tf, fyk_tf)
-                        .or(Bindings.isNull(ductibilityClass_chcb.valueProperty()))
-        );
+            isDisabledRebarCalculate.bind(
+                    mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(sectionWidth_tf, sectionHeight_tf, fck_tf, fyk_tf)
+                            .or(Bindings.isNull(ductibilityClass_chcb.valueProperty()))
+            );
+        }
     }
 
     @FXML

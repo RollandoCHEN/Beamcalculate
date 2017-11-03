@@ -37,11 +37,12 @@
                             </padding>
                             <VBox spacing="10">
 
-                                <HBox spacing="5">
+                                <HBox spacing="20">
                                     <padding>
                                         <Insets top="10" bottom="10"/>
                                     </padding>
                                     <CheckBox fx:id="onTSection_chkb" text="%label.ifTSection"/>
+                                    <CheckBox fx:id="sampleInputs_chkb" text="%checkBox.sampleInput"/>
                                 </HBox>
                                 <Label styleClass="title" text="%title.geometry"/>
                                 <HBox spacing="30">

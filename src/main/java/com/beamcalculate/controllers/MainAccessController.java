@@ -158,7 +158,7 @@ public class MainAccessController implements Initializable {
     //Get nodes from moment page controller to pass them to the input page controller
     public AnchorPane getMomentPageAnchorPane() { return momentPageController.getAnchorPane(); }
 
-    public void createMomentLineChart(SpanMomentFunction... spanMomentFunctions) { momentPageController.createMomentLineChart(spanMomentFunctions);}
+    public void createMomentLineChart(SpanMomentFunction... spanMomentFunctions) { momentPageController.createMomentPage(spanMomentFunctions);}
 
     @FXML
     public void handleFullScreen(ActionEvent actionEvent) {

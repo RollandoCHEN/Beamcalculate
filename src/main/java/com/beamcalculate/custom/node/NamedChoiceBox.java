@@ -2,7 +2,7 @@ package com.beamcalculate.custom.node;
 
 import javafx.scene.control.ChoiceBox;
 
-public class NamedChoiceBox extends ChoiceBox{
+public class NamedChoiceBox <T extends Object> extends ChoiceBox <T> {
     private String mParameterName;
 
     public String getParameterName() {
