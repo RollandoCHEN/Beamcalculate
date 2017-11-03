@@ -112,6 +112,8 @@ public class InputPageController implements Initializable {
             if (newValue){
                 onTSection_chkb.setSelected(true);
                 numSpans_chcb.getSelectionModel().select(2);
+                equalSpan_chkb.setSelected(false);
+                equalSupport_chkb.setSelected(false);
                 sectionWidth_tf.setText("0.4");
                 sectionHeight_tf.setText("0.6");
                 slabThickness_tf.setText("0.18");
