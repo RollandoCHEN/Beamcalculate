@@ -54,8 +54,8 @@
                         </VBox>
                         <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="2">
                            <children>
-                              <CheckBox fx:id="redistributionCheck" text="%label.redistribution" />
-                              <Button fx:id="configurationButton" text="%button.rdsConfig" />
+                              <CheckBox fx:id="redistributionCheck" visible="false" text="%label.redistribution" />
+                              <Button fx:id="configurationButton" visible="false" text="%button.rdsConfig" />
                            </children>
                         </VBox>
                      </children>

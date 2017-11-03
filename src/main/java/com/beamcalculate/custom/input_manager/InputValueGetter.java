@@ -14,12 +14,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.beamcalculate.custom.alert.WarningMessage.IfWithConfirm.WITH_CONFIRM;
+
 /**
  * Created by Ruolin on 29/10/2017 for Beamcalculate.
  */
 public class InputValueGetter {
 
     private Set<String> mMissingParamWarningSet = new HashSet<>();
+    private boolean ifContinue;
 
     public void getInputValue(GridPane sourceGridPane, Map goalMap){
         sourceGridPane.getChildren().forEach(node -> {
@@ -58,8 +61,14 @@ public class InputValueGetter {
         }
     }
 
-
-    public void showInputWarning(){
-        new WarningMessage(mMissingParamWarningSet, "warning.content.inputWarning");
+    public boolean continueAfterShowingWarning(){
+        if(!mMissingParamWarningSet.isEmpty()) {
+            WarningMessage warningMessage = new WarningMessage(
+                    mMissingParamWarningSet, "warning.content.inputWarning", WITH_CONFIRM
+            );
+            return warningMessage.okChosen();
+        } else {
+            return true;
+        }
     }
 }

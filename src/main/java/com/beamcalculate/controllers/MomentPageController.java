@@ -132,10 +132,8 @@ public class MomentPageController {
             });
 
             //Rebar Calculating Button setting : disable value and on action
-            rebarCalculateButton.disableProperty().bind(
-                    Bindings.isNull(methodsChoiceBox.valueProperty())
-                            .or(InputPageController.isDisabledRebarCalculateProperty())
-            );
+            rebarCalculateButton.disableProperty().bind(Bindings.isNull(methodsChoiceBox.valueProperty()));
+            rebarCalculateButton.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
             rebarCalculateButton.setOnAction(event -> {
                 AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
                 Reinforcement reinforcement = new Reinforcement(chosenMethod);
@@ -183,16 +181,14 @@ public class MomentPageController {
                 }
             });
 
-
-
+            redistributionCheck.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
+            configurationButton.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
             //if the methodName of calculate is "3 moment", add redistribution for the methodName
             if (methodName.equals(TROIS_MOMENT.getMethodName())
                     && !InputPageController.isDisabledRebarCalculate()
                     ) {
                 addRedistribution(spanMomentFunction);
             }
-
-
         }
 
         private void addMethodsChoicesForCalculating(SpanMomentFunction spanMomentFunction) {

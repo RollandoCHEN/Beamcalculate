@@ -16,137 +16,92 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.ToggleButton?>
-<AnchorPane minHeight="950" minWidth="1800"
+<AnchorPane minHeight="900" minWidth="1800"
             xmlns="http://javafx.com/javafx/8.0.141"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.beamcalculate.controllers.MainAccessController">
-    <children>
-        <MenuBar fx:id="menuBar" prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0"
-                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <menus>
-                <Menu fx:id="fileMenu" mnemonicParsing="false" text="%menu.file">
-                    <items>
-                        <Menu text="%menu.export">
-                            <items>
-                                <MenuItem text="%menu.item.word"/>
-                            </items>
-                        </Menu>
-                        <MenuItem mnemonicParsing="false" text="%menu.item.close"/>
-                    </items>
-                </Menu>
-                <Menu fx:id="optionMenu" mnemonicParsing="false" text="%menu.options">
-                    <items>
-                        <Menu fx:id="languageMenu" text="%menu.languages"/>
-                        <MenuItem fx:id="fullScreenItem" text="%menu.item.fullScreen" onAction="#handleFullScreen"/>
-                    </items>
-                </Menu>
-                <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="%menu.item.about"/>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-        <SplitPane dividerPositions="0.3" layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-            <items>
-                <AnchorPane fx:id="leftPartOfSplitPane" maxWidth="220.0" minWidth="220.0">
-                    <children>
-                        <VBox alignment="TOP_CENTER" spacing="5.0"
-                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                              AnchorPane.topAnchor="0.0">
-                            <children>
-                                <StackPane>
-                                    <children>
-                                        <ToggleButton fx:id="inputPageButton" mnemonicParsing="false"
-                                                      prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
-                                        <HBox alignment="CENTER" mouseTransparent="true"
-                                              disable="${inputPageButton.disabled}">
-                                            <children>
-                                                <ImageView pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../image/input_32x32.png"/>
-                                                    </image>
-                                                </ImageView>
-                                                <Label fx:id="inputPageLabel"
-                                                       style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
-                                                       text="%label.pageButton.dimensions"/>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </StackPane>
-                                <StackPane>
-                                    <children>
-                                        <ToggleButton fx:id="momentPageButton" disable="true" mnemonicParsing="false"
-                                                      prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
-                                        <HBox alignment="CENTER" mouseTransparent="true"
-                                              disable="${momentPageButton.disabled}">
-                                            <children>
-                                                <ImageView pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../image/chart_32x32.png"/>
-                                                    </image>
-                                                </ImageView>
-                                                <Label fx:id="momentPageLabel"
-                                                       style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
-                                                       text="%label.pageButton.momentChart"/>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </StackPane>
-                                <StackPane>
-                                    <children>
-                                        <ToggleButton fx:id="rebarCasesPageButton" disable="true"
-                                                      mnemonicParsing="false"
-                                                      prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
-                                        <HBox alignment="CENTER" mouseTransparent="true"
-                                              disable="${rebarCasesPageButton.disabled}">
-                                            <children>
-                                                <ImageView pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../image/section_32x32.png"/>
-                                                    </image>
-                                                </ImageView>
-                                                <Label fx:id="rebarCasesPageLabel"
-                                                       style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
-                                                       text="%label.pageButton.rebar"/>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </StackPane>
-                            </children>
-                            <padding>
-                                <Insets bottom="10.0"/>
-                            </padding>
-                        </VBox>
-                    </children>
-                </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0">
-                    <children>
-                        <TabPane fx:id="mainPageTabPane" side="BOTTOM" tabClosingPolicy="UNAVAILABLE"
-                                 AnchorPane.bottomAnchor="-30.0" AnchorPane.leftAnchor="0.0"
-                                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <tabs>
-                                <Tab>
-                                    <content>
-                                        <fx:include fx:id="inputPage" source="InputPage.fxml"/>
-                                    </content>
-                                </Tab>
-                                <Tab>
-                                    <content>
-                                        <fx:include fx:id="momentPage" source="MomentPage.fxml"/>
-                                    </content>
-                                </Tab>
-                                <Tab>
-                                    <content>
-                                        <!--<fx:include source="RebarCasesPage.fxml"/>-->
-                                    </content>
-                                </Tab>
-                            </tabs>
-                        </TabPane>
-                    </children>
-                </AnchorPane>
-            </items>
-        </SplitPane>
-    </children>
+    <MenuBar fx:id="menuBar" prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0"
+             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Menu fx:id="fileMenu" mnemonicParsing="false" text="%menu.file">
+            <Menu text="%menu.export">
+                <MenuItem text="%menu.item.word"/>
+            </Menu>
+            <MenuItem mnemonicParsing="false" text="%menu.item.close"/>
+        </Menu>
+        <Menu fx:id="optionMenu" mnemonicParsing="false" text="%menu.options">
+            <Menu fx:id="languageMenu" text="%menu.languages"/>
+            <MenuItem fx:id="fullScreenItem" text="%menu.item.fullScreen" onAction="#handleFullScreen"/>
+        </Menu>
+        <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
+            <MenuItem mnemonicParsing="false" text="%menu.item.about"/>
+        </Menu>
+    </MenuBar>
+    <SplitPane dividerPositions="0.3" layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+        <AnchorPane fx:id="leftPartOfSplitPane" maxWidth="220.0" minWidth="220.0">
+            <VBox alignment="TOP_CENTER" spacing="5.0"
+                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                  AnchorPane.topAnchor="0.0">
+                <padding>
+                    <Insets bottom="10.0"/>
+                </padding>
+                <StackPane>
+                    <ToggleButton fx:id="inputPageButton" mnemonicParsing="false"
+                                  prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                    <HBox alignment="CENTER" mouseTransparent="true"
+                          disable="${inputPageButton.disabled}">
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../image/input_32x32.png"/>
+                        </ImageView>
+                        <Label fx:id="inputPageLabel"
+                               style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
+                               text="%label.pageButton.dimensions"/>
+                    </HBox>
+                </StackPane>
+                <StackPane>
+                    <ToggleButton fx:id="momentPageButton" disable="true" mnemonicParsing="false"
+                                  prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                    <HBox alignment="CENTER" mouseTransparent="true"
+                          disable="${momentPageButton.disabled}">
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../image/chart_32x32.png"/>
+                        </ImageView>
+                        <Label fx:id="momentPageLabel"
+                               style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
+                               text="%label.pageButton.momentChart"/>
+                    </HBox>
+                </StackPane>
+                <StackPane>
+                    <ToggleButton fx:id="rebarCasesPageButton" disable="true"
+                                  mnemonicParsing="false"
+                                  prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                    <HBox alignment="CENTER" mouseTransparent="true"
+                          disable="${rebarCasesPageButton.disabled}">
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../image/section_32x32.png"/>
+                        </ImageView>
+                        <Label fx:id="rebarCasesPageLabel"
+                               style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
+                               text="%label.pageButton.rebar"/>
+                    </HBox>
+                </StackPane>
+            </VBox>
+        </AnchorPane>
+        <AnchorPane minHeight="0.0" minWidth="0.0">
+            <TabPane fx:id="mainPageTabPane" tabClosingPolicy="UNAVAILABLE"
+                     tabMinHeight="30"
+                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-41">
+                <Tab text="%label.tab.dimensions" disable="${inputPageButton.disabled}">
+                    <fx:include fx:id="inputPage" source="InputPage.fxml"/>
+                </Tab>
+                <Tab text="${momentPageLabel.text}" disable="${momentPageButton.disabled}">
+                    <fx:include fx:id="momentPage" source="MomentPage.fxml"/>
+                </Tab>
+                <Tab text="${rebarCasesPageLabel.text}" disable="${rebarCasesPageButton.disabled}">
+                    <!--<fx:include source="RebarCasesPage.fxml"/>-->
+                </Tab>
+            </TabPane>
+        </AnchorPane>
+    </SplitPane>
 </AnchorPane>

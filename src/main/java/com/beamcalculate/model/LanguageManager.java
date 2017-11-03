@@ -39,6 +39,12 @@ public class LanguageManager {
                     ResourceBundle.getBundle("UIResources", locale)
             );
             BeamCalculatorApp.getPrimaryStage().setScene(new Scene(parent));
+            if (BeamCalculatorApp.getPrimaryStage().isMaximized()) {
+                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
+                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
+            } else {
+                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

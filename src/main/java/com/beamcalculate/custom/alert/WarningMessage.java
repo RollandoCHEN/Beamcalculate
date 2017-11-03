@@ -3,36 +3,77 @@ package com.beamcalculate.custom.alert;
 import com.beamcalculate.BeamCalculatorApp;
 import com.beamcalculate.model.LanguageManager;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.util.Optional;
 import java.util.Set;
+
+import static com.beamcalculate.model.LanguageManager.getBundleText;
 
 /**
  * Created by Ruolin on 29/10/2017 for Beamcalculate.
  */
 public class WarningMessage {
+    private Alert mAlert;
+    private Optional<ButtonType> mResult;
+    private ButtonType mButtonTypeOk;
+    private ButtonType mButtonTypeCancel;
 
-    public WarningMessage(Set<String> messageInputSet, String messageBodyKey){
+    public enum IfWithConfirm{
+        WITH_CONFIRM(true),
+        WITHOUT_CONFIRM(false);
+        private boolean withConfirmation;
+
+        IfWithConfirm(boolean withConfirmation) {
+            this.withConfirmation = withConfirmation;
+        }
+
+        public boolean isWithConfirmation() {
+            return withConfirmation;
+        }
+    }
+
+    public WarningMessage(Set<String> messageInputSet, String messageBodyKey, IfWithConfirm ifWithConfirm){
         if(!messageInputSet.isEmpty()) {
             ImageView warningGraphic = new ImageView("image/warning-icon_64x64.png");
             Image warningIcon = new Image("image/warning-icon_256x256.png");
 
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle(LanguageManager.getBundleText("window.title.warning"));
-            alert.setHeaderText(null);
+            mAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            mAlert.setTitle(getBundleText("window.title.warning"));
+            mAlert.setHeaderText(null);
 
-            StringBuffer messageFromSet = new StringBuffer();
+            StringBuilder messageFromSet = new StringBuilder();
             messageInputSet.forEach (messageItem -> messageFromSet.append("\n- " + messageItem));
-
-            String infoMessage = LanguageManager.getBundleText(messageBodyKey) + messageFromSet;
-            alert.setContentText(infoMessage);
-            alert.setGraphic(warningGraphic);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            mAlert.setGraphic(warningGraphic);
+            Stage stage = (Stage) mAlert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(warningIcon);
-            alert.showAndWait();
+
+            StringBuilder infoMessage = new StringBuilder(getBundleText(messageBodyKey) + messageFromSet);
+
+            mButtonTypeOk = new ButtonType(getBundleText("button.ok"), ButtonBar.ButtonData.OK_DONE);
+            if (ifWithConfirm.isWithConfirmation()) {
+                mButtonTypeCancel = new ButtonType(getBundleText("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                mAlert.getButtonTypes().setAll(mButtonTypeOk, mButtonTypeCancel);
+                infoMessage.append("\n\n").append(getBundleText("warning.content.confirmation"));
+            } else {
+                mAlert.getButtonTypes().setAll(mButtonTypeOk);
+            }
+
+            mAlert.setContentText(infoMessage.toString());
+            mResult = mAlert.showAndWait();
             messageInputSet.clear();
         }
+    }
+
+    public Boolean okChosen(){
+        return mResult.get() == mButtonTypeOk;
+    }
+
+    public Boolean cancelChosen(){
+        return mResult.get() == mButtonTypeCancel;
     }
 }

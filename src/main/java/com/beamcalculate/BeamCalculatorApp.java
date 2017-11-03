@@ -4,15 +4,8 @@ import static com.beamcalculate.model.LanguageManager.AppSettings;
 
 import com.beamcalculate.model.LanguageManager;
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import java.util.*;
 
 public class BeamCalculatorApp extends Application {
 
@@ -21,20 +14,9 @@ public class BeamCalculatorApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-//        mBorderPane.setTop(createMenuBar());
-//        loadView(Locale.getDefault());
-//        ScrollPane scrollPane = new ScrollPane(mBorderPane);
-//        scrollPane.setFitToWidth(true);
-
         mLanguageManager.setAppLanguage(AppSettings.currentLocal);
         mPrimaryStage.setTitle("BeamCalculator 1.1.0-SNAPSHOT");
         mPrimaryStage.getIcons().add(new Image("image/icon.png"));
-        mPrimaryStage.setMaximized(true);
-
-//        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-//        if (primaryScreenBounds.getHeight() < mPrimaryStage.getScene().getHeight()){
-//            mPrimaryStage.setHeight(primaryScreenBounds.getHeight());
-//        }
 
         mPrimaryStage.setOnCloseRequest(we -> {
 //                Alert alert = new Alert(Alert.AlertType.INFORMATION);

@@ -13,7 +13,6 @@ import com.beamcalculate.model.calculate.support_moment.SupportMoment3Moment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Load;
 import com.beamcalculate.model.entites.Material;
-import com.beamcalculate.model.result.MomentLineChart;
 import com.beamcalculate.model.calculate.support_moment.SupportMomentForfaitaire;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -27,6 +26,8 @@ import javafx.scene.layout.*;
 
 import java.net.URL;
 import java.util.*;
+
+import static com.beamcalculate.custom.alert.WarningMessage.IfWithConfirm.WITHOUT_CONFIRM;
 
 
 public class InputPageController implements Initializable {
@@ -212,26 +213,27 @@ public class InputPageController implements Initializable {
     @FXML
     private void GenerateDiagram(ActionEvent actionEvent) {
         getInputs();
-        mInputValueGetter.showInputWarning();
-        mConditionVerifier = new ForfaitaireConditionVerifier(mGeometry, mLoad);
-        calculateMoments();
-        if (mConditionVerifier.isVerified()) {
-            mMainAccessController.createMomentLineChart(
-                    mSpanMomentFunctionCaquot,
-                    mSpanMomentFunctionForfaitaire,
-                    mSpanMomentFunction3Moment
-            );
-        } else {
-            mMainAccessController.createMomentLineChart(
-                    mSpanMomentFunctionCaquot,
-                    mSpanMomentFunction3Moment
-            );
-            Set<String> messageInputSet = mConditionVerifier.getInvalidatedConditions();
-            new WarningMessage(messageInputSet, "warning.content.conditionWarning");
-        }
+        if (mInputValueGetter.continueAfterShowingWarning()) {
+            mConditionVerifier = new ForfaitaireConditionVerifier(mGeometry, mLoad);
+            calculateMoments();
+            if (mConditionVerifier.isVerified()) {
+                mMainAccessController.createMomentLineChart(
+                        mSpanMomentFunctionCaquot,
+                        mSpanMomentFunctionForfaitaire,
+                        mSpanMomentFunction3Moment
+                );
+            } else {
+                mMainAccessController.createMomentLineChart(
+                        mSpanMomentFunctionCaquot,
+                        mSpanMomentFunction3Moment
+                );
+                Set<String> messageInputSet = mConditionVerifier.getInvalidatedConditions();
+                new WarningMessage(messageInputSet, "warning.content.conditionWarning", WITHOUT_CONFIRM);
+            }
 
-        mMainAccessController.getMomentPageButton().setDisable(false);
-        mMainAccessController.getMomentPageButton().setSelected(true);
+            mMainAccessController.getMomentPageButton().setDisable(false);
+            mMainAccessController.getMomentPageButton().setSelected(true);
+        }
     }
 
     public boolean isNotEqualSpan() {

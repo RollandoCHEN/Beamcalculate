@@ -1,6 +1,7 @@
 package com.beamcalculate.controllers;
 
 import com.beamcalculate.BeamCalculatorApp;
+import com.beamcalculate.custom.alert.ConfirmationMessage;
 import com.beamcalculate.model.LanguageManager;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import javafx.beans.binding.Bindings;
@@ -14,8 +15,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.*;
@@ -85,17 +84,17 @@ public class MainAccessController implements Initializable {
 
         double leftMenuWidth = leftPartOfSplitPane.getMinWidth();
         getMomentPageAnchorPane().prefHeightProperty().bind(
-                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),90)
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),110)
         );
         getMomentPageAnchorPane().prefWidthProperty().bind(
-                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 30)
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
         );
 
         getInputPageAnchorPane().prefHeightProperty().bind(
-                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),90)
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),110)
         );
         getInputPageAnchorPane().prefWidthProperty().bind(
-                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 30)
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
         );
     }
 
@@ -117,8 +116,15 @@ public class MainAccessController implements Initializable {
             menuItem.textProperty().bind(languageStrP);
 
             menuItem.setOnAction(event -> {
-                setTextForLanguageMenu();
-                mLanguageManager.setAppLanguage(locale);
+                ConfirmationMessage confirmationMessage =
+                        new ConfirmationMessage(
+                                "window.title.confirmation",
+                                "confirmation.content.changeLanguage"
+                        );
+                if(confirmationMessage.okChosen()) {
+                    setTextForLanguageMenu();
+                    mLanguageManager.setAppLanguage(locale);
+                }
             });
 
             menuItemList.add(menuItem);
