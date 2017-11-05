@@ -38,7 +38,7 @@ public class WarningMessage {
     public WarningMessage(Set<String> messageInputSet, String messageBodyKey, WarningMessageOption option){
         if(!messageInputSet.isEmpty()) {
             ImageView warningGraphic = new ImageView("image/warning-icon_64x64.png");
-            Image warningIcon = new Image("image/warning-icon_256x256.png");
+            Image warningIcon = new Image("image/warning-icon_64x64.png");
 
             mAlert = new Alert(Alert.AlertType.CONFIRMATION);
             mAlert.setTitle(getBundleText("window.title.warning"));

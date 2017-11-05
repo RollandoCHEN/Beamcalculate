@@ -1,5 +1,6 @@
 package com.beamcalculate.model.calculate;
 
+import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Material;
 
@@ -19,6 +20,8 @@ public class MomentRedistribution {
     private double mMuLowerBound;
     private final double mMuUpperBound = 0.294;
 
+    private Geometry mGeometry;
+    private Material mMaterial;
 
     private double resolveQuadraticEquation(double a, double b, double c){
 
@@ -29,9 +32,11 @@ public class MomentRedistribution {
         return root1;
     }
 
-    public MomentRedistribution(ELUCombination combination) {
-
-        for (int supportId = 1; supportId < Geometry.getNumSupport()+1; supportId++) {
+    public MomentRedistribution(AbstractSpanMoment spanMomentFunction) {
+        ELUCombination combination = new ELUCombination(spanMomentFunction);
+        mGeometry = spanMomentFunction.getInputs().getGeometry();
+        mMaterial = spanMomentFunction.getInputs().getMaterial();
+        for (int supportId = 1; supportId < mGeometry.getNumSupport()+1; supportId++) {
 
 //        get support_moment moment values before redistribution
             mSupportMomentMap_BR.put(supportId, combination.getMinMomentValueOfSupport(supportId));
@@ -39,12 +44,13 @@ public class MomentRedistribution {
 //        get support_moment Mu values before redistribution
 
             double maxMoment = - combination.getMinMomentValueOfSupport(supportId);
-            double supportMuValue = maxMoment / (Geometry.getSectionWidth() * Math.pow(Geometry.getEffectiveHeight(), 2.0) * Material.getFcd());
+            double supportMuValue = maxMoment /
+                    (mGeometry.getSectionWidth() * Math.pow(mGeometry.getEffectiveHeight(), 2.0) * mMaterial.getFcd());
             mSupportMuMap_BR.put(supportId, supportMuValue);
         }
 
 //        set lower bound and redistribution coefficient for different ductibility class case
-        if (Material.getDuctibilityClass().equals("A")){
+        if (mMaterial.getDuctibilityClass().equals("A")){
             mMuLowerBound = 0.255;
             mMinRedistributionCoef = 0.8;
         } else {
@@ -82,7 +88,7 @@ public class MomentRedistribution {
                     combination.getSupportMomentWhenSpanMomentMax(supportId, 2)
             );
             double ration = 0;
-            if (supportId > 1 && supportId < Geometry.getNumSupport()) {
+            if (supportId > 1 && supportId < mGeometry.getNumSupport()) {
                 ration = supportMomentWhenSpanMomentMax / combination.getMinMomentValueOfSupport(supportId);
             }
             mFinalRedistributionCoefMap.put(supportId, Math.max(ration, redistributionCoef));

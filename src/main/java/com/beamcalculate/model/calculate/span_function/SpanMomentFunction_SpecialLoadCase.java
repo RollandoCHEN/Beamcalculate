@@ -3,6 +3,7 @@ package com.beamcalculate.model.calculate.span_function;
 import com.beamcalculate.controllers.InputPageController;
 import com.beamcalculate.enums.UltimateCase;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 
 import java.util.HashMap;
@@ -17,15 +18,17 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 
 public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
-    public SpanMomentFunction_SpecialLoadCase(Map<Integer, Map<Integer, Double>> specialLoadCaseSupportMomentMap, Geometry geometry) {
-        mGeometry = geometry;
+    public SpanMomentFunction_SpecialLoadCase(Map<Integer, Map<Integer, Double>> specialLoadCaseSupportMomentMap, Inputs inputs) {
+        mInputs = inputs;
+        mGeometry = inputs.getGeometry();
+        mLoad = inputs.getLoad();
         // add spanId and Map to spanMomentMap
 
-        for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
+        for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
             Map<Integer, Function<Double, Double>> loadCaseMomentFunctionMap = new HashMap();
             loadCaseMomentFunctionMap.put(1, null);
             loadCaseMomentFunctionMap.put(2, null);
-            for (int loadCase = 2; loadCase < Geometry.getNumSupport(); loadCase++) {
+            for (int loadCase = 2; loadCase < mGeometry.getNumSupport(); loadCase++) {
                 loadCaseMomentFunctionMap.put(loadCase + 10, null);
             }
             mSpanMomentFunctionMap.put(spanId, loadCaseMomentFunctionMap);
@@ -41,15 +44,15 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
                     if (loadCase < 10) {                 // loadCase == 1, loadCase == 2
                         if (spanId % 2 == loadCase % 2) {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * Load.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * Load.getQMNm();
+                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
                         } else {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * Load.getGMNm();
+                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm();
                         }
                     } else {
                         if (spanId == loadCase - 10 - 1 || spanId == loadCase - 10) {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * Load.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * Load.getQMNm();
+                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
                         } else {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * Load.getGMNm();
+                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm();
                         }
                     }
 
@@ -86,7 +89,7 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
         double ultimateMoment = 0;
         boolean compareCondition = true;
 
-        for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
+        for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
             double moment = getUltimateMomentValueOfSpan(spanId, ultimateCase);
             switch (ultimateCase) {
                 case MAX:
@@ -140,7 +143,7 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
     ) {
         int spanId;
         double xOfSupport;
-        if (supportId == Geometry.getNumSupport()) {
+        if (supportId == mGeometry.getNumSupport()) {
             spanId = supportId - 1;
             xOfSupport = this.getCalculateSpanLengthMap().get(spanId);
         } else {

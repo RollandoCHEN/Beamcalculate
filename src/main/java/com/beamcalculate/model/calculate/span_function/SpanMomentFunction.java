@@ -12,13 +12,15 @@ public class SpanMomentFunction extends AbstractSpanMoment {
 
     public SpanMomentFunction(SupportMoment supportMoment) {
         mSupportMoment = supportMoment;
-        mGeometry = mSupportMoment.getGeometry();
+        mInputs = mSupportMoment.getInputs();
+        mGeometry = mInputs.getGeometry();
+        mLoad = mInputs.getLoad();
 
         // add spanId and Map to spanMomentMap
 
-        for (int i = 0; i < Geometry.getNumSpan(); i++) {
+        for (int i = 0; i < mGeometry.getNumSpan(); i++) {
             Map<Integer, Function<Double, Double>> loadCaseMomentFunctionMap = new HashMap();
-            for (int j = 0; j < Geometry.getNumSpan() + 1; j++) {
+            for (int j = 0; j < mGeometry.getNumSpan() + 1; j++) {
                 loadCaseMomentFunctionMap.put(j, null);
             }
             mSpanMomentFunctionMap.put(i + 1, loadCaseMomentFunctionMap);
@@ -37,10 +39,10 @@ public class SpanMomentFunction extends AbstractSpanMoment {
                 thisSpanLength = mSupportMoment.getCalculateSpanLengthMap().get(spanId);
 
                 if (loadCase == 0) {
-                    thisSpanLoad = Load.getGMNm();
+                    thisSpanLoad = mLoad.getGMNm();
                 } else {
                     if (loadCase == spanId) {
-                        thisSpanLoad = Load.getQMNm();
+                        thisSpanLoad = mLoad.getQMNm();
                     } else {
                         thisSpanLoad = 0;
                     }

@@ -1,7 +1,6 @@
 package com.beamcalculate.model.result;
 
 import static com.beamcalculate.model.LanguageManager.getBundleText;
-import com.beamcalculate.controllers.InputPageController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.Reinforcement;
@@ -24,9 +23,11 @@ import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
 public class ReinforcementResultTable {
 
+    private final Geometry mGeometry;
     private Stage mResultTableStage;
 
     public ReinforcementResultTable(Reinforcement reinforcement) {
+        mGeometry = reinforcement.getSpanMomentFunction().getInputs().getGeometry();
 
         HBox spanParamHBox = new HBox();
         spanParamHBox.setSpacing(20);
@@ -43,15 +44,13 @@ public class ReinforcementResultTable {
         supportParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "support_moment"));
 
         StringBuilder tableTitle = new StringBuilder();
-        tableTitle.append(
-                getBundleText("label.momentCalculateMethod") +
-                " : " +
-                reinforcement.getSpanMomentFunction().getMethod()
-        );
-        if (InputPageController.isOnTSection()){
-            tableTitle.append(
-                    " (" + getBundleText("title.onTSection") + ")"
-            );
+        tableTitle.append(getBundleText("label.momentCalculateMethod")).
+                append(" : ").
+                append(reinforcement.getSpanMomentFunction().getMethod());
+        if (mGeometry.isOnTSection()){
+            tableTitle.append(" (").
+                    append(getBundleText("title.onTSection")).
+                    append(")");
         }
         Label methodTitle = new Label(tableTitle.toString());
         methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
@@ -66,9 +65,10 @@ public class ReinforcementResultTable {
 
         mResultTableStage = new Stage();
         mResultTableStage.setTitle(getBundleText("window.title.reinforcementTable"));
-        mResultTableStage.getIcons().add(new Image("image/reinforcement.png"));
+        mResultTableStage.getIcons().add(new Image("image/section_32x32.png"));
 
-        double sceneWidth = Geometry.getNumSpan() * 180 + 430;
+
+        double sceneWidth = mGeometry.getNumSpan() * 180 + 430;
         Scene scene = new Scene(container, sceneWidth, 880);
         mResultTableStage.setScene(scene);
     }
@@ -135,7 +135,7 @@ public class ReinforcementResultTable {
 
         reinforceParamMap.forEach((sectionId, paramValueMap)->{
             VBox paramValueVBox = new VBox();
-            if (spanOrSupport.equals("support_moment") && sectionId != 1 && sectionId != Geometry.getNumSupport()
+            if (spanOrSupport.equals("support_moment") && sectionId != 1 && sectionId != mGeometry.getNumSupport()
                     || spanOrSupport.equals("span_function")){
                 paramValueVBox.setSpacing(15);
                 Label crossSectionLabel = new Label(sectionLabelString + " " + sectionId);
@@ -144,7 +144,7 @@ public class ReinforcementResultTable {
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){
                         Label paramValue = new Label(
-                                param.getSymbol() + " = " + FOURDECIMALS.getDecimalFormat().format(value)
+                                param.getSymbol() + " = " + FOURDECIMALS.format(value)
                         );
                         Label pivotValue = new Label(
                                 pivotMap.get(sectionId).getContent()
@@ -152,7 +152,7 @@ public class ReinforcementResultTable {
                         paramValueVBox.getChildren().addAll(paramValue, pivotValue);
                     } else {
                         Label paramValue = new Label(
-                                param.getSymbol() + " = " + FOURDECIMALS.getDecimalFormat().format(value)
+                                param.getSymbol() + " = " + FOURDECIMALS.format(value)
                         );
                         paramValueVBox.getChildren().add(paramValue);
                     }
@@ -167,4 +167,5 @@ public class ReinforcementResultTable {
     public Stage getStage() {
         return mResultTableStage;
     }
+
 }

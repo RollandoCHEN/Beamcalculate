@@ -1,9 +1,21 @@
 package com.beamcalculate;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 /**
  * Created by Ruolin on 31/10/2017 for Beamcalculate.
  */
 public class JavaFXIds {
+
+    //Main Access Window
+    public final static String FILE_MENU = "#fileMenu";
+    public final static String OPTION_MENU = "#optionMenu";
+    public final static String LANGUAGE_MENU = "#languageMenu";
+    public final static String FULL_SCREEN_ITEM = "#fullScreenItem";
+    public final static String HELP_MENU = "#helpMenu";
+    public final static String INPUT_PAGE_BUTTON = "#inputPageButton";
+    public final static String MOMENT_PAGE_BUTTON = "#momentPageButton";
+    public final static String REBAR_CASES_PAGE_BUTTON = "#rebarCasesPageButton";
 
     //Input Window
     public final static String NUM_SPAN_CHOICE = "#numSpans_chcb";

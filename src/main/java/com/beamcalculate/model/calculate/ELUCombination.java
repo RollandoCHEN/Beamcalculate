@@ -25,7 +25,7 @@ public class ELUCombination {
 
     public ELUCombination(AbstractSpanMoment spanMomentFunction) {
         mSpanMomentFunction = spanMomentFunction;
-        mGeometry = spanMomentFunction.getGeometry();
+        mGeometry = spanMomentFunction.getInputs().getGeometry();
     }
 
     public double getCombinedUltimateMomentAtXOfSpan(
@@ -78,7 +78,7 @@ public class ELUCombination {
                 ObjectPositionMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(loadCaseObject);
                 break;
             case SUPPORT_MIN:
-                if (loadCaseObject == Geometry.getNumSupport()) {
+                if (loadCaseObject == mGeometry.getNumSupport()) {
                     ObjectPositionMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(loadCaseObject - 1);
                 } else {
                     ObjectPositionMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(loadCaseObject);
@@ -99,7 +99,7 @@ public class ELUCombination {
                     mUnfavorableCondition = loadCaseObjectMoment > 0;
                     break;
                 case SUPPORT_MIN:
-                    if (loadCaseObject != 1 && loadCaseObject != Geometry.getNumSupport()) {
+                    if (loadCaseObject != 1 && loadCaseObject != mGeometry.getNumSupport()) {
                         loadCaseObjectMoment = ObjectPositionMomentFunctionMap.get(loadCase).apply(0.0);
                     }
                     mUnfavorableCondition = loadCaseObjectMoment < 0;
@@ -128,7 +128,7 @@ public class ELUCombination {
         double ultimateMoment = 0;
         boolean compareCondition = true;
 
-        for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
+        for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
             double moment = getUltimateMomentValueOfSpan(spanId, ultimateCase);
             switch (ultimateCase) {
                 case MAX:
@@ -182,7 +182,7 @@ public class ELUCombination {
     ) {
         int spanId;
         double xOfSupport;
-        if (supportId == Geometry.getNumSupport()) {
+        if (supportId == mGeometry.getNumSupport()) {
             spanId = supportId - 1;
             xOfSupport = mSpanMomentFunction.getCalculateSpanLengthMap().get(spanId);
         } else {
@@ -197,7 +197,7 @@ public class ELUCombination {
     ) {
         double xInRefSpan;
         int refSpanId;
-        if (supportId == Geometry.getNumSupport()) {
+        if (supportId == mGeometry.getNumSupport()) {
             refSpanId = supportId - 1;
             xInRefSpan = mSpanMomentFunction.getCalculateSpanLengthMap().get(refSpanId);
         } else {
@@ -216,7 +216,7 @@ public class ELUCombination {
     ) {
         double xInRefSpan;
         int refSpanId;
-        if (objectSupportId == Geometry.getNumSupport()) {
+        if (objectSupportId == mGeometry.getNumSupport()) {
             refSpanId = objectSupportId - 1;
             xInRefSpan = mSpanMomentFunction.getCalculateSpanLengthMap().get(refSpanId);
         } else {
@@ -284,14 +284,14 @@ public class ELUCombination {
 
         Map<Integer, Map<Integer, Double>> specialLoadCaseSupportMomentMap = new HashMap<>();
 
-        for(int supportId = 1; supportId < Geometry.getNumSupport() + 1; supportId++){
+        for(int supportId = 1; supportId < mGeometry.getNumSupport() + 1; supportId++){
             Map<Integer, Double> loadCaseMoment = new HashMap();
 
             loadCaseMoment.put(01, this.getSupportMomentWhenSpanMomentMax(supportId, 1));
 
             loadCaseMoment.put(02, this.getSupportMomentWhenSpanMomentMax(supportId, 2));
 
-            for (int loadCase = 2; loadCase < Geometry.getNumSupport(); loadCase++){
+            for (int loadCase = 2; loadCase < mGeometry.getNumSupport(); loadCase++){
 
                 loadCaseMoment.put(loadCase + 10, this.getSupportMomentWhenSupportMomentMin(supportId, loadCase));
             }

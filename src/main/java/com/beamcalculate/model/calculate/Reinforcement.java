@@ -39,23 +39,46 @@ public class Reinforcement {
     private double mPerpendicularSpacing;
     private double mSlabThickness;
     private AbstractSpanMoment mSpanMomentFunction;
-    private static Map<Integer, DoubleProperty> mEffectiveWidthPropertyMap = new HashMap();
-    private static Map<Integer, DoubleProperty> mFlangeCompressionsHeightMap = new HashMap<>();
-    private static Map<Integer, DoubleProperty> mWebCompressionHeightMap = new HashMap<>();
+    private Map<Integer, DoubleProperty> mEffectiveWidthPropertyMap = new HashMap();
+    private Map<Integer, DoubleProperty> mFlangeCompressionsHeightMap = new HashMap<>();
+    private Map<Integer, DoubleProperty> mWebCompressionHeightMap = new HashMap<>();
 
     private Map<Integer, Map<ReinforcementParam, Double>> mSpanReinforceParam = new HashMap<>();
     private Map<Integer, Map<ReinforcementParam, Double>> mSupportReinforceParam = new HashMap<>();
     private Map<Integer, Pivots> mSpanPivotMap = new HashMap<>();
     private Map<Integer, Pivots> mSupportPivotMap = new HashMap<>();
 
+    private Geometry mGeometry;
+    private Material mMaterial;
+
+    public Reinforcement(AbstractSpanMoment spanMomentFunction) {
+        mSpanMomentFunction = spanMomentFunction;
+        mGeometry = spanMomentFunction.getInputs().getGeometry();
+        mMaterial = spanMomentFunction.getInputs().getMaterial();
+        prepare();
+
+        for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++){
+            if (mGeometry.isOnTSection()) {
+                calculateReinforcementParamWithTSection(spanId);
+            } else {
+                calculateReinforcementOfSpan(spanId);
+            }
+        }
+
+        for (int supportId = 1; supportId < mGeometry.getNumSupport()+1; supportId++){
+            calculateReinforcementOfSupport(supportId);
+        }
+
+    }
+
     private void prepare(){
-        mWidth = Geometry.getSectionWidth();
-        mEffectiveHeight = Geometry.getEffectiveHeight();
-        mFcd = Material.getFcd();
-        mFyd = Material.getFyd();
-        mSteelUltimateStrain = Material.getSteelUltimateExtension();
-        mPerpendicularSpacing = Geometry.getPerpendicularSpacing();
-        mSlabThickness = Geometry.getSlabThickness();
+        mWidth = mGeometry.getSectionWidth();
+        mEffectiveHeight = mGeometry.getEffectiveHeight();
+        mFcd = mMaterial.getFcd();
+        mFyd = mMaterial.getFyd();
+        mSteelUltimateStrain = mMaterial.getSteelUltimateExtension();
+        mPerpendicularSpacing = mGeometry.getPerpendicularSpacing();
+        mSlabThickness = mGeometry.getSlabThickness();
     }
 
     private void calculateReinforcementOfSupport(int supportId){
@@ -91,7 +114,7 @@ public class Reinforcement {
         Map<Integer, Double> effectiveWidthMap = new HashMap<>();
 
         mSpanMomentFunction.getCalculateSpanLengthMap().forEach((span, spanLength)->{
-            if(span == 1 || span == Geometry.getNumSpan()) {
+            if(span == 1 || span == mGeometry.getNumSpan()) {
                 conventionalLengthMap.put(span, 0.85 * spanLength);
             } else {
                 conventionalLengthMap.put(span, 0.7 * spanLength);
@@ -214,25 +237,6 @@ public class Reinforcement {
         return maxMoment;
     }
 
-    public Reinforcement(AbstractSpanMoment spanMomentFunction) {
-        prepare();
-
-        mSpanMomentFunction = spanMomentFunction;
-
-        for (int spanId = 1; spanId < Geometry.getNumSpan()+1; spanId++){
-            if (InputPageController.isOnTSection()) {
-                calculateReinforcementParamWithTSection(spanId);
-            } else {
-                calculateReinforcementOfSpan(spanId);
-            }
-        }
-
-        for (int supportId = 1; supportId < Geometry.getNumSupport()+1; supportId++){
-            calculateReinforcementOfSupport(supportId);
-        }
-
-    }
-
     public Map<Integer, Map<ReinforcementParam, Double>> getSpanReinforceParam() {
         return mSpanReinforceParam;
     }
@@ -253,15 +257,15 @@ public class Reinforcement {
         return mSpanMomentFunction;
     }
 
-    public static Map<Integer, DoubleProperty> getEffectiveWidthPropertyMap() {
+    public Map<Integer, DoubleProperty> getEffectiveWidthPropertyMap() {
         return mEffectiveWidthPropertyMap;
     }
 
-    public static Map<Integer, DoubleProperty> getFlangeCompressionsHeightMap() {
+    public Map<Integer, DoubleProperty> getFlangeCompressionsHeightMap() {
         return mFlangeCompressionsHeightMap;
     }
 
-    public static Map<Integer, DoubleProperty> getWebCompressionHeightMap() {
+    public Map<Integer, DoubleProperty> getWebCompressionHeightMap() {
         return mWebCompressionHeightMap;
     }
 }

@@ -3,6 +3,7 @@ package com.beamcalculate.controllers;
 import com.beamcalculate.BeamCalculatorApp;
 import com.beamcalculate.custom.alert.ConfirmationMessage;
 import com.beamcalculate.model.LanguageManager;
+import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.*;
 
 import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.LanguageManager.getResourceBundle;
 
 /**
  * Created by Ruolin on 01/11/2017 for Beamcalculate.
@@ -35,8 +37,10 @@ public class MainAccessController implements Initializable {
 
     @FXML private Parent inputPage;
     @FXML private Parent momentPage;
+    @FXML private Parent rebarCasesPage;
     @FXML private InputPageController inputPageController;
     @FXML private MomentPageController momentPageController;
+    @FXML private RebarCasesPageController rebarCasesPageController;
 
     private List<BooleanProperty> mBttPressedIndicPropertiesList = new ArrayList<>();
 
@@ -58,6 +62,14 @@ public class MainAccessController implements Initializable {
         setTextForLanguageMenu();
         fullScreenItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
 
+        momentPageButton.disableProperty().bind(inputPageController.newInputProperty());
+        rebarCasesPageButton.disableProperty().bind(
+                Bindings.or(
+                        inputPageController.newInputProperty(),
+                        Bindings.not(momentPageController.showRebarPageProperty())
+                )
+        );
+
         inputPageButton.selectedProperty().addListener(((observable, oldValue, newValue) -> {
             if (!oldValue) {
                 setButtonPressed(
@@ -78,22 +90,41 @@ public class MainAccessController implements Initializable {
             }
         }));
 
+        rebarCasesPageButton.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!oldValue) {
+                setButtonPressed(
+                        rebarCasesPageButton.mouseTransparentProperty(),
+                        rebarCasesPageButton.selectedProperty()
+                );
+                mainPageTabPane.getSelectionModel().select(2);
+            }
+        }));
+
+
         inputPageButton.setSelected(true);
         //When the main fxml is loaded, inject the main controller to the input page controller
         inputPageController.injectMainController(this);
 
+        momentPageController.injectMainController(this);
+
         double leftMenuWidth = leftPartOfSplitPane.getMinWidth();
+        getInputPageAnchorPane().prefHeightProperty().bind(
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),110)
+        );
+        getInputPageAnchorPane().prefWidthProperty().bind(
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
+        );
+
         getMomentPageAnchorPane().prefHeightProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),110)
         );
         getMomentPageAnchorPane().prefWidthProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
         );
-
-        getInputPageAnchorPane().prefHeightProperty().bind(
+        getRebarCasesPageAnchorPane().prefHeightProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),110)
         );
-        getInputPageAnchorPane().prefWidthProperty().bind(
+        getRebarCasesPageAnchorPane().prefWidthProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
         );
     }
@@ -152,14 +183,24 @@ public class MainAccessController implements Initializable {
         return momentPageButton;
     }
 
-    //Get nodes from input page controller
+    public ToggleButton getRebarCasesPageButton() {
+        return rebarCasesPageButton;
+    }
+
+    //Get anchor pane from input page controller
     public AnchorPane getInputPageAnchorPane() { return inputPageController.getAnchorPane(); }
 
-    //Get nodes from moment page controller to pass them to the input page controller
+    //Get anchor pane from moment page controller
     public AnchorPane getMomentPageAnchorPane() { return momentPageController.getAnchorPane(); }
+
+    public BooleanProperty getShowRebarPageProperty() { return momentPageController.showRebarPageProperty(); }
+
+    //Get anchor pane from rebar cases page controller
+    public AnchorPane getRebarCasesPageAnchorPane() { return rebarCasesPageController.getAnchorPane(); }
 
     public void createMomentLineChart(SpanMomentFunction... spanMomentFunctions) { momentPageController.createMomentPage(spanMomentFunctions);}
 
+    public void generateRebarSelectionCasesTable(Rebar rebar) { rebarCasesPageController.createRebarCasesPage(rebar);}
     @FXML
     public void handleFullScreen(ActionEvent actionEvent) {
         BeamCalculatorApp.getPrimaryStage().setFullScreen(true);

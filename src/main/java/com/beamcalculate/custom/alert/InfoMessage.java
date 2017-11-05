@@ -14,7 +14,7 @@ public class InfoMessage {
 
     public InfoMessage(String titleKey, String headKey, String messageBodyKey){
         ImageView infoGraphic = new ImageView("image/info-icon_64x64.png");
-        Image infoIcon = new Image("image/info-icon_256x256.png");
+        Image infoIcon = new Image("image/info-icon_64x64.png");
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(LanguageManager.getBundleText(titleKey));

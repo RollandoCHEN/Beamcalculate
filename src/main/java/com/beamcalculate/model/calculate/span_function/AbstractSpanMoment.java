@@ -2,13 +2,17 @@ package com.beamcalculate.model.calculate.span_function;
 
 import com.beamcalculate.model.calculate.support_moment.SupportMoment;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
+import com.beamcalculate.model.entites.Load;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public abstract class AbstractSpanMoment {
+    Inputs mInputs;
     Geometry mGeometry;
+    Load mLoad;
     SupportMoment mSupportMoment;
     Map<Integer, Map<Integer, Function<Double, Double>>> mSpanMomentFunctionMap = new HashMap<>();
 
@@ -20,8 +24,8 @@ public abstract class AbstractSpanMoment {
         return mSupportMoment.getMethod();
     }
 
-    public Geometry getGeometry() {
-        return mGeometry;
+    public Inputs getInputs() {
+        return mInputs;
     }
 
     public Map<Integer, Double> getCalculateSpanLengthMap() {

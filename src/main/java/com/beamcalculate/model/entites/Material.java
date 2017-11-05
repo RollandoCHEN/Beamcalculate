@@ -12,11 +12,11 @@ public class Material {
     public static double STEEL_COEF = 1.15;
 
     private final DoubleProperty fck = new SimpleDoubleProperty();
-    private static final DoubleProperty fcd = new SimpleDoubleProperty();
+    private final DoubleProperty fcd = new SimpleDoubleProperty();
     private final DoubleProperty fyk = new SimpleDoubleProperty();
-    private static final DoubleProperty fyd = new SimpleDoubleProperty();
-    private static final StringProperty ductibilityClass = new SimpleStringProperty();
-    private static final DoubleProperty steelUltimateExtension = new SimpleDoubleProperty();
+    private final DoubleProperty fyd = new SimpleDoubleProperty();
+    private final StringProperty ductibilityClass = new SimpleStringProperty();
+    private final DoubleProperty steelUltimateExtension = new SimpleDoubleProperty();
 
     public Material() {
         fcd.bind(Bindings.divide(fck, CONCRETE_COEF));
@@ -28,7 +28,7 @@ public class Material {
         );
     }
 
-    public static double getSteelUltimateExtension() {
+    public double getSteelUltimateExtension() {
         return steelUltimateExtension.get();
     }
 
@@ -37,7 +37,7 @@ public class Material {
     }
 
 
-    public static double getFcd() {
+    public double getFcd() {
         return fcd.get();
     }
 
@@ -45,7 +45,7 @@ public class Material {
         return fcd;
     }
 
-    public static double getFyd() {
+    public double getFyd() {
         return fyd.get();
     }
 
@@ -69,7 +69,7 @@ public class Material {
         return fyk;
     }
 
-    public static String getDuctibilityClass() {
+    public String getDuctibilityClass() {
         return ductibilityClass.get();
     }
 
@@ -77,7 +77,7 @@ public class Material {
         return ductibilityClass;
     }
 
-    public static boolean isEmptyDuctibilityClass(){
+    public boolean isEmptyDuctibilityClass(){
         return ductibilityClass.isEmpty().get();
     }
 }

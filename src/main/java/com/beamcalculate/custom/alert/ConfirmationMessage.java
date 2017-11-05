@@ -22,7 +22,7 @@ public class ConfirmationMessage {
 
     public ConfirmationMessage(String titleKey, String messageBodyKey){
         ImageView questionGraphic = new ImageView("image/question-icon_64x64.png");
-        Image questionIcon = new Image("image/question-icon_256x256.png");
+        Image questionIcon = new Image("image/question-icon_64x64.png");
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBundleText(titleKey));
