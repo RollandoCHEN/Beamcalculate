@@ -16,22 +16,24 @@ import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 public class Rebar {
     // TODO mMaxDiameter should not be fixed
     private double mMaxDiameter = HA25.getDiameter_mm();
-    private double mSectionWidth_cm = Geometry.getSectionWidth() * 100;
     private Map<Integer, List<Map<Integer, RebarType_Number>>> mRebarCasesMap = new HashMap<>();
     private Reinforcement mReinforcement;
     private int mMaxNumOfRebarPerLayer;
     private int mMaxNumLayers;
+    private Geometry mGeometry;
 
     public Rebar(Reinforcement reinforcement) {
         setReinforcement(reinforcement);
+        mGeometry = reinforcement.getSpanMomentFunction().getInputs().getGeometry();
 
+        double sectionWidth_cm = mGeometry.getSectionWidth() * 100;
         // TODO the estimation method of maxRebarPerLayer is not confirmed
-        mMaxNumOfRebarPerLayer = getMaxNumOfRebarPerLayer(mSectionWidth_cm);
+        mMaxNumOfRebarPerLayer = getMaxNumOfRebarPerLayer(sectionWidth_cm);
 
         // TODO maxNumLayers should not be fixed
         mMaxNumLayers = 2;
 
-        for (int spanId = 1; spanId < Geometry.getNumSpan()+1; spanId++){
+        for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++){
             calculateRebarCasesOfSpan(spanId);
             printRebarOfSpan(spanId);
         }

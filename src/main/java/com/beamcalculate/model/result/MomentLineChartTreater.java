@@ -35,6 +35,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import sun.plugin2.message.GetAppletMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,12 +52,6 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 
 public class MomentLineChartTreater {
 
-    private static Geometry mGeometry;
-
-    public MomentLineChartTreater(SpanMomentFunction spanMomentFunction) {
-        mGeometry = spanMomentFunction.getGeometry();
-    }
-
     public static List<NumberAxis> defineAxis(AbstractSpanMoment spanMomentFunction) {
         double maxSpanMomentValue;
         double maxSupportMomentValue;
@@ -71,8 +66,16 @@ public class MomentLineChartTreater {
             maxSpanMomentValue = combination.getUltimateMomentValue(MAX);
         }
 
-        NumberAxis xAxis = new NumberAxis(-1, mGeometry.getTotalLength() + 1, 1);
-        NumberAxis yAxis = new NumberAxis(-1.2 * maxSpanMomentValue, -1.2 * maxSupportMomentValue, 0.05);
+        NumberAxis xAxis = new NumberAxis(
+                -1,
+                spanMomentFunction.getInputs().getGeometry().getTotalLength() + 1,
+                1
+        );
+        NumberAxis yAxis = new NumberAxis(
+                -1.2 * maxSpanMomentValue,
+                -1.2 * maxSupportMomentValue,
+                0.05
+        );
 
         xAxis.setLabel(getBundleText("label.abscissa") + " (" + getBundleText("unit.length.m") + ")");
         yAxis.setLabel(getBundleText("label.ordinate") + " (" + getBundleText("unit.moment") + ")");
@@ -89,14 +92,15 @@ public class MomentLineChartTreater {
             AbstractSpanMoment spanMomentFunction, UltimateCase ultimateCase,
             XYChart.Series<Number, Number> series
     ) {
+        Geometry geometry = spanMomentFunction.getInputs().getGeometry();
         ELUCombination eluCombination = new ELUCombination(spanMomentFunction);
-        for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
+        for (int spanId = 1; spanId < geometry.getNumSpan() + 1; spanId++) {
 
             double spanLength = eluCombination.getSpanMomentFunction().getCalculateSpanLengthMap().get(spanId);
             double spanLocalX = 0;
 
             String calculateMethod = eluCombination.getSpanMomentFunction().getMethod();
-            double globalX = getGlobalX(spanId, spanLocalX, calculateMethod);
+            double globalX = getGlobalX(spanId, spanLocalX, calculateMethod, geometry);
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
                 double moment = -eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);         // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
@@ -115,10 +119,11 @@ public class MomentLineChartTreater {
             SpanMomentFunction_SpecialLoadCase spanMomentFunction, UltimateCase ultimateCase,
             XYChart.Series series
     ) {
+        Geometry geometry = spanMomentFunction.getGeometry();
         spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) -> {
-            double spanLength = mGeometry.getEffectiveSpansLengthMap().get(spanId);
+            double spanLength = spanMomentFunction.getGeometry().getEffectiveSpansLengthMap().get(spanId);
             double spanLocalX = 0;
-            double globalX = getGlobalX(spanId, spanLocalX, TROIS_MOMENT.getMethodName());
+            double globalX = getGlobalX(spanId, spanLocalX, TROIS_MOMENT.getMethodName(), geometry);
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
                 double moment = -spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
@@ -137,16 +142,16 @@ public class MomentLineChartTreater {
                 + TROIS_MOMENT_R.getMethodName());
     }
 
-    public static double getGlobalX(int spanId, double spanLocalX, String method) {
+    public static double getGlobalX(int spanId, double spanLocalX, String method, Geometry geometry) {
         double globalX = spanLocalX;
         if (TROIS_MOMENT.getMethodName().equals(method)
                 || TROIS_MOMENT_R.getMethodName().equals(method)) {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {
-                    preX = Geometry.supportWidthMap().get(1) / 2;
+                    preX = geometry.supportWidthMap().get(1) / 2;
                 } else {
-                    preX = mGeometry.getEffectiveSpansLengthMap().get(preSpanId);
+                    preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
                 globalX += preX;
             }
@@ -155,10 +160,10 @@ public class MomentLineChartTreater {
                 double preSpanLength = 0;
                 double preSupportLength;
                 if (preSpanId == 0) {
-                    preSupportLength = Geometry.supportWidthMap().get(1);
+                    preSupportLength = geometry.supportWidthMap().get(1);
                 } else {
-                    preSpanLength = mGeometry.spansLengthMap().get(preSpanId);
-                    preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
+                    preSpanLength = geometry.spansLengthMap().get(preSpanId);
+                    preSupportLength = geometry.supportWidthMap().get(preSpanId + 1);
                 }
                 globalX += (preSpanLength + preSupportLength);
             }
@@ -167,15 +172,15 @@ public class MomentLineChartTreater {
     }
 
     // TODO Simplify this method by removing spanId parameter
-    public static double getSpanLocalX(int spanId, double globalX, String method) {
+    public static double getSpanLocalX(int spanId, double globalX, String method, Geometry geometry) {
         double spanLocalX = globalX;
         if (TROIS_MOMENT.getMethodName().equals(method)) {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {
-                    preX = Geometry.supportWidthMap().get(1) / 2;
+                    preX = geometry.supportWidthMap().get(1) / 2;
                 } else {
-                    preX = mGeometry.getEffectiveSpansLengthMap().get(preSpanId);
+                    preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
                 spanLocalX -= preX;
             }
@@ -184,10 +189,10 @@ public class MomentLineChartTreater {
                 double preSpanLength = 0;
                 double preSupportLength;
                 if (preSpanId == 0) {
-                    preSupportLength = Geometry.supportWidthMap().get(1);
+                    preSupportLength = geometry.supportWidthMap().get(1);
                 } else {
-                    preSpanLength = mGeometry.spansLengthMap().get(preSpanId);
-                    preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
+                    preSpanLength = geometry.spansLengthMap().get(preSpanId);
+                    preSupportLength = geometry.supportWidthMap().get(preSpanId + 1);
                 }
                 spanLocalX -= (preSpanLength + preSupportLength);
             }

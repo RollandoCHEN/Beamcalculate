@@ -1,5 +1,7 @@
 package com.beamcalculate.custom.input_manager;
 
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import sun.misc.Regexp;
 
@@ -16,31 +18,24 @@ public class InputControllerAdder {
         for (TextField textField : textFields) {
             textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (!newValue) { //when focus lost
-                    if (!textField.getText().matches("(?=([.]|[,])?\\d)\\d*(?:(?:[.]|[,])(?:\\d*))?")) {
-                        /* The pattern means :
-                         * (?=[.]?\\d) -----> first match [.]|[,]? - "." or "," appears once or not at all with \d - one number, to avoid entering only one "." and one ","
-                         * \\d*(?:(?:[.])(?:\\d*))? -------> then match \d* zero or more number, ([.] + \d*)? "." with zero or more number appears zero or once
-                         */
+                    if (!textField.getText().matches("(?=(?:[.]|[,])?(?:\\d))(\\d*)(?:([.]|[,])(\\d*))?")) {
                         //when it not matches the pattern
                         //set the textField empty
                         textField.setText("");
                     } else {
-                        Pattern p = Pattern.compile("(\\d*)([.]|[,])(\\d*)");
-                        //if we enter ".2" or "3."
-                        //it will be replaced by "0.2" and "3.0"
-                        Matcher m = p.matcher(textField.getText());
-                        if(m.find()) {
-                            if (m.group(2).equals(",")){
-                                textField.setText(m.group(1) + "." + m.group(3));
+                        Pattern pattern = Pattern.compile("(\\d*)([.]|[,])(\\d*)");
+                        Matcher matcher = pattern.matcher(textField.getText());
+                        if (matcher.find()) {
+                            if (matcher.group(2).equals(",")) {
+                                textField.setText(matcher.group(1) + "." + matcher.group(3));
                             }
-                            if (m.group(1).equals("")){
-                                textField.setText("0." + m.group(3));
+                            if (matcher.group(1).equals("")) {
+                                textField.setText("0." + matcher.group(3));
                             }
-                            if (m.group(3).equals("")){
-                                textField.setText(m.group(1) + ".0");
+                            if (matcher.group(3).equals("")) {
+                                textField.setText(matcher.group(1) + ".0");
                             }
                         }
-
                     }
                 }
             });
@@ -52,13 +47,10 @@ public class InputControllerAdder {
     }
 
     public void addMaxValueValidation(TextField textField, double maxValue) {
+        addRealNumberControllerTo(textField);
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (!newValue) { //when focus lost
-                if (!textField.getText().matches("\\d*(?:(?:[.])(?:\\d*))?")) {
-                    //when it not matches the pattern
-                    //set the textField empty
-                    textField.setText("");
-                } else if (Double.parseDouble(textField.getText()) > maxValue) {
+                if (!textField.getText().isEmpty()&&Double.parseDouble(textField.getText()) > maxValue) {
                     textField.setText("");
                 }
             }

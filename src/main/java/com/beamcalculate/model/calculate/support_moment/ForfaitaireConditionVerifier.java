@@ -2,6 +2,7 @@ package com.beamcalculate.model.calculate.support_moment;
 
 import static com.beamcalculate.model.LanguageManager.getBundleText;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 
 import java.util.HashSet;
@@ -16,18 +17,18 @@ public class ForfaitaireConditionVerifier {
     private boolean mConditionsVerified;
     private Set<String> mInvalidateConditions = new HashSet<>();
 
-    public ForfaitaireConditionVerifier(Geometry geometry, Load load){
+    public ForfaitaireConditionVerifier(Inputs inputs){
         // TODO To add verification for the live load on sol q < 5kN/m²
         boolean liveLoadCond = true;
 //        boolean liveLoadCond = load.getQMNm() / 6 < 0.005;
 //        if (!liveLoadCond){
 //            mInvalidateConditions.add(BeamCalculatorApp.getBundleText("text.conditionA"));
 //        }
-        boolean live_deadLoadCond = load.getQMNm() <= 2*load.getGMNm();
+        boolean live_deadLoadCond = inputs.getLoad().getQMNm() <= 2*inputs.getLoad().getGMNm();
         if(!live_deadLoadCond){
             mInvalidateConditions.add(getBundleText("text.conditionA"));
         }
-        boolean spanLengthCond = getSpanLengthCondition(geometry);
+        boolean spanLengthCond = getSpanLengthCondition(inputs.getGeometry());
         if (!spanLengthCond){
             mInvalidateConditions.add(getBundleText("text.conditionC"));
         }

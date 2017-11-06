@@ -1,8 +1,8 @@
 package com.beamcalculate.model.calculate.support_moment;
 
 import Jama.Matrix;
-import com.beamcalculate.custom.MyMethods;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 
 import java.util.ArrayList;
@@ -14,22 +14,25 @@ import java.util.stream.Stream;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 
 public class SupportMoment3Moment extends SupportMoment {
+
     private Map<Integer, Double> mEffectiveSpansLengthMap = new HashMap();
 
-    public SupportMoment3Moment(Geometry geometry, Load load) {
-        mGeometry = geometry;
-        mEffectiveSpansLengthMap = geometry.getEffectiveSpansLengthMap();
+    public SupportMoment3Moment(Inputs inputs) {
+        mInputs = inputs;
+        mGeometry = inputs.getGeometry();
+        mLoad = inputs.getLoad();
+        mEffectiveSpansLengthMap = mGeometry.getEffectiveSpansLengthMap();
         // add supportId and Map to mSupportMomentMap
 
-        for (int supportId = 1; supportId < Geometry.getNumSupport() + 1; supportId++) {
+        for (int supportId = 1; supportId < mGeometry.getNumSupport() + 1; supportId++) {
             Map<Integer, Double> loadCaseMomentMap = new HashMap();
-            for (int loadCase = 0; loadCase < Geometry.getNumSpan() + 1; loadCase++) {
+            for (int loadCase = 0; loadCase < mGeometry.getNumSpan() + 1; loadCase++) {
                 loadCaseMomentMap.put(loadCase, null);
             }
             mSupportMomentMap.put(supportId, loadCaseMomentMap);
         }
 
-        for (int loadCase = 0; loadCase < Geometry.getNumSpan() + 1; loadCase++) {
+        for (int loadCase = 0; loadCase < mGeometry.getNumSpan() + 1; loadCase++) {
 
 //        get left hand side array for the equation
 
@@ -37,20 +40,20 @@ public class SupportMoment3Moment extends SupportMoment {
 
 //        get right hand side array for the equation
 
-            double[] rhsArray = getRhsArray(load, loadCase);
+            double[] rhsArray = getRhsArray(mLoad, loadCase);
 
 //        Creating Matrix Objects with arrays
 
             Matrix lhs = new Matrix(lhsArray);
-            Matrix rhs = new Matrix(rhsArray, Geometry.getNumSupport());
+            Matrix rhs = new Matrix(rhsArray, mGeometry.getNumSupport());
             //calculate Solved Matrix
             Matrix answer = lhs.solve(rhs);
 
             mSupportMomentMap.forEach((supportId, loadCaseMomentMap) -> {
 
             });
-            for (int supportId = 1; supportId < Geometry.getNumSupport() + 1; supportId++) {
-                if (supportId == 1 || supportId == Geometry.getNumSupport()) {
+            for (int supportId = 1; supportId < mGeometry.getNumSupport() + 1; supportId++) {
+                if (supportId == 1 || supportId == mGeometry.getNumSupport()) {
                     mSupportMomentMap.get(supportId).put(loadCase, 0.0);
                 } else {
                     double moment = answer.get(supportId - 1, 0);
@@ -70,10 +73,10 @@ public class SupportMoment3Moment extends SupportMoment {
 
     private double[][] getLhsArray() {
         List<double[]> lhsArrayList = new ArrayList<>();
-        for (int centreSupportCase = 1; centreSupportCase < Geometry.getNumSupport() + 1; centreSupportCase++) {
+        for (int centreSupportCase = 1; centreSupportCase < mGeometry.getNumSupport() + 1; centreSupportCase++) {
             List<Double> newCase = new ArrayList();
-            if (centreSupportCase == 1 || centreSupportCase == Geometry.getNumSupport()) {
-                for (int supportId = 1; supportId < Geometry.getNumSupport() + 1; supportId++) {
+            if (centreSupportCase == 1 || centreSupportCase == mGeometry.getNumSupport()) {
+                for (int supportId = 1; supportId < mGeometry.getNumSupport() + 1; supportId++) {
                     double matrixCoef;
                     if (supportId == centreSupportCase) {
                         matrixCoef = 1;
@@ -83,7 +86,7 @@ public class SupportMoment3Moment extends SupportMoment {
                     newCase.add(matrixCoef);
                 }
             } else {
-                for (int supportId = 1; supportId < Geometry.getNumSupport() + 1; supportId++) {
+                for (int supportId = 1; supportId < mGeometry.getNumSupport() + 1; supportId++) {
                     double matrixCoef;
                     if (supportId == centreSupportCase - 1) {
                         matrixCoef = getLeftSpanEffectiveLength(centreSupportCase);
@@ -110,8 +113,8 @@ public class SupportMoment3Moment extends SupportMoment {
     private double[] getRhsArray(Load load, int loadCase) {
         List<Double> rhsArrayList = new ArrayList();
 
-        for (int centreSupportCase = 1; centreSupportCase < Geometry.getNumSupport() + 1; centreSupportCase++) {
-            if (centreSupportCase == 1 || centreSupportCase == Geometry.getNumSupport()) {
+        for (int centreSupportCase = 1; centreSupportCase < mGeometry.getNumSupport() + 1; centreSupportCase++) {
+            if (centreSupportCase == 1 || centreSupportCase == mGeometry.getNumSupport()) {
                 rhsArrayList.add(0.0);
             } else {
                 double matrixCoef;

@@ -34,7 +34,6 @@ import static com.beamcalculate.enums.UltimateCase.MIN;
 import static com.beamcalculate.model.result.MomentLineChartTreater.*;
 
 public class RebarCutChart {
-
     private AbstractSpanMoment mSpanMoment;
     private double mFirstLayerMoment;
     private double mCumulativeMoment;
@@ -48,8 +47,11 @@ public class RebarCutChart {
 
     private Scene mScene;
 
+    private Geometry mGeometry;
+
     public RebarCutChart(Rebar rebar, int spanId, int caseNum) {
         mSpanMoment = rebar.getReinforcement().getSpanMomentFunction();
+        mGeometry = mSpanMoment.getInputs().getGeometry();
         String calculateMethod = mSpanMoment.getMethod();
 
         mXAxis = defineAxis(mSpanMoment).get(0);
@@ -75,7 +77,7 @@ public class RebarCutChart {
 
         lineChart.getData().addAll(maxSeries, minSeries);
 
-        double moveDistance = 1.25 * 0.9 * Geometry.getEffectiveHeight();
+        double moveDistance = 1.25 * 0.9 * mGeometry.getEffectiveHeight();
 
         double startPoint = getStartGlobalXOfSpan(spanId);
         double endPoint = startPoint + mSpanMoment.getCalculateSpanLengthMap().get(spanId);
@@ -221,8 +223,12 @@ public class RebarCutChart {
                     System.out.println("No intersection points with second layer moment line !!!");
 
                 } else {
-                    mSecondLayerRebarStart = getSpanLocalX(spanId, Collections.min(secondLayerRebarCutPointsList), calculateMethod);
-                    mSecondLayerRebarEnd = getSpanLocalX(spanId, Collections.max(secondLayerRebarCutPointsList), calculateMethod);
+                    mSecondLayerRebarStart = getSpanLocalX(
+                            spanId, Collections.min(secondLayerRebarCutPointsList), calculateMethod, mGeometry
+                    );
+                    mSecondLayerRebarEnd = getSpanLocalX(
+                            spanId, Collections.max(secondLayerRebarCutPointsList), calculateMethod, mGeometry
+                    );
                 }
             }
         }
@@ -298,7 +304,7 @@ public class RebarCutChart {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {
-                    preX = Geometry.supportWidthMap().get(1) / 2;
+                    preX = mGeometry.supportWidthMap().get(1) / 2;
                 } else {
                     preX = mSpanMoment.getCalculateSpanLengthMap().get(preSpanId);
                 }
@@ -309,10 +315,10 @@ public class RebarCutChart {
                 double preSpanLength = 0;
                 double preSupportLength;
                 if (preSpanId == 0) {
-                    preSupportLength = Geometry.supportWidthMap().get(1);
+                    preSupportLength = mGeometry.supportWidthMap().get(1);
                 } else {
-                    preSpanLength = Geometry.spansLengthMap().get(preSpanId);
-                    preSupportLength = Geometry.supportWidthMap().get(preSpanId + 1);
+                    preSpanLength = mGeometry.spansLengthMap().get(preSpanId);
+                    preSupportLength = mGeometry.supportWidthMap().get(preSpanId + 1);
                 }
                 globalX += (preSpanLength + preSupportLength);
             }

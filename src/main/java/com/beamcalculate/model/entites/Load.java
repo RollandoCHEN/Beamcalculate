@@ -5,17 +5,17 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
 public class Load {
-    private static final DoubleProperty gMNm = new SimpleDoubleProperty();
-    private static final DoubleProperty qMNm = new SimpleDoubleProperty();
-    private static final DoubleProperty gTm = new SimpleDoubleProperty();
-    private static final DoubleProperty qTm = new SimpleDoubleProperty();
+    private final DoubleProperty gMNm = new SimpleDoubleProperty();
+    private final DoubleProperty qMNm = new SimpleDoubleProperty();
+    private final DoubleProperty gTm = new SimpleDoubleProperty();
+    private final DoubleProperty qTm = new SimpleDoubleProperty();
 
     public Load() {
         gMNm.bind(Bindings.divide(gTm, 100));
         qMNm.bind(Bindings.divide(qTm, 100));
     }
 
-    public static double getGMNm() {
+    public double getGMNm() {
         return gMNm.get();
     }
 
@@ -23,7 +23,7 @@ public class Load {
         return gMNm;
     }
 
-    public static double getQMNm() {
+    public double getQMNm() {
         return qMNm.get();
     }
 
@@ -31,7 +31,7 @@ public class Load {
         return qMNm;
     }
 
-    public static double getGTm() {
+    public double getGTm() {
         return gTm.get();
     }
 
@@ -39,7 +39,7 @@ public class Load {
         return gTm;
     }
 
-    public static double getQTm() {
+    public double getQTm() {
         return qTm.get();
     }
 

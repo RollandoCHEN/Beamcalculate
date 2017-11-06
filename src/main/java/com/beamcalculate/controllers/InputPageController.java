@@ -11,11 +11,13 @@ import com.beamcalculate.model.calculate.support_moment.ForfaitaireConditionVeri
 import com.beamcalculate.model.calculate.support_moment.SupportMomentCaquot;
 import com.beamcalculate.model.calculate.support_moment.SupportMoment3Moment;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 import com.beamcalculate.model.entites.Material;
 import com.beamcalculate.model.calculate.support_moment.SupportMomentForfaitaire;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,9 +56,8 @@ public class InputPageController implements Initializable {
     @FXML private Button diagramGenerate_button;
 
 
+    private Inputs mInputs;
     private Geometry mGeometry = new Geometry();
-    private Load mLoad = new Load();
-    private Material mMaterial = new Material();
 
     private SupportMomentCaquot mSupportMomentCaquot;
     public static SupportMoment3Moment mSupportMoment3Moment;
@@ -80,9 +81,19 @@ public class InputPageController implements Initializable {
     private ForfaitaireConditionVerifier mConditionVerifier;
 
     private MainAccessController mMainAccessController;
+    private BooleanProperty mNewInput = new SimpleBooleanProperty(true);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        addChangingStatusListenerTo(onTSection_chkb, sampleInputs_chkb, equalSupport_chkb, equalSpan_chkb);
+        addChangingStatusListenerTo(numSpans_chcb, ductibilityClass_chcb);
+        addChangingStatusListenerTo(
+                equalSupportWidth_tf, equalSpanLength_tf, sectionWidth_tf, sectionHeight_tf,
+                perpendicularSpacing_tf, slabThickness_tf,
+                fck_tf, fyk_tf, permanentLoad_tf, variableLoad_tf
+        );
+        addChangingStatusListenerTo(spansLength_gp, supportsWidth_gp);
+
          /* set the parameter name for the text fields and choice box
           * in order to show the correct parameter name in the missing param warning message*/
         ductibilityClass_chcb.setParameterName(resources.getString("parameter.ductilityClass"));
@@ -144,12 +155,8 @@ public class InputPageController implements Initializable {
                 variableLoad_tf.clear();
                 fck_tf.clear();
                 fyk_tf.clear();
-                spansLength_gp.getChildren().forEach(node -> {
-                    ((TextField) node).clear();
-                });
-                supportsWidth_gp.getChildren().forEach(node -> {
-                    ((TextField) node).clear();
-                });
+                spansLength_gp.getChildren().forEach(node -> ((TextField) node).clear());
+                supportsWidth_gp.getChildren().forEach(node -> ((TextField) node).clear());
             }
         }));
 
@@ -174,6 +181,37 @@ public class InputPageController implements Initializable {
         });
     }
 
+    private void addChangingStatusListenerTo(CheckBox...checkBoxes){
+        for (CheckBox checkBox : checkBoxes) {
+            addListener(checkBox.selectedProperty());
+        }
+    }
+    private void addChangingStatusListenerTo(ChoiceBox...choiceBoxes){
+        for (ChoiceBox choiceBox : choiceBoxes) {
+            addListener(choiceBox.valueProperty());
+        }
+    }
+    private void addChangingStatusListenerTo(TextField...textFields){
+        for (TextField textField : textFields) {
+            addListener(textField.textProperty());
+        }
+    }
+    private void addChangingStatusListenerTo(GridPane... gridPanes){
+        for (GridPane gridPane : gridPanes){
+            gridPane.getChildren().forEach(node -> {
+                TextInputControl textField = (TextInputControl) node;
+                addListener(textField.textProperty());
+            });
+        }
+    }
+
+    private void addListener(ObservableValue goalProperty){
+        goalProperty.addListener((observable -> {
+            mNewInput.set(true);
+            mMainAccessController.getShowRebarPageProperty().setValue(false);
+        }));
+    }
+
     private Image getBeamDiagram(int numSpan){
         StringBuilder url = new StringBuilder();
         switch (numSpan){
@@ -194,28 +232,32 @@ public class InputPageController implements Initializable {
     }
 
     private void getInputs(){
+        final Load load = new Load();
+        final Material material = new Material();
         mInputValueGetter.getInputValue(spansLength_gp, mGeometry.spansLengthMap());
-        mInputValueGetter.getInputValue(supportsWidth_gp, Geometry.supportWidthMap());
-        mInputValueGetter.getInputValue(sectionHeight_tf, Geometry.sectionHeightProperty());
-        mInputValueGetter.getInputValue(sectionWidth_tf, Geometry.sectionWidthProperty());
-        mInputValueGetter.getInputValue(permanentLoad_tf, mLoad.gTmProperty());
-        mInputValueGetter.getInputValue(variableLoad_tf, mLoad.qTmProperty());
-        mInputValueGetter.getInputValue(fck_tf, mMaterial.fckProperty());
-        mInputValueGetter.getInputValue(fyk_tf, mMaterial.fykProperty());
-        mInputValueGetter.getInputValue(ductibilityClass_chcb, mMaterial.ductibilityClassProperty());
+        mInputValueGetter.getInputValue(supportsWidth_gp, mGeometry.supportWidthMap());
+        mInputValueGetter.getInputValue(sectionHeight_tf, mGeometry.sectionHeightProperty());
+        mInputValueGetter.getInputValue(sectionWidth_tf, mGeometry.sectionWidthProperty());
+        mInputValueGetter.getInputValue(permanentLoad_tf, load.gTmProperty());
+        mInputValueGetter.getInputValue(variableLoad_tf, load.qTmProperty());
+        mInputValueGetter.getInputValue(fck_tf, material.fckProperty());
+        mInputValueGetter.getInputValue(fyk_tf, material.fykProperty());
+        mInputValueGetter.getInputValue(ductibilityClass_chcb, material.ductibilityClassProperty());
+        mInputValueGetter.getInputValue(onTSection_chkb, mGeometry.onTSectionProperty());
         if (isOnTSection()) {
-            mInputValueGetter.getInputValue(slabThickness_tf, Geometry.slabThicknessProperty());
-            mInputValueGetter.getInputValue(perpendicularSpacing_tf, Geometry.perpendicularSpacingProperty());
+            mInputValueGetter.getInputValue(slabThickness_tf, mGeometry.slabThicknessProperty());
+            mInputValueGetter.getInputValue(perpendicularSpacing_tf, mGeometry.perpendicularSpacingProperty());
         }
+        mInputs = new Inputs(mGeometry, load, material);
     }
 
     private void calculateMoments(){
-        mSupportMomentCaquot = new SupportMomentCaquot(mGeometry, mLoad);
+        mSupportMomentCaquot = new SupportMomentCaquot(mInputs);
         mSpanMomentFunctionCaquot = new SpanMomentFunction(mSupportMomentCaquot);
-        mSupportMoment3Moment = new SupportMoment3Moment(mGeometry, mLoad);
+        mSupportMoment3Moment = new SupportMoment3Moment(mInputs);
         mSpanMomentFunction3Moment = new SpanMomentFunction(mSupportMoment3Moment);
         if (mConditionVerifier.isVerified()) {
-            mSupportMomentForfaitaire = new SupportMomentForfaitaire(mGeometry, mLoad);
+            mSupportMomentForfaitaire = new SupportMomentForfaitaire(mInputs);
             mSpanMomentFunctionForfaitaire = new SpanMomentFunction(mSupportMomentForfaitaire);
         }
     }
@@ -260,10 +302,10 @@ public class InputPageController implements Initializable {
     }
 
     @FXML
-    private void GenerateDiagram(ActionEvent actionEvent) {
+    private void getMomentChartPage(ActionEvent actionEvent) {
         getInputs();
         if (mInputValueGetter.continueAfterShowingWarning()) {
-            mConditionVerifier = new ForfaitaireConditionVerifier(mGeometry, mLoad);
+            mConditionVerifier = new ForfaitaireConditionVerifier(mInputs);
             calculateMoments();
             if (mConditionVerifier.isVerified()) {
                 mMainAccessController.createMomentLineChart(
@@ -280,7 +322,7 @@ public class InputPageController implements Initializable {
                 new WarningMessage(messageInputSet, "warning.content.conditionWarning", WITHOUT_CONFIRM);
             }
 
-            mMainAccessController.getMomentPageButton().setDisable(false);
+            mNewInput.setValue(false);
             mMainAccessController.getMomentPageButton().setSelected(true);
         }
     }
@@ -326,6 +368,14 @@ public class InputPageController implements Initializable {
     }
 
     public AnchorPane getAnchorPane() { return anchorPane; }
+
+    public boolean hasNewInput() {
+        return mNewInput.get();
+    }
+
+    public BooleanProperty newInputProperty() {
+        return mNewInput;
+    }
 
     //Get main controller
     public void injectMainController(MainAccessController mainAccessController) {

@@ -99,7 +99,7 @@
                     <fx:include fx:id="momentPage" source="MomentPage.fxml"/>
                 </Tab>
                 <Tab text="${rebarCasesPageLabel.text}" disable="${rebarCasesPageButton.disabled}">
-                    <!--<fx:include source="RebarCasesPage.fxml"/>-->
+                    <fx:include fx:id="rebarCasesPage" source="RebarCasesPage.fxml"/>
                 </Tab>
             </TabPane>
         </AnchorPane>

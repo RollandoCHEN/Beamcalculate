@@ -20,15 +20,15 @@ public class HoveredThresholdNode extends StackPane {
             labelX = new Label(
                     getBundleText("label.abscissa")
                             + " : "
-                            + TWODECIMALS.getDecimalFormat().format(globelX)
+                            + TWODECIMALS.format(globelX)
                             + getBundleText("unit.length.m")
             );
         }else {
             labelX = new Label(
                     getBundleText("label.abscissa")
                             + " G (R) : "
-                            + TWODECIMALS.getDecimalFormat().format(globelX) +
-                            " (" + TWODECIMALS.getDecimalFormat().format(relativeX) + ") "
+                            + TWODECIMALS.format(globelX) +
+                            " (" + TWODECIMALS.format(relativeX) + ") "
                             + getBundleText("unit.length.m")
             );
         }
@@ -36,7 +36,7 @@ public class HoveredThresholdNode extends StackPane {
         Label labelY = new Label(
                 getBundleText("label.moment")
                         + " : "
-                        + FOURDECIMALS.getDecimalFormat().format(y)
+                        + FOURDECIMALS.format(y)
                         + " "
                         + getBundleText("unit.moment")
         );

@@ -2,12 +2,12 @@ package com.beamcalculate.gui;
 
 import com.beamcalculate.TestFXBase;
 import com.beamcalculate.pages.InputPage;
-import javafx.scene.input.KeyCode;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.matcher.base.NodeMatchers;
 
-import static com.beamcalculate.JavaFXIds.DIAGRAM_BUTTON;
+import static com.beamcalculate.JavaFXIds.*;
 import static org.testfx.api.FxAssert.verifyThat;
 
 
@@ -28,7 +28,7 @@ public class BeamCalculatorAppTest extends TestFXBase {
 
     @Test
     public void alertMessageShouldShownWhenFillInOnlyGeometryAndLoad(){
-        mInputPage.getNSpansBeam(3, new Double[]{5.1, 4.8, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2});
+        mInputPage.getNSpansBeam(3, new Double[]{5.1, 5.6, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2});
         mInputPage.setLoad(3.8, 5.9);
         clickOn(DIAGRAM_BUTTON);
 

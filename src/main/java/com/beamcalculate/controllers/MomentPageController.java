@@ -10,18 +10,18 @@ import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -32,10 +32,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,12 +64,19 @@ public class MomentPageController {
     @FXML ChoiceBox<Integer> spanChoiceBox;
     @FXML TextField abscissaField;
     @FXML Button momentCalculateButton;
+    @FXML Label maxCaseMomentLabel;
     @FXML Label maxCaseMomentValue;
+    @FXML Label minCaseMomentLabel;
     @FXML Label minCaseMomentValue;
 
+    private Inputs mInputs;
     private Geometry mGeometry;
 
     private InputControllerAdder inputControllerAdder = new InputControllerAdder();
+
+    private MainAccessController mMainAccessController;
+
+    private BooleanProperty mShowRebarPage = new SimpleBooleanProperty(false);
 
     public class MomentPageCreator {
         private LineChart<Number, Number> mLineChart;
@@ -84,7 +90,17 @@ public class MomentPageController {
             final String methodName = spanMomentFunction.getMethod();
             String maxSeriesId = methodName + "_" + getBundleText("label.max");
             String minSeriesId = methodName + "_" + getBundleText("label.min");
-            mGeometry = spanMomentFunction.getGeometry();
+            mInputs = spanMomentFunction.getInputs();
+            mGeometry = mInputs.getGeometry();
+
+            maxCaseMomentLabel.setText(
+                    getBundleText("label.maxMoment") +
+                            " (" + getBundleText("unit.moment") + ") : "
+            );
+            minCaseMomentLabel.setText(
+                    getBundleText("label.minMoment") +
+                            " (" + getBundleText("unit.moment") + ") : "
+            );
 
             addChartsDisplayingCheckBox(methodName, maxSeriesId, minSeriesId);
 
@@ -106,7 +122,7 @@ public class MomentPageController {
                 double enteredXValue = Double.parseDouble(abscissaField.getText());
                 AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
 
-                if (chosenMethod.equals(TROIS_MOMENT_R.getMethodName())) {
+                if (chosenMethod.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
                     SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) chosenMethod;
                     maxY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                             enteredXValue, chosenSpan, MAX
@@ -123,8 +139,8 @@ public class MomentPageController {
                             enteredXValue, chosenSpan, MIN
                     );
                 }
-                maxCaseMomentValue.setText(FOURDECIMALS.getDecimalFormat().format(maxY));
-                minCaseMomentValue.setText(FOURDECIMALS.getDecimalFormat().format(minY));
+                maxCaseMomentValue.setText(FOURDECIMALS.format(maxY));
+                minCaseMomentValue.setText(FOURDECIMALS.format(minY));
             });
 
             //Rebar Calculating Button setting : disable value and on action
@@ -134,47 +150,10 @@ public class MomentPageController {
                 AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
                 Reinforcement reinforcement = new Reinforcement(chosenMethod);
                 Rebar rebar = new Rebar(reinforcement);
+                mMainAccessController.generateRebarSelectionCasesTable(rebar);
 
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/RebarCasesPage.fxml"),
-                            getResourceBundle());
-                    Parent root = fxmlLoader.load();
-
-                    RebarCasesPageController controller = fxmlLoader.getController();
-
-                    controller.setRebar(rebar);
-                    controller.generateRebarSelectionCasesTable();
-
-                    int maxNumOfCases = 1;
-                    for (int spanId = 1; spanId < Geometry.getNumSpan() + 1; spanId++) {
-                        int rebarCases = rebar.getRebarCasesListOfSpan(spanId).size();
-                        maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
-                    }
-                    // 60 is the padding in the grid pane, around the left and right grid pane
-                    double sceneWidth = controller.getLeftGridPaneWidth() + controller.getRightGridPaneWidth() + 80;
-
-                    double sceneHeight = Math.max(maxNumOfCases * 110 + 100, 970);
-
-                    Scene rebarSelectionScene = new Scene(root, sceneWidth, sceneHeight);
-                    Stage rebarSelectionStage = new Stage();
-                    rebarSelectionStage.setTitle(getBundleText("window.title.rebarChoices"));
-                    rebarSelectionStage.getIcons().add(new Image("image/rebar.png"));
-                    rebarSelectionStage.setScene(rebarSelectionScene);
-                    rebarSelectionStage.setResizable(true);
-
-                    Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-                    if (primaryScreenBounds.getHeight() < rebarSelectionStage.getScene().getHeight()) {
-                        rebarSelectionStage.setHeight(primaryScreenBounds.getHeight());
-                    }
-                    if (primaryScreenBounds.getWidth() < rebarSelectionStage.getScene().getWidth()) {
-                        rebarSelectionStage.setHeight(primaryScreenBounds.getWidth());
-                    }
-
-                    rebarSelectionStage.show();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                mShowRebarPage.setValue(true);
+                mMainAccessController.getRebarCasesPageButton().setSelected(true);
             });
 
             redistributionCheck.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
@@ -375,8 +354,7 @@ public class MomentPageController {
             mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(redistributionCheck.selectedProperty()));
             spanNumSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
-            ELUCombination combination = new ELUCombination(spanMomentFunction);
-            MomentRedistribution momentRedistribution = new MomentRedistribution(combination);
+            MomentRedistribution momentRedistribution = new MomentRedistribution(spanMomentFunction);
 
             Map<Integer, Double> calculatedFinalRedCoefMap = momentRedistribution.getFinalRedistributionCoefMap();
             Map<Integer, Double> calculatedRedCoefMap = momentRedistribution.getRedistributionCoefMap();
@@ -387,13 +365,13 @@ public class MomentPageController {
             calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
 
             //TODO This is not the correct way to add method to the method choice box
-            methodsChoiceBox.getItems().add(spanMomentFunction);
+            methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap));
 
             redistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 XYChart.Series maxELUSeries = new XYChart.Series();
                 XYChart.Series minELUSeries = new XYChart.Series();
                 if (newValue) {
-                    for (int i = 1; i < Geometry.getNumSupport(); i++) {
+                    for (int i = 1; i < mGeometry.getNumSupport(); i++) {
                         try {
                             usedRedCoefMap.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
                         } catch (Exception exp) {
@@ -403,15 +381,23 @@ public class MomentPageController {
 
                     SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
 
-                    createRedistributionMomentSeries(spanNumSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries);
+                    createRedistributionMomentSeries(
+                            spanNumSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+                    );
 
-                    createRedistributionMomentSeries(spanNumSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries);
+                    createRedistributionMomentSeries(
+                            spanNumSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+                    );
 
                     spanNumSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
                         maxELUSeries.getData().clear();
                         minELUSeries.getData().clear();
-                        createRedistributionMomentSeries(spanNumSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries);
-                        createRedistributionMomentSeries(spanNumSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries);
+                        createRedistributionMomentSeries(
+                                spanNumSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+                        );
+                        createRedistributionMomentSeries(
+                                spanNumSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+                        );
                     });
 
 
@@ -431,35 +417,38 @@ public class MomentPageController {
                 }
             });
 
+            HBox centerHBox = new HBox();
+            centerHBox.setSpacing(20);
+            centerHBox.setAlignment(Pos.CENTER);
+
             VBox paramNameVBox = new VBox();
             paramNameVBox.setSpacing(15);
+            paramNameVBox.setAlignment(Pos.CENTER_LEFT);
             Label blank = new Label("");
             Label rdsCoef = new Label(getBundleText("label.theoRdsCoef"));
             Label minRdsCoef = new Label(getBundleText("label.minRdsCoef"));
             Label finalRdsCoef = new Label(getBundleText("label.finalRdsCoef"));
             blank.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
             paramNameVBox.getChildren().addAll(blank, rdsCoef, minRdsCoef, finalRdsCoef);
+            centerHBox.getChildren().add(paramNameVBox);
 
-
-            HBox paramValuesHBox = new HBox();
-            paramValuesHBox.setSpacing(20);
-            paramValuesHBox.setAlignment(Pos.CENTER);
             calculatedRedCoefMap.forEach((supportId, coef) -> {
                 VBox supportParamValueVBox = new VBox();
                 supportParamValueVBox.setSpacing(15);
+                supportParamValueVBox.setAlignment(Pos.CENTER);
                 Label sectionLabel = new Label(getBundleText("label.support") + " " + supportId.toString());
                 sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
                 Label rdsCoefValue = new Label(
-                        THREEDECIMALS.getDecimalFormat().format(coef)
+                        THREEDECIMALS.format(coef)
                 );
                 Label finalCoefValue = new Label(
-                        THREEDECIMALS.getDecimalFormat().format(calculatedFinalRedCoefMap.get(supportId))
+                        THREEDECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
                 );
 
                 TextField coefValue = new TextField();
                 coefValue.setPrefWidth(65);
                 coefValue.textProperty().setValue(
-                        THREEDECIMALS.getDecimalFormat().format(calculatedFinalRedCoefMap.get(supportId))
+                        THREEDECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
                 );
                 if (calculatedFinalRedCoefMap.get(supportId) == 1) {
                     coefValue.setDisable(true);
@@ -485,13 +474,8 @@ public class MomentPageController {
                 mEnteredRdsCoef.put(supportId, stringProperty);
 
                 supportParamValueVBox.getChildren().addAll(sectionLabel, rdsCoefValue, finalCoefValue, coefValue);
-                paramValuesHBox.getChildren().add(supportParamValueVBox);
+                centerHBox.getChildren().add(supportParamValueVBox);
             });
-
-            HBox centerHBox = new HBox();
-            centerHBox.setSpacing(20);
-            centerHBox.setAlignment(Pos.CENTER);
-            centerHBox.getChildren().addAll(paramNameVBox, paramValuesHBox);
 
             HBox bottomHBox = new HBox();
             bottomHBox.setSpacing(20);
@@ -505,21 +489,23 @@ public class MomentPageController {
             });
 
             BorderPane container = new BorderPane();
-            container.setPadding(new Insets(20, 20, 20, 20));
+            container.setPadding(new Insets(0, 20, 20, 20));
             container.setCenter(centerHBox);
             container.setBottom(bottomHBox);
 
-
             Stage configStage = new Stage();
             configStage.setTitle(getBundleText("window.title.redistribution"));
-            configStage.getIcons().add(new Image("image/configuration.png"));
+            configStage.getIcons().add(new Image("image/setting-icon_256x256.png"));
+            configStage.setAlwaysOnTop(true);
+            configStage.setResizable(false);
+            configStage.initModality(Modality.WINDOW_MODAL);
+            configStage.initOwner(configurationButton.getScene().getWindow());
 
-            Scene scene = new Scene(container, 1000, 300);
+            int numOfSupport = mGeometry.getNumSupport();
+            Scene scene = new Scene(container, numOfSupport * 90 + 320, 280);
             configStage.setScene(scene);
 
-            configurationButton.setOnAction(event -> {
-                configStage.show();
-            });
+            configurationButton.setOnAction(event -> configStage.show());
 
             confirmButton.setOnAction(event -> {
                 redistributionCheck.setSelected(false);
@@ -553,7 +539,7 @@ public class MomentPageController {
                 supportMomentMap_AD.put(supportId, newLoadCaseMap);
             }
 
-            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD, mGeometry);
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD, mInputs);
             // match the calculate method name to the related spanMomentFunction
             return newSpanMomentFunction;
         }
@@ -565,5 +551,17 @@ public class MomentPageController {
 
     public void createMomentPage(SpanMomentFunction... spanMomentFunctions){
         new MomentPageCreator(spanMomentFunctions);
+    }
+
+    public void injectMainController(MainAccessController mainAccessController) {
+        mMainAccessController = mainAccessController;
+    }
+
+    public boolean showRebarPage() {
+        return mShowRebarPage.get();
+    }
+
+    public BooleanProperty showRebarPageProperty() {
+        return mShowRebarPage;
     }
 }

@@ -3,9 +3,11 @@ package com.beamcalculate.custom.input_manager;
 import com.beamcalculate.custom.alert.WarningMessage;
 import com.beamcalculate.custom.node.NamedChoiceBox;
 import com.beamcalculate.custom.node.NamedTextField;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.GridPane;
@@ -55,6 +57,10 @@ public class InputValueGetter {
 
     public void getInputValue(ChoiceBox<Integer> sourceChoiceBox, IntegerProperty goalProperty){
         goalProperty.set(sourceChoiceBox.getValue());
+    }
+
+    public void getInputValue(CheckBox sourceCheckBox, BooleanProperty goalProperty){
+        goalProperty.set(sourceCheckBox.isSelected());
     }
 
     public boolean continueAfterShowingWarning(){

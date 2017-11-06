@@ -2,6 +2,7 @@ package com.beamcalculate.enums;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Formatter;
 import java.util.Locale;
 
 public enum NumericalFormat {
@@ -11,17 +12,19 @@ public enum NumericalFormat {
     THREEDECIMALS("##0.000"),
     FOURDECIMALS("##0.0000");
 
-    private DecimalFormat mPattern;
+    private DecimalFormat mFormat;
     //TODO Generate the numerical format according to the selected local language
     private Locale mCurrentLocale = new Locale("en", "US");
 
-    NumericalFormat(String pattern){setPattern(pattern);}
-
-    public DecimalFormat getDecimalFormat() {
-        return mPattern;
+    NumericalFormat(String pattern){
+        setDecimalFormat(pattern);
     }
 
-    public void setPattern(String pattern) {
-        mPattern = new DecimalFormat(pattern, new DecimalFormatSymbols(mCurrentLocale));;
+    private void setDecimalFormat(String pattern) {
+        mFormat = new DecimalFormat(pattern, new DecimalFormatSymbols(mCurrentLocale));
+    }
+
+    public String format(double number){
+        return mFormat.format(number);
     }
 }
