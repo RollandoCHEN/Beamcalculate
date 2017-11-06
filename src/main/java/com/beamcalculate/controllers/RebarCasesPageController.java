@@ -1,5 +1,6 @@
 package com.beamcalculate.controllers;
 
+import static com.beamcalculate.enums.NumericalFormat.ONE_DECIMAL;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import com.beamcalculate.model.MyMethods;
 import com.beamcalculate.model.RebarType_Number;
@@ -96,6 +97,10 @@ public class RebarCasesPageController {
     private DoubleProperty leftGridPaneWidth = new SimpleDoubleProperty();
     private DoubleProperty rightGridPaneWidth = new SimpleDoubleProperty();
 
+    private DoubleProperty spanLength_cm = new SimpleDoubleProperty();
+    private DoubleProperty leftSupportWidth_cm = new SimpleDoubleProperty();
+    private DoubleProperty rightSupportWidth_cm = new SimpleDoubleProperty();
+
     private StringProperty compRegionHeightString = new SimpleStringProperty();
     private StringProperty webCompWidthString = new SimpleStringProperty();
     private StringProperty flangeWidthString = new SimpleStringProperty();
@@ -109,7 +114,7 @@ public class RebarCasesPageController {
     private StringProperty spanLengthString = new SimpleStringProperty();
 
     private double mSectionViewRatio;
-    private double mElevationViewLengthRatio;
+    private DoubleProperty mElevationViewLengthRatio = new SimpleDoubleProperty();
     private double mElevationViewHeightRatio;
 
     private double mCoverThickness_cm;
@@ -141,19 +146,24 @@ public class RebarCasesPageController {
             rebarRightIndentHBox.setVisible(false);
             rebarLengthHBox.setVisible(false);
 
-            double spanLength_cm = mGeometry.spansLengthMap().get(1) * 100;
-            double leftSupportWidth_cm = mGeometry.supportWidthMap().get(1) * 100;
-            double rightSupportWidth_cm = mGeometry.supportWidthMap().get(2) * 100;
+            spanLength_cm.setValue(mGeometry.spansLengthMap().get(1) * 100);
+            leftSupportWidth_cm.setValue(mGeometry.supportWidthMap().get(1) * 100);
+            rightSupportWidth_cm.setValue(mGeometry.supportWidthMap().get(2) * 100);
 
-            mElevationViewLengthRatio = totalLength.get() / (spanLength_cm + leftSupportWidth_cm + rightSupportWidth_cm);
+            mElevationViewLengthRatio.bind(
+                    Bindings.divide(
+                            totalLength,
+                            Bindings.add(spanLength_cm, leftSupportWidth_cm).add(rightSupportWidth_cm)
+                    )
+            );
 
-            displayedSpanLength.set(spanLength_cm * mElevationViewLengthRatio);
-            displayedLeftSupportWidth.set(leftSupportWidth_cm * mElevationViewLengthRatio);
-            displayedRightSupportWidth.set(rightSupportWidth_cm * mElevationViewLengthRatio);
+            displayedSpanLength.bind(Bindings.multiply(spanLength_cm, mElevationViewLengthRatio));
+            displayedLeftSupportWidth.bind(Bindings.multiply(leftSupportWidth_cm ,mElevationViewLengthRatio));
+            displayedRightSupportWidth.bind(Bindings.multiply(rightSupportWidth_cm, mElevationViewLengthRatio));
 
-            leftSupportWidthString.set(ZERO_DECIMAL.format(leftSupportWidth_cm));
-            rightSupportWidthString.set(ZERO_DECIMAL.format(rightSupportWidth_cm));
-            spanLengthString.set(ZERO_DECIMAL.format(spanLength_cm));
+            leftSupportWidthString.bind(ZERO_DECIMAL.format(leftSupportWidth_cm));
+            rightSupportWidthString.bind(ZERO_DECIMAL.format(rightSupportWidth_cm));
+            spanLengthString.bind(ZERO_DECIMAL.format(spanLength_cm));
 
             rebarDimensionAnnoGridPane.setPadding(
                     new Insets(0,displayedRightSupportWidth.get()/2,0,displayedLeftSupportWidth.get()/2)
@@ -337,19 +347,9 @@ public class RebarCasesPageController {
 
                             prepareRebarCutCalculateDetails();
 
-                            double spanLength_cm = mGeometry.spansLengthMap().get(columnNum) * 100;
-                            double leftSupportWidth_cm = mGeometry.supportWidthMap().get(columnNum) * 100;
-                            double rightSupportWidth_cm = mGeometry.supportWidthMap().get(columnNum + 1) * 100;
-
-                            mElevationViewLengthRatio = totalLength.get() / (spanLength_cm + leftSupportWidth_cm + rightSupportWidth_cm);
-
-                            displayedLeftSupportWidth.set(leftSupportWidth_cm * mElevationViewLengthRatio);
-                            displayedRightSupportWidth.set(rightSupportWidth_cm * mElevationViewLengthRatio);
-                            displayedSpanLength.set(spanLength_cm * mElevationViewLengthRatio);
-
-                            leftSupportWidthString.set(ZERO_DECIMAL.format(leftSupportWidth_cm));
-                            rightSupportWidthString.set(ZERO_DECIMAL.format(rightSupportWidth_cm));
-                            spanLengthString.set(ZERO_DECIMAL.format(spanLength_cm));
+                            spanLength_cm.setValue(mGeometry.spansLengthMap().get(columnNum) * 100);
+                            leftSupportWidth_cm.setValue(mGeometry.supportWidthMap().get(columnNum) * 100);
+                            rightSupportWidth_cm.setValue(mGeometry.supportWidthMap().get(columnNum + 1) * 100);
 
                             rebarDimensionAnnoGridPane.setPadding(
                                     new Insets(0,displayedRightSupportWidth.get()/2,0,displayedLeftSupportWidth.get()/2)
@@ -376,13 +376,15 @@ public class RebarCasesPageController {
                                 double rebarDiameter_cm = rebarType_number.getRebarType().getDiameter_mm()/10;
                                 double rebarLength_cm = (mRebarCutChart.getSecondLayerRebarEnd() - mRebarCutChart.getSecondLayerRebarStart()) * 100;
                                 double rebarLeftIndent_cm = mRebarCutChart.getSecondLayerRebarStart() * 100;
-                                double rebarRightIndent_cm = spanLength_cm + leftSupportWidth_cm/2 + rightSupportWidth_cm/2 - rebarLength_cm - rebarLeftIndent_cm;
+                                double rebarRightIndent_cm = spanLength_cm.get() + leftSupportWidth_cm.get()/2 + rightSupportWidth_cm.get()/2 -
+                                                rebarLength_cm - rebarLeftIndent_cm;
 
                                 VBox thisLayerRebarVBox = new VBox();
                                 if (layerNum == 1){
                                     Line rebarLine = new Line();
                                     rebarLine.setEndX(
-                                            (spanLength_cm + leftSupportWidth_cm/2 + rightSupportWidth_cm/2) * mElevationViewLengthRatio
+                                            (spanLength_cm.get() + leftSupportWidth_cm.get()/2 + rightSupportWidth_cm.get()/2) *
+                                                    mElevationViewLengthRatio.get()
                                     );
                                     rebarLine.setStroke(Paint.valueOf("red"));
                                     rebarLine.setStrokeWidth(rebarDiameter_cm * mElevationViewHeightRatio);
@@ -390,19 +392,19 @@ public class RebarCasesPageController {
 
                                 } else {
                                     thisLayerRebarVBox.setPadding(
-                                            new Insets(0,0,0,rebarLeftIndent_cm * mElevationViewLengthRatio)
+                                            new Insets(0,0,0,rebarLeftIndent_cm * mElevationViewLengthRatio.get())
                                     );
                                     Line rebarLine = new Line();
-                                    rebarLine.setEndX(rebarLength_cm * mElevationViewLengthRatio);
+                                    rebarLine.setEndX(rebarLength_cm * mElevationViewLengthRatio.get());
                                     rebarLine.setStroke(Paint.valueOf("red"));
                                     rebarLine.setStrokeWidth(rebarDiameter_cm * mElevationViewHeightRatio);
                                     thisLayerRebarVBox.getChildren().add(rebarLine);
                                 }
                                 elevationRebarVBox.getChildren().add(thisLayerRebarVBox);
 
-                                displayedRebarLeftIndent.set(rebarLeftIndent_cm * mElevationViewLengthRatio);
-                                displayedRebarRightIndent.set(rebarRightIndent_cm * mElevationViewLengthRatio);
-                                displayedRebarLength.set(rebarLength_cm * mElevationViewLengthRatio);
+                                displayedRebarLeftIndent.set(rebarLeftIndent_cm * mElevationViewLengthRatio.get());
+                                displayedRebarRightIndent.set(rebarRightIndent_cm * mElevationViewLengthRatio.get());
+                                displayedRebarLength.set(rebarLength_cm * mElevationViewLengthRatio.get());
 
                                 rebarLeftIndentString.set(ZERO_DECIMAL.format(rebarLeftIndent_cm));
                                 rebarRightIndentString.set(ZERO_DECIMAL.format(rebarRightIndent_cm));

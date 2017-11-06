@@ -20,7 +20,15 @@ public class LanguageManager {
     }
 
     public static class AppSettings {
-        public static Locale currentLocal = Locale.getDefault();
+        private static Locale currentLocal = Locale.getDefault();
+
+        public static Locale getCurrentLocal() {
+            return currentLocal;
+        }
+
+        public static void setCurrentLocal(Locale currentLocal) {
+            AppSettings.currentLocal = currentLocal;
+        }
     }
 
     public static ResourceBundle getResourceBundle(){
@@ -33,7 +41,7 @@ public class LanguageManager {
     }
 
     public void setAppLanguage(Locale locale){
-        AppSettings.currentLocal = locale;
+        AppSettings.setCurrentLocal(locale);
 
         int previousScreenStatus;
         if(BeamCalculatorApp.getPrimaryStage().isFullScreen()){

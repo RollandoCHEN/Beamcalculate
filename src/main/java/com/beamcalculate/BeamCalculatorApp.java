@@ -14,7 +14,7 @@ public class BeamCalculatorApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        mLanguageManager.setAppLanguage(AppSettings.currentLocal);
+        mLanguageManager.setAppLanguage(AppSettings.getCurrentLocal());
         mPrimaryStage.setTitle("BeamCalculator 1.1.0-SNAPSHOT");
         mPrimaryStage.getIcons().add(new Image("image/icon.png"));
 

@@ -164,7 +164,7 @@ public class MainAccessController implements Initializable {
 
     private void setTextForLanguageMenu(){
         mLanguagesItems.forEach((itemLocale, languageItem) -> {
-            if(LanguageManager.AppSettings.currentLocal.equals(itemLocale)){
+            if(LanguageManager.AppSettings.getCurrentLocal().equals(itemLocale)){
                 languageItem.setValue(getBundleText("menuItem." + itemLocale.getLanguage()));
 
             } else {

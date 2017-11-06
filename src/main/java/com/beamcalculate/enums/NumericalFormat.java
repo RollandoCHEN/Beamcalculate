@@ -3,11 +3,9 @@ package com.beamcalculate.enums;
 import com.beamcalculate.model.page_manager.LanguageManager;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.StringProperty;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Formatter;
 import java.util.Locale;
 
 public enum NumericalFormat {
@@ -17,8 +15,7 @@ public enum NumericalFormat {
     THREE_DECIMALS("##0.000", "%.3f"),
     FOUR_DECIMALS("##0.0000", "%.4f");
 
-    private DecimalFormat mFormat;
-    private Locale mCurrentLocale = LanguageManager.AppSettings.currentLocal;
+    private String mDecimalPattern;
     private String mFormatterPattern;
 
     NumericalFormat(String decimalPattern, String formatterPattern){
@@ -27,7 +24,7 @@ public enum NumericalFormat {
     }
 
     private void setDecimalFormat(String pattern) {
-        mFormat = new DecimalFormat(pattern, new DecimalFormatSymbols(mCurrentLocale));
+        mDecimalPattern = pattern;
     }
 
     private void setFormatter(String formatter) {
@@ -35,10 +32,14 @@ public enum NumericalFormat {
     }
 
     public String format(double number){
-        return mFormat.format(number);
+        DecimalFormat decimalFormat = new DecimalFormat(
+                mDecimalPattern,
+                new DecimalFormatSymbols(LanguageManager.AppSettings.getCurrentLocal())
+        );
+        return decimalFormat.format(number);
     }
 
     public StringBinding format(DoubleProperty doubleProperty) {
-        return doubleProperty.asString(mCurrentLocale, mFormatterPattern);
+        return doubleProperty.asString(LanguageManager.AppSettings.getCurrentLocal(), mFormatterPattern);
     }
 }

@@ -23,7 +23,6 @@
 <ScrollPane stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.beamcalculate.controllers.InputPageController">
-    <content>
         <AnchorPane fx:id="anchorPane" minHeight="900" minWidth="1040">
             <HBox alignment="CENTER"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
@@ -169,5 +168,4 @@
 
             </HBox>
         </AnchorPane>
-    </content>
 </ScrollPane>
