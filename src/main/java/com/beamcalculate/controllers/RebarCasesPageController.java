@@ -133,8 +133,11 @@ public class RebarCasesPageController {
             crossSectionRebarVBox.getChildren().clear();
             currentRebarCase.setText(" \n ");
 
-            elevationRebarVBox.getChildren().clear();
-            rebarLeftIndentHBox.setVisible(false);
+            elevationRebarVBox.getChildren().clear();       //remove the rebar symbol
+            displayedRebarLeftIndent.set(0);                //reset the rebar length annotation
+            displayedRebarRightIndent.set(0);
+            displayedRebarLength.set(0);
+            rebarLeftIndentHBox.setVisible(false);          //set invisible the rebar length annotation
             rebarRightIndentHBox.setVisible(false);
             rebarLengthHBox.setVisible(false);
 
@@ -211,15 +214,15 @@ public class RebarCasesPageController {
         }
 
         private void setSceneSize() {
-            // scene size depends on the max flange width
-            DoubleProperty maxDisplayedFlangeWidth = new SimpleDoubleProperty();
-            mReinforcement.getEffectiveWidthPropertyMap().forEach((spanId, effectiveWidthProperty) -> {
-                if(effectiveWidthProperty.get() > maxDisplayedFlangeWidth.get()){
-                    maxDisplayedFlangeWidth.set(effectiveWidthProperty.get() * 100 * mSectionViewRatio);
-                }
-            });
             double maxSchemaWidth;
             if(mGeometry.isOnTSection()){
+                // scene size depends on the max flange width
+                DoubleProperty maxDisplayedFlangeWidth = new SimpleDoubleProperty();
+                mReinforcement.getEffectiveWidthPropertyMap().forEach((spanId, effectiveWidthProperty) -> {
+                    if(effectiveWidthProperty.get() > maxDisplayedFlangeWidth.get()){
+                        maxDisplayedFlangeWidth.set(effectiveWidthProperty.get() * 100 * mSectionViewRatio);
+                    }
+                });
                 maxSchemaWidth = maxDisplayedFlangeWidth.get();
             } else {
                 maxSchemaWidth = displayedWebWidth.get();
