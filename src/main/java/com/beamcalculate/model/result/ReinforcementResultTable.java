@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 import java.util.Map;
 
-import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.FOUR_DECIMALS;
 import static com.beamcalculate.enums.ReinforcementParam.b_MU;
 import static com.beamcalculate.enums.ReinforcementParam.k_PIVOT;
 
@@ -144,7 +144,7 @@ public class ReinforcementResultTable {
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){
                         Label paramValue = new Label(
-                                param.getSymbol() + " = " + FOURDECIMALS.format(value)
+                                param.getSymbol() + " = " + FOUR_DECIMALS.format(value)
                         );
                         Label pivotValue = new Label(
                                 pivotMap.get(sectionId).getContent()
@@ -152,7 +152,7 @@ public class ReinforcementResultTable {
                         paramValueVBox.getChildren().addAll(paramValue, pivotValue);
                     } else {
                         Label paramValue = new Label(
-                                param.getSymbol() + " = " + FOURDECIMALS.format(value)
+                                param.getSymbol() + " = " + FOUR_DECIMALS.format(value)
                         );
                         paramValueVBox.getChildren().add(paramValue);
                     }

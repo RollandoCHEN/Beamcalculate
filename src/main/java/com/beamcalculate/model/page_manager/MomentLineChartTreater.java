@@ -46,6 +46,16 @@ public class MomentLineChartTreater {
                 0.05
         );
 
+        // TODO Find a way to inverse the y axis properly
+        // !!!!!!!!! Trick to display the minus tick label for the y axis !!!!!!
+        yAxis.setTickLabelFormatter(new NumberAxis.DefaultFormatter(yAxis) {
+            @Override
+            public String toString(Number value) {
+                // note we are printing minus value
+                return String.format("%.4f", -value.doubleValue());
+            }
+        });
+
         xAxis.setLabel(getBundleText("label.abscissa") + " (" + getBundleText("unit.length.m") + ")");
         yAxis.setLabel(getBundleText("label.ordinate") + " (" + getBundleText("unit.moment") + ")");
 
@@ -72,7 +82,9 @@ public class MomentLineChartTreater {
             double globalX = getGlobalX(spanId, spanLocalX, calculateMethod, geometry);
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
-                double moment = -eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);         // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
+                // TODO When inverse the y axis properly, this negative sign should be removed
+                // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
+                double moment = - eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);
                 final XYChart.Data<Number, Number> data = new XYChart.Data<>(globalX, moment);
                 data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
                 series.getData().add(data);
@@ -95,9 +107,11 @@ public class MomentLineChartTreater {
             double globalX = getGlobalX(spanId, spanLocalX, TROIS_MOMENT.getMethodName(), geometry);
 
             for (int i = 0; i < numSection + 1; i++) {             // Number of data (moment value) is numSection+1
-                double moment = -spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                // TODO When inverse the y axis properly, this negative sign should be removed
+                // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
+                double moment = - spanMomentFunction.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                         spanLocalX, spanId, ultimateCase
-                );         // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
+                );
                 final XYChart.Data<Double, Double> data = new XYChart.Data<>(globalX, moment);
                 data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
                 series.getData().add(data);

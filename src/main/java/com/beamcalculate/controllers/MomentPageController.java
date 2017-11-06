@@ -40,8 +40,8 @@ import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
-import static com.beamcalculate.enums.NumericalFormat.THREEDECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.FOUR_DECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.THREE_DECIMALS;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
@@ -100,6 +100,8 @@ public class MomentPageController {
                     getBundleText("label.minMoment") +
                             " (" + getBundleText("unit.moment") + ") : "
             );
+            maxCaseMomentValue.setText(FOUR_DECIMALS.format(0));
+            minCaseMomentValue.setText(FOUR_DECIMALS.format(0));
 
             addChartsDisplayingCheckBox(methodName, maxSeriesId, minSeriesId);
 
@@ -138,8 +140,8 @@ public class MomentPageController {
                             enteredXValue, chosenSpan, MIN
                     );
                 }
-                maxCaseMomentValue.setText(FOURDECIMALS.format(maxY));
-                minCaseMomentValue.setText(FOURDECIMALS.format(minY));
+                maxCaseMomentValue.setText(FOUR_DECIMALS.format(maxY));
+                minCaseMomentValue.setText(FOUR_DECIMALS.format(minY));
             });
 
             //Rebar Calculating Button setting : disable value and on action
@@ -438,16 +440,16 @@ public class MomentPageController {
                 Label sectionLabel = new Label(getBundleText("label.support") + " " + supportId.toString());
                 sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
                 Label rdsCoefValue = new Label(
-                        THREEDECIMALS.format(coef)
+                        THREE_DECIMALS.format(coef)
                 );
                 Label finalCoefValue = new Label(
-                        THREEDECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
+                        THREE_DECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
                 );
 
                 TextField coefValue = new TextField();
                 coefValue.setPrefWidth(65);
                 coefValue.textProperty().setValue(
-                        THREEDECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
+                        THREE_DECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
                 );
                 if (calculatedFinalRedCoefMap.get(supportId) == 1) {
                     coefValue.setDisable(true);

@@ -73,7 +73,7 @@ public class RebarCutChart {
         removeLineChartPoints(maxSeries);
         removeLineChartPoints(minSeries);
 
-        LineChart<Number, Number> lineChart = new LineChart(mXAxis, mYAxis);
+        LineChart<Number, Number> lineChart = new LineChart<>(mXAxis, mYAxis);
 
         lineChart.getData().addAll(maxSeries, minSeries);
 
@@ -88,7 +88,7 @@ public class RebarCutChart {
         double preMaxMomentXValue = 0;
         for (int i=0; i < maxSeries.getData().size(); i++){
             double xValue = maxSeries.getData().get(i).getXValue().doubleValue();
-            // TODO When change the sign of the axis, this negative sign should be removed
+            // TODO When inverse the y axis properly, this negative sign should be removed
             double maxMomentValue = - maxSeries.getData().get(i).getYValue().doubleValue();
             if(xValue >= startPoint && xValue <= endPoint && maxMomentValue > maxMomentValueOfSpan){
                 maxMomentValueOfSpan = maxMomentValue;
@@ -109,7 +109,7 @@ public class RebarCutChart {
                 setCumulativeMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
                 XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
                 XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
-                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series();
+                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series<>();
                 cumulativeSeries.getData().addAll(data3, data4);
                 removeLineChartPoints(cumulativeSeries);
                 cumulativeSeries.setName(getBundleText("legend.momentRst_1stLayer"));
@@ -130,14 +130,14 @@ public class RebarCutChart {
 
                 XYChart.Data<Number, Number> data1 = new XYChart.Data<>(startPoint, getFirstLayerMoment());
                 XYChart.Data<Number, Number> data2 = new XYChart.Data<>(endPoint, getFirstLayerMoment());
-                XYChart.Series<Number, Number> firstLayerSeries = new XYChart.Series();
+                XYChart.Series<Number, Number> firstLayerSeries = new XYChart.Series<>();
                 firstLayerSeries.getData().addAll(data1, data2);
                 removeLineChartPoints(firstLayerSeries);
                 firstLayerSeries.setName(getBundleText("legend.momentRst_1stLayer"));
 
                 XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
                 XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
-                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series();
+                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series<>();
                 cumulativeSeries.getData().addAll(data3, data4);
                 removeLineChartPoints(cumulativeSeries);
                 cumulativeSeries.setName(getBundleText("legend.momentRst_1+2Layer"));

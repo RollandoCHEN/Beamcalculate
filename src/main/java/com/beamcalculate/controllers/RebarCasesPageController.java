@@ -6,6 +6,7 @@ import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.page_manager.LanguageManager;
 import com.beamcalculate.model.result.RebarCutChart;
 import com.beamcalculate.model.result.ReinforcementResultTable;
 import javafx.beans.binding.Bindings;
@@ -31,8 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.beamcalculate.enums.NumericalFormat.TWODECIMALS;
-import static com.beamcalculate.enums.NumericalFormat.ZERODECIMAL;
+import static com.beamcalculate.enums.NumericalFormat.TWO_DECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.ZERO_DECIMAL;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 
 public class RebarCasesPageController {
@@ -150,9 +151,9 @@ public class RebarCasesPageController {
             displayedLeftSupportWidth.set(leftSupportWidth_cm * mElevationViewLengthRatio);
             displayedRightSupportWidth.set(rightSupportWidth_cm * mElevationViewLengthRatio);
 
-            leftSupportWidthString.set(ZERODECIMAL.format(leftSupportWidth_cm));
-            rightSupportWidthString.set(ZERODECIMAL.format(rightSupportWidth_cm));
-            spanLengthString.set(ZERODECIMAL.format(spanLength_cm));
+            leftSupportWidthString.set(ZERO_DECIMAL.format(leftSupportWidth_cm));
+            rightSupportWidthString.set(ZERO_DECIMAL.format(rightSupportWidth_cm));
+            spanLengthString.set(ZERO_DECIMAL.format(spanLength_cm));
 
             rebarDimensionAnnoGridPane.setPadding(
                     new Insets(0,displayedRightSupportWidth.get()/2,0,displayedLeftSupportWidth.get()/2)
@@ -205,11 +206,11 @@ public class RebarCasesPageController {
                 compRegionHeight.bind(flangeCompHeight);
             }
 
-            webCompWidthString.bind(webCompWidth.asString("%.0f"));
-            compRegionHeightString.bind(compRegionHeight.asString("%.2f"));
-            flangeWidthString.bind(flangeWidth.asString("%.0f"));
-            flangeHeightString.bind(flangeHeight.asString("%.0f"));
-            totalHeightString.bind(totalHeight.asString("%.0f"));
+            webCompWidthString.bind(ZERO_DECIMAL.format(webCompWidth));
+            compRegionHeightString.bind(TWO_DECIMALS.format(compRegionHeight));
+            flangeWidthString.bind(ZERO_DECIMAL.format(flangeWidth));
+            flangeHeightString.bind(ZERO_DECIMAL.format(flangeHeight));
+            totalHeightString.bind(ZERO_DECIMAL.format(totalHeight));
         }
 
         private void setSceneSize() {
@@ -275,7 +276,7 @@ public class RebarCasesPageController {
 
                 double calculatedArea = mReinforcement.getSpanReinforceParam().get(spanId).get(j_A_S);
                 Label calculatedAreaLabel = new Label(
-                        j_A_S.getSymbol() + " = " + TWODECIMALS.format(calculatedArea) + " " + getBundleText("unit.area.cm2")
+                        j_A_S.getSymbol() + " = " + TWO_DECIMALS.format(calculatedArea) + " " + getBundleText("unit.area.cm2")
                 );
                 calculatedAreaLabel.setStyle("-fx-font-style: italic; -fx-font-weight: bold;");
 
@@ -317,7 +318,7 @@ public class RebarCasesPageController {
                         double rebarArea = mRebar.getTotalRebarAreaListOfSpan(spanId).get(caseNum);
                         Label rebarAreaLabel = new Label(
                                 j_A_S.getSymbol() + " = "
-                                        + TWODECIMALS.format(rebarArea)
+                                        + TWO_DECIMALS.format(rebarArea)
                                         + " " + getBundleText("unit.area.cm2")
                         );
                         rebarAreaLabel.setStyle("-fx-font-style: italic");
@@ -346,9 +347,9 @@ public class RebarCasesPageController {
                             displayedRightSupportWidth.set(rightSupportWidth_cm * mElevationViewLengthRatio);
                             displayedSpanLength.set(spanLength_cm * mElevationViewLengthRatio);
 
-                            leftSupportWidthString.set(ZERODECIMAL.format(leftSupportWidth_cm));
-                            rightSupportWidthString.set(ZERODECIMAL.format(rightSupportWidth_cm));
-                            spanLengthString.set(ZERODECIMAL.format(spanLength_cm));
+                            leftSupportWidthString.set(ZERO_DECIMAL.format(leftSupportWidth_cm));
+                            rightSupportWidthString.set(ZERO_DECIMAL.format(rightSupportWidth_cm));
+                            spanLengthString.set(ZERO_DECIMAL.format(spanLength_cm));
 
                             rebarDimensionAnnoGridPane.setPadding(
                                     new Insets(0,displayedRightSupportWidth.get()/2,0,displayedLeftSupportWidth.get()/2)
@@ -403,9 +404,9 @@ public class RebarCasesPageController {
                                 displayedRebarRightIndent.set(rebarRightIndent_cm * mElevationViewLengthRatio);
                                 displayedRebarLength.set(rebarLength_cm * mElevationViewLengthRatio);
 
-                                rebarLeftIndentString.set(ZERODECIMAL.format(rebarLeftIndent_cm));
-                                rebarRightIndentString.set(ZERODECIMAL.format(rebarRightIndent_cm));
-                                rebarLengthString.set(ZERODECIMAL.format(rebarLength_cm));
+                                rebarLeftIndentString.set(ZERO_DECIMAL.format(rebarLeftIndent_cm));
+                                rebarRightIndentString.set(ZERO_DECIMAL.format(rebarRightIndent_cm));
+                                rebarLengthString.set(ZERO_DECIMAL.format(rebarLength_cm));
                             }
 
                             // switch the cross section

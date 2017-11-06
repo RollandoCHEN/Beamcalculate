@@ -12,23 +12,23 @@ import static com.beamcalculate.enums.NumericalFormat.*;
 
 public class HoveredThresholdNode extends StackPane {
 
-    public HoveredThresholdNode(double globelX, double relativeX, double y) {
+    public HoveredThresholdNode(double globalX, double relativeX, double y) {
 
         setPrefSize(10, 10);
         Label labelX;
-        if (globelX == relativeX){
+        if (globalX == relativeX){
             labelX = new Label(
                     getBundleText("label.abscissa")
                             + " : "
-                            + TWODECIMALS.format(globelX)
+                            + TWO_DECIMALS.format(globalX)
                             + getBundleText("unit.length.m")
             );
         }else {
             labelX = new Label(
                     getBundleText("label.abscissa")
                             + " G (R) : "
-                            + TWODECIMALS.format(globelX) +
-                            " (" + TWODECIMALS.format(relativeX) + ") "
+                            + TWO_DECIMALS.format(globalX) +
+                            " (" + TWO_DECIMALS.format(relativeX) + ") "
                             + getBundleText("unit.length.m")
             );
         }
@@ -36,7 +36,8 @@ public class HoveredThresholdNode extends StackPane {
         Label labelY = new Label(
                 getBundleText("label.moment")
                         + " : "
-                        + FOURDECIMALS.format(y)
+                        // TODO When inverse the y axis properly, this negative sign should be removed
+                        + FOUR_DECIMALS.format(-y)           // trick to display inverse value on line chart
                         + " "
                         + getBundleText("unit.moment")
         );

@@ -34,13 +34,14 @@ public class LanguageManager {
 
     public void setAppLanguage(Locale locale){
         AppSettings.currentLocal = locale;
-        int screenStatus;
+
+        int previousScreenStatus;
         if(BeamCalculatorApp.getPrimaryStage().isFullScreen()){
-            screenStatus = 2;
+            previousScreenStatus = 2;
         } else if (BeamCalculatorApp.getPrimaryStage().isMaximized()){
-            screenStatus = 1;
+            previousScreenStatus = 1;
         } else {
-            screenStatus = 0;
+            previousScreenStatus = 0;
         }
         try {
             Parent parent = FXMLLoader.load(
@@ -48,9 +49,12 @@ public class LanguageManager {
                     getBundle("UIResources", locale)
             );
             BeamCalculatorApp.getPrimaryStage().setScene(new Scene(parent));
-            if (screenStatus == 2){
+
+            //after setting scene, the primary stage window performance weirdly
+            //so need to reset the window size
+            if (previousScreenStatus == 2){
                 BeamCalculatorApp.getPrimaryStage().setFullScreen(true);
-            } else if (screenStatus == 1) {
+            } else if (previousScreenStatus == 1) {
                 BeamCalculatorApp.getPrimaryStage().setMaximized(false);
                 BeamCalculatorApp.getPrimaryStage().setMaximized(true);
             } else {

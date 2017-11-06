@@ -96,12 +96,12 @@
                              text="%button.calculateMoment"/>
                      <VBox alignment="CENTER_LEFT">
                         <HBox prefHeight="100.0" prefWidth="220.0">
-                           <Label fx:id="maxCaseMomentLabel"/>
-                           <Label fx:id="maxCaseMomentValue" text="0.0000"/>
+                           <Label fx:id="minCaseMomentLabel"/>
+                           <Label fx:id="minCaseMomentValue"/>
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="220.0">
-                           <Label fx:id="minCaseMomentLabel"/>
-                           <Label fx:id="minCaseMomentValue" text="0.0000"/>
+                           <Label fx:id="maxCaseMomentLabel"/>
+                           <Label fx:id="maxCaseMomentValue"/>
                         </HBox>
                      </VBox>
                   </HBox>
