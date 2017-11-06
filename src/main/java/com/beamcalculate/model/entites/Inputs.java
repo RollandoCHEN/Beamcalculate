@@ -1,8 +1,6 @@
 package com.beamcalculate.model.entites;
 
 
-import com.beamcalculate.custom.input_manager.InputValueGetter;
-
 /**
  * Created by Ruolin on 04/11/2017 for BeamCalculator.
  */

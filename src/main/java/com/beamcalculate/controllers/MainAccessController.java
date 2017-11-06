@@ -1,8 +1,8 @@
 package com.beamcalculate.controllers;
 
 import com.beamcalculate.BeamCalculatorApp;
-import com.beamcalculate.custom.alert.ConfirmationMessage;
-import com.beamcalculate.model.LanguageManager;
+import com.beamcalculate.model.custom_alert.ConfirmationMessage;
+import com.beamcalculate.model.page_manager.LanguageManager;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import javafx.beans.binding.Bindings;
@@ -20,8 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import java.net.URL;
 import java.util.*;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
-import static com.beamcalculate.model.LanguageManager.getResourceBundle;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 
 /**
  * Created by Ruolin on 01/11/2017 for Beamcalculate.

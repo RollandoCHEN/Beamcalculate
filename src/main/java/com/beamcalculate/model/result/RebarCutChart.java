@@ -1,9 +1,9 @@
 package com.beamcalculate.model.result;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
-import com.beamcalculate.custom.node.HoveredThresholdNode;
-import com.beamcalculate.custom.MyMethods;
-import com.beamcalculate.custom.RebarType_Number;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
+import com.beamcalculate.model.custom_node.HoveredThresholdNode;
+import com.beamcalculate.model.MyMethods;
+import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
@@ -31,7 +31,7 @@ import static com.beamcalculate.enums.ReinforcementParam.a_M;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
-import static com.beamcalculate.model.result.MomentLineChartTreater.*;
+import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
 
 public class RebarCutChart {
     private AbstractSpanMoment mSpanMoment;
@@ -69,7 +69,7 @@ public class RebarCutChart {
             createMomentSeries(300, mSpanMoment, MIN, minSeries);
         }
 
-        //for all series, take date, each data has node (symbol) for representing point
+        //for all series, take date, each data has custom_node (symbol) for representing point
         removeLineChartPoints(maxSeries);
         removeLineChartPoints(minSeries);
 

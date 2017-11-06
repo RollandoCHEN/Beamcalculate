@@ -1,4 +1,4 @@
-package com.beamcalculate.custom.input_manager;
+package com.beamcalculate.model.page_manager;
 
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;

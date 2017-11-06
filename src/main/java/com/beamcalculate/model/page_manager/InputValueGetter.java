@@ -1,8 +1,8 @@
-package com.beamcalculate.custom.input_manager;
+package com.beamcalculate.model.page_manager;
 
-import com.beamcalculate.custom.alert.WarningMessage;
-import com.beamcalculate.custom.node.NamedChoiceBox;
-import com.beamcalculate.custom.node.NamedTextField;
+import com.beamcalculate.model.custom_node.NamedChoiceBox;
+import com.beamcalculate.model.custom_node.NamedTextField;
+import com.beamcalculate.model.custom_alert.WarningMessage;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.beamcalculate.custom.alert.WarningMessage.WarningMessageOption.WITH_CONFIRM;
+import static com.beamcalculate.model.custom_alert.WarningMessage.WarningMessageOption.WITH_CONFIRM;
 
 /**
  * Created by Ruolin on 29/10/2017 for Beamcalculate.

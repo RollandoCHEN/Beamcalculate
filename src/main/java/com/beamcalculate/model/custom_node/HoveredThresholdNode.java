@@ -1,6 +1,6 @@
-package com.beamcalculate.custom.node;
+package com.beamcalculate.model.custom_node;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;

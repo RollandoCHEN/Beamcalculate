@@ -1,9 +1,8 @@
 package com.beamcalculate.model.calculate.support_moment;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
-import com.beamcalculate.model.entites.Load;
 
 import java.util.HashSet;
 import java.util.Map;

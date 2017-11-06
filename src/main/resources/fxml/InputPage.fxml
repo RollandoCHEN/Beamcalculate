@@ -16,8 +16,8 @@
 
 <?import javafx.scene.text.Text?>
 <?import javafx.geometry.Insets?>
-<?import com.beamcalculate.custom.node.NamedChoiceBox?>
-<?import com.beamcalculate.custom.node.NamedTextField?>
+<?import com.beamcalculate.model.nodeChoiceBox?>
+<?import com.beamcalculate.model.custom_node.NamedTextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.ScrollPane?>
 <ScrollPane stylesheets="@../css/main.css"

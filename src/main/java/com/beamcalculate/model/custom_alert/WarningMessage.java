@@ -1,4 +1,4 @@
-package com.beamcalculate.custom.alert;
+package com.beamcalculate.model.custom_alert;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 
 /**
  * Created by Ruolin on 29/10/2017 for Beamcalculate.

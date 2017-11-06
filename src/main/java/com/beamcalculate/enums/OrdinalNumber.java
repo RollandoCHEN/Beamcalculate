@@ -1,6 +1,6 @@
 package com.beamcalculate.enums;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 
 public enum OrdinalNumber {
     FIRST("ordinalNumber.1st"),

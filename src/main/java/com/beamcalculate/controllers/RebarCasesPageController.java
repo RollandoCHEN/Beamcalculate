@@ -1,14 +1,13 @@
 package com.beamcalculate.controllers;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
-import com.beamcalculate.custom.MyMethods;
-import com.beamcalculate.custom.RebarType_Number;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
+import com.beamcalculate.model.MyMethods;
+import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.calculate.Rebar;
 import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.result.RebarCutChart;
 import com.beamcalculate.model.result.ReinforcementResultTable;
-import com.sun.javafx.image.impl.ByteIndexed;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;

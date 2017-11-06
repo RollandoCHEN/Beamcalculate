@@ -1,4 +1,4 @@
-package com.beamcalculate.custom;
+package com.beamcalculate.model;
 
 import com.beamcalculate.enums.RebarType;
 

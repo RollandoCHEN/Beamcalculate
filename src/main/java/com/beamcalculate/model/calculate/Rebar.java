@@ -3,7 +3,7 @@ package com.beamcalculate.model.calculate;
 import static com.beamcalculate.enums.RebarType.*;
 
 import com.beamcalculate.enums.RebarType;
-import com.beamcalculate.custom.RebarType_Number;
+import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.entites.Geometry;
 
 import java.util.ArrayList;

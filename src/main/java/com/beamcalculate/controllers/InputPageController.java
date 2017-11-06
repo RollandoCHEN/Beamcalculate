@@ -1,11 +1,11 @@
 package com.beamcalculate.controllers;
 
-import com.beamcalculate.custom.alert.WarningMessage;
-import com.beamcalculate.custom.input_manager.InputControllerAdder;
-import com.beamcalculate.custom.input_manager.InputTextFieldsTreater;
-import com.beamcalculate.custom.input_manager.InputValueGetter;
-import com.beamcalculate.custom.node.NamedChoiceBox;
-import com.beamcalculate.custom.node.NamedTextField;
+import com.beamcalculate.model.custom_alert.WarningMessage;
+import com.beamcalculate.model.page_manager.InputControllerAdder;
+import com.beamcalculate.model.page_manager.InputTextFieldsTreater;
+import com.beamcalculate.model.page_manager.InputValueGetter;
+import com.beamcalculate.model.custom_node.NamedChoiceBox;
+import com.beamcalculate.model.custom_node.NamedTextField;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import com.beamcalculate.model.calculate.support_moment.ForfaitaireConditionVerifier;
 import com.beamcalculate.model.calculate.support_moment.SupportMomentCaquot;
@@ -29,7 +29,7 @@ import javafx.scene.layout.*;
 import java.net.URL;
 import java.util.*;
 
-import static com.beamcalculate.custom.alert.WarningMessage.WarningMessageOption.WITHOUT_CONFIRM;
+import static com.beamcalculate.model.custom_alert.WarningMessage.WarningMessageOption.WITHOUT_CONFIRM;
 
 
 public class InputPageController implements Initializable {

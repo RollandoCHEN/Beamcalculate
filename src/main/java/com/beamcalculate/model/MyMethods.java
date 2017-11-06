@@ -1,4 +1,4 @@
-package com.beamcalculate.custom;
+package com.beamcalculate.model;
 
 import static com.beamcalculate.enums.OrdinalNumber.*;
 

@@ -1,52 +1,21 @@
-package com.beamcalculate.model.result;
+package com.beamcalculate.model.page_manager;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
-import static com.beamcalculate.model.LanguageManager.getResourceBundle;
-import com.beamcalculate.controllers.InputPageController;
-import com.beamcalculate.controllers.RebarCasesPageController;
-import com.beamcalculate.custom.alert.InfoMessage;
-import com.beamcalculate.custom.node.HoveredThresholdNode;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
+
 import com.beamcalculate.model.calculate.ELUCombination;
-import com.beamcalculate.model.calculate.MomentRedistribution;
-import com.beamcalculate.model.calculate.Rebar;
-import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.chart.LineChart;
+import com.beamcalculate.model.custom_node.HoveredThresholdNode;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import sun.plugin2.message.GetAppletMessage;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
-import static com.beamcalculate.enums.NumericalFormat.THREEDECIMALS;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
 

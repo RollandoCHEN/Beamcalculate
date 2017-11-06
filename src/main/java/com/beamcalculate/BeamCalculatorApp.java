@@ -1,8 +1,8 @@
 package com.beamcalculate;
 
-import static com.beamcalculate.model.LanguageManager.AppSettings;
+import static com.beamcalculate.model.page_manager.LanguageManager.AppSettings;
 
-import com.beamcalculate.model.LanguageManager;
+import com.beamcalculate.model.page_manager.LanguageManager;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -19,14 +19,14 @@ public class BeamCalculatorApp extends Application {
         mPrimaryStage.getIcons().add(new Image("image/icon.png"));
 
         mPrimaryStage.setOnCloseRequest(we -> {
-//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                alert.setTitle(BeamCalculatorApp.getBundleText("info.title.love"));
-//                alert.setHeaderText(null);
-//                alert.setContentText(BeamCalculatorApp.getBundleText("info.content.love"));
-//                alert.setGraphic(new ImageView("image/my_love.png"));
-//                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//                Alert custom_alert = new Alert(Alert.AlertType.INFORMATION);
+//                custom_alert.setTitle(BeamCalculatorApp.getBundleText("info.title.love"));
+//                custom_alert.setHeaderText(null);
+//                custom_alert.setContentText(BeamCalculatorApp.getBundleText("info.content.love"));
+//                custom_alert.setGraphic(new ImageView("image/my_love.png"));
+//                Stage stage = (Stage) custom_alert.getDialogPane().getScene().getWindow();
 //                stage.getIcons().add(new Image("image/love.png"));
-//                alert.showAndWait();
+//                custom_alert.showAndWait();
         });
 
         mPrimaryStage.show();

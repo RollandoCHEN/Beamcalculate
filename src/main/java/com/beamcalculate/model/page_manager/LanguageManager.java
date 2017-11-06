@@ -1,4 +1,4 @@
-package com.beamcalculate.model;
+package com.beamcalculate.model.page_manager;
 
 import com.beamcalculate.BeamCalculatorApp;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 
 import java.io.IOException;
 import java.util.*;
+
+import static java.util.ResourceBundle.*;
 
 /**
  * Created by Ruolin on 01/11/2017 for Beamcalculate.
@@ -22,24 +24,33 @@ public class LanguageManager {
     }
 
     public static ResourceBundle getResourceBundle(){
-        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", AppSettings.currentLocal);
-        return bundle;
+        return getBundle("UIResources", AppSettings.currentLocal);
     }
 
     public static String getBundleText(String key){
-        ResourceBundle bundle = ResourceBundle.getBundle("UIResources", AppSettings.currentLocal);
+        ResourceBundle bundle = getBundle("UIResources", AppSettings.currentLocal);
         return bundle.getString(key);
     }
 
     public void setAppLanguage(Locale locale){
         AppSettings.currentLocal = locale;
+        int screenStatus;
+        if(BeamCalculatorApp.getPrimaryStage().isFullScreen()){
+            screenStatus = 2;
+        } else if (BeamCalculatorApp.getPrimaryStage().isMaximized()){
+            screenStatus = 1;
+        } else {
+            screenStatus = 0;
+        }
         try {
             Parent parent = FXMLLoader.load(
                     getClass().getResource("/fxml/MainAccess.fxml"),
-                    ResourceBundle.getBundle("UIResources", locale)
+                    getBundle("UIResources", locale)
             );
             BeamCalculatorApp.getPrimaryStage().setScene(new Scene(parent));
-            if (BeamCalculatorApp.getPrimaryStage().isMaximized()) {
+            if (screenStatus == 2){
+                BeamCalculatorApp.getPrimaryStage().setFullScreen(true);
+            } else if (screenStatus == 1) {
                 BeamCalculatorApp.getPrimaryStage().setMaximized(false);
                 BeamCalculatorApp.getPrimaryStage().setMaximized(true);
             } else {

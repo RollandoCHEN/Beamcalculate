@@ -1,7 +1,6 @@
-package com.beamcalculate.custom.alert;
+package com.beamcalculate.model.custom_alert;
 
-import com.beamcalculate.BeamCalculatorApp;
-import com.beamcalculate.model.LanguageManager;
+import com.beamcalculate.model.page_manager.LanguageManager;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

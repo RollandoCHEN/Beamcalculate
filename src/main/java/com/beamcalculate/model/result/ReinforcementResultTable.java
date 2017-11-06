@@ -1,6 +1,6 @@
 package com.beamcalculate.model.result;
 
-import static com.beamcalculate.model.LanguageManager.getBundleText;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.Reinforcement;

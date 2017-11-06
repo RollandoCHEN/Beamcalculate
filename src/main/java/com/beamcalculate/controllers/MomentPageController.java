@@ -1,7 +1,7 @@
 package com.beamcalculate.controllers;
 
-import com.beamcalculate.custom.alert.InfoMessage;
-import com.beamcalculate.custom.input_manager.InputControllerAdder;
+import com.beamcalculate.model.custom_alert.InfoMessage;
+import com.beamcalculate.model.page_manager.InputControllerAdder;
 import com.beamcalculate.model.calculate.ELUCombination;
 import com.beamcalculate.model.calculate.MomentRedistribution;
 import com.beamcalculate.model.calculate.Rebar;
@@ -44,9 +44,8 @@ import static com.beamcalculate.enums.NumericalFormat.FOURDECIMALS;
 import static com.beamcalculate.enums.NumericalFormat.THREEDECIMALS;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
-import static com.beamcalculate.model.LanguageManager.getBundleText;
-import static com.beamcalculate.model.LanguageManager.getResourceBundle;
-import static com.beamcalculate.model.result.MomentLineChartTreater.*;
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
+import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
 
 /**
  * Created by Ruolin on 01/11/2017 for Beamcalculate.

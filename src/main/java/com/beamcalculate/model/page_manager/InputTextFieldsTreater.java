@@ -1,4 +1,4 @@
-package com.beamcalculate.custom.input_manager;
+package com.beamcalculate.model.page_manager;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -15,7 +15,7 @@ public class InputTextFieldsTreater {
 
     public BooleanBinding bindIsEmptyPropertyWithOr(TextField... textFields) {
         //      foreach lambda doesn't accept non-final parameter，orConjunction = orConjunction.or(...) could not be used
-//      so I used for (node node : gridPane.getChildren())
+//      so I used for (custom_node custom_node : gridPane.getChildren())
         BooleanBinding orConjunction = Bindings.isEmpty(new TextField("0").textProperty());
 
         for (TextField textField : textFields){
@@ -26,7 +26,7 @@ public class InputTextFieldsTreater {
 
     public BooleanBinding bindIsEmptyPropertyWithOr(GridPane gridPane){
 //      foreach lambda doesn't accept non-final parameter，orConjunction = orConjunction.or(...) could not be used
-//      so I used for (node node : gridPane.getChildren())
+//      so I used for (custom_node custom_node : gridPane.getChildren())
         BooleanBinding orConjunction = Bindings.isEmpty(new TextField("0").textProperty());
 
         for (Node node : gridPane.getChildren()){

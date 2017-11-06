@@ -1,4 +1,4 @@
-package com.beamcalculate.custom.node;
+package com.beamcalculate.model.custom_node;
 
 import javafx.scene.control.ChoiceBox;
 
