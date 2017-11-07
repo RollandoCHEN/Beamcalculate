@@ -3,9 +3,9 @@ package com.beamcalculate.enums;
 import static com.beamcalculate.enums.NumericalFormat.THREE_DECIMALS;
 
 public enum Pivots {
-    PIVOTA("Pivot A", 0, 0.056),
-    PIVOTB("Pivot B", 0.056, 0.48),
-    PIVOTC("Pivot C", 0, 0);
+    PIVOT_A("Pivot A", 0, 0.056),
+    PIVOT_B("Pivot B", 0.056, 0.48),
+    PIVOT_C("Pivot C", 0, 0);
 
     private String mName;
     private double mLeftLimit;
@@ -19,7 +19,6 @@ public enum Pivots {
 
     public String getContent() {
         String content;
-        ;
         if (mLeftLimit != mRightLimit) {
             content = mName + " (" +
                     (mLeftLimit!=0 ? THREE_DECIMALS.format(mLeftLimit)+ " < " : "")

@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
@@ -59,7 +58,6 @@ public class MainAccessController implements Initializable {
 
         languageMenu.getItems().addAll(getMenuItemList());
         setTextForLanguageMenu();
-        fullScreenItem.setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
 
         momentPageButton.disableProperty().bind(inputPageController.newInputProperty());
         rebarCasesPageButton.disableProperty().bind(

@@ -6,7 +6,6 @@ import javafx.beans.property.DoubleProperty;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 public enum NumericalFormat {
     ZERO_DECIMAL("##0", "%.0f"),

@@ -35,38 +35,13 @@ public class Rebar {
 
         for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++){
             calculateRebarCasesOfSpan(spanId);
-            printRebarOfSpan(spanId);
+//            printRebarOfSpan(spanId);
         }
     }
 
     private void calculateRebarCasesOfSpan(int spanId) {
-
         double rebarAreaAs = getRebarAreaOfSpan(spanId);
         List<Map<Integer, RebarType_Number>> rebarCasesList = new ArrayList<>();
-
-//        // put same steel bars for all layers
-//        for (int numOfLayers = 1; numOfLayers < maxNumLayers + 1; numOfLayers++) {
-//            for (RebarType rebarType : RebarType.values()) {
-//                Map<RebarType, Integer> type_numberMap = new HashMap<>();
-//                Map<Integer, Map<RebarType, Integer>> layer_rebarMap = new HashMap<>();
-//
-//                if (rebarType.getSectionalArea_cm2(maxRebarPerLayer * numOfLayers) > rebarAreaAs
-//                        && rebarType.getDiameter_mm() < mMaxDiameter) {
-//
-//                    type_numberMap.put(rebarType, maxRebarPerLayer);
-//
-//                    for (int layerNum = 1; layerNum < numOfLayers + 1; layerNum++) {
-//                        layer_rebarMap.put(layerNum, type_numberMap);
-//                    }
-//
-//                    rebarCasesList.add(layer_rebarMap);
-//
-//                    // Because the for each loop will loop for the rebar type enum in order, from 6 to 40
-//                    // as we want to take the min size of rebar, so when it matches the condition we break the loop
-//                    break;
-//                }
-//            }
-//        }
 
         // put steel bars with different diameters for different layers, but on one layer, put same bars
         for (int numOfLayers = 1; numOfLayers < mMaxNumLayers + 1; numOfLayers++) {
@@ -134,7 +109,7 @@ public class Rebar {
     }
 
     public List<Map<Integer, Double>> getRebarAreaListForEachLayerOfSpan(int spanId){
-        List<Map<Integer, Double>> rebarAreaList = new ArrayList();
+        List<Map<Integer, Double>> rebarAreaList = new ArrayList<>();
 
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
             Map<Integer, Double> rebarAreaMap = new HashMap<>();
@@ -153,7 +128,7 @@ public class Rebar {
     }
 
     public List<Double> getTotalRebarAreaListOfSpan(int spanId){
-        List<Double> totalRebarAreaList = new ArrayList();
+        List<Double> totalRebarAreaList = new ArrayList<>();
 
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
             double totalRebarArea = 0;
@@ -177,7 +152,7 @@ public class Rebar {
         }
     }
 
-    public void setReinforcement(Reinforcement reinforcement) {
+    private void setReinforcement(Reinforcement reinforcement) {
         mReinforcement = reinforcement;
     }
 
@@ -191,7 +166,7 @@ public class Rebar {
         return mRebarCasesMap.get(spanId);
     }
 
-    public int getMaxNumOfRebarPerLayer(double sectionWidth_cm) {
+    private int getMaxNumOfRebarPerLayer(double sectionWidth_cm) {
         if (0 <= sectionWidth_cm && sectionWidth_cm < 17){
             return 2;
         } else if (17 <= sectionWidth_cm && sectionWidth_cm < 27){

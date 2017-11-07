@@ -1,6 +1,5 @@
 package com.beamcalculate.model.calculate;
 
-import com.beamcalculate.controllers.InputPageController;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
 import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
@@ -16,9 +15,9 @@ import java.util.TreeMap;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.UltimateCase.MAX;
-import static com.beamcalculate.enums.Pivots.PIVOTA;
-import static com.beamcalculate.enums.Pivots.PIVOTB;
-import static com.beamcalculate.enums.Pivots.PIVOTC;
+import static com.beamcalculate.enums.Pivots.PIVOT_A;
+import static com.beamcalculate.enums.Pivots.PIVOT_B;
+import static com.beamcalculate.enums.Pivots.PIVOT_C;
 import static com.beamcalculate.enums.ReinforcementParam.*;
 
 public class Reinforcement {
@@ -176,11 +175,11 @@ public class Reinforcement {
         paramValueMap.put(b_MU, mReducedMomentMu);
 
         if (mReducedMomentMu < 0.056){
-            mPivot = PIVOTA;
+            mPivot = PIVOT_A;
         }else if (mReducedMomentMu < 0.48){
-            mPivot = PIVOTB;
+            mPivot = PIVOT_B;
         }else {
-            mPivot = PIVOTC;
+            mPivot = PIVOT_C;
         }
 
         mNeutralAxisAlpha = 1.25 * (1 - Math.sqrt(1 - 2 * mReducedMomentMu));
@@ -196,11 +195,11 @@ public class Reinforcement {
         paramValueMap.put(f_Z, mLeverArmZ);
 
         switch (mPivot){
-            case PIVOTA: mStrainEpsilonS = 0.9 * mSteelUltimateStrain * 1000;
+            case PIVOT_A: mStrainEpsilonS = 0.9 * mSteelUltimateStrain * 1000;
                 break;
-            case PIVOTB: mStrainEpsilonS = 0.0035 * (1 - mNeutralAxisAlpha) / mNeutralAxisAlpha * 1000;
+            case PIVOT_B: mStrainEpsilonS = 0.0035 * (1 - mNeutralAxisAlpha) / mNeutralAxisAlpha * 1000;
                 break;
-            case PIVOTC: break;
+            case PIVOT_C: break;
         }
         paramValueMap.put(g_EPSILON_S, mStrainEpsilonS);
 

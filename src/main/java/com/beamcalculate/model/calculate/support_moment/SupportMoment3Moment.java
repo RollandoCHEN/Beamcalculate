@@ -1,7 +1,6 @@
 package com.beamcalculate.model.calculate.support_moment;
 
 import Jama.Matrix;
-import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 

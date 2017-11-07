@@ -4,7 +4,6 @@ import com.beamcalculate.controllers.InputPageController;
 import com.beamcalculate.enums.UltimateCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
-import com.beamcalculate.model.entites.Load;
 
 import java.util.HashMap;
 import java.util.Map;

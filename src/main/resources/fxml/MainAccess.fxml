@@ -30,7 +30,7 @@
         </Menu>
         <Menu fx:id="optionMenu" mnemonicParsing="false" text="%menu.options">
             <Menu fx:id="languageMenu" text="%menu.languages"/>
-            <MenuItem fx:id="fullScreenItem" text="%menu.item.fullScreen" onAction="#handleFullScreen"/>
+            <MenuItem fx:id="fullScreenItem" text="%menu.item.fullScreen" onAction="#handleFullScreen" accelerator="Alt + F"/>
         </Menu>
         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
             <MenuItem mnemonicParsing="false" text="%menu.item.about"/>

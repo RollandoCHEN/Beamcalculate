@@ -233,11 +233,11 @@ public class MomentPageController {
             mLineChart.setCursor(Cursor.CROSSHAIR);
 
             //Define series
-            XYChart.Series maxELUSeries = new XYChart.Series();
+            XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
             createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
             maxELUSeries.setName(maxSeriesId);
 
-            XYChart.Series minELUSeries = new XYChart.Series();
+            XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
             createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
             minELUSeries.setName(minSeriesId);
 
@@ -273,9 +273,9 @@ public class MomentPageController {
 
             //        add new series to line chart
 
-            XYChart.Series newMaxELUSeries = new XYChart.Series();
+            XYChart.Series<Number, Number> newMaxELUSeries = new XYChart.Series<>();
             createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MAX, newMaxELUSeries);
-            XYChart.Series newMinELUSeries = new XYChart.Series();
+            XYChart.Series<Number, Number> newMinELUSeries = new XYChart.Series<>();
             createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MIN, newMinELUSeries);
 
             mStringSeriesMap.put(maxSeriesId, newMaxELUSeries);
@@ -369,8 +369,8 @@ public class MomentPageController {
             methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap));
 
             redistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                XYChart.Series maxELUSeries = new XYChart.Series();
-                XYChart.Series minELUSeries = new XYChart.Series();
+                XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
+                XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
                 if (newValue) {
                     for (int i = 1; i < mGeometry.getNumSupport(); i++) {
                         try {
@@ -540,9 +540,8 @@ public class MomentPageController {
                 supportMomentMap_AD.put(supportId, newLoadCaseMap);
             }
 
-            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD, mInputs);
             // match the calculate method name to the related spanMomentFunction
-            return newSpanMomentFunction;
+            return new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD, mInputs);
         }
     }
 
