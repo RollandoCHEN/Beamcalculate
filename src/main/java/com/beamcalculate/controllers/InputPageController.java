@@ -33,7 +33,7 @@ import static com.beamcalculate.model.custom_alert.WarningMessage.WarningMessage
 
 
 public class InputPageController implements Initializable {
-    @FXML private AnchorPane anchorPane;
+    @FXML private AnchorPane inputPageAnchorPane;
     @FXML private CheckBox onTSection_chkb;
     @FXML private CheckBox sampleInputs_chkb;
     @FXML private ChoiceBox<Integer> numSpans_chcb;
@@ -367,7 +367,7 @@ public class InputPageController implements Initializable {
         return onTSection;
     }
 
-    public AnchorPane getAnchorPane() { return anchorPane; }
+    public AnchorPane getAnchorPane() { return inputPageAnchorPane; }
 
     public boolean hasNewInput() {
         return mNewInput.get();

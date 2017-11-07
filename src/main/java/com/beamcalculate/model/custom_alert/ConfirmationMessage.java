@@ -31,7 +31,7 @@ public class ConfirmationMessage {
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(questionIcon);
 
-        mButtonTypeOk = new ButtonType(getBundleText("button.ok"), ButtonBar.ButtonData.OK_DONE);
+        mButtonTypeOk = new ButtonType(getBundleText("button.continue"), ButtonBar.ButtonData.OK_DONE);
         mButtonTypeCancel = new ButtonType(getBundleText("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(mButtonTypeOk, mButtonTypeCancel);

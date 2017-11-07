@@ -45,14 +45,14 @@ public class WarningMessage {
             mAlert.setHeaderText(null);
 
             StringBuilder messageFromSet = new StringBuilder();
-            messageInputSet.forEach (messageItem -> messageFromSet.append("\n- " + messageItem));
+            messageInputSet.forEach (messageItem -> messageFromSet.append("\n- ").append(messageItem));
             mAlert.setGraphic(warningGraphic);
             Stage stage = (Stage) mAlert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(warningIcon);
 
             StringBuilder infoMessage = new StringBuilder(getBundleText(messageBodyKey) + messageFromSet);
 
-            mButtonTypeOk = new ButtonType(getBundleText("button.ok"), ButtonBar.ButtonData.OK_DONE);
+            mButtonTypeOk = new ButtonType(getBundleText("button.continue"), ButtonBar.ButtonData.OK_DONE);
             if (option.withConfirmation()) {
                 mButtonTypeCancel = new ButtonType(getBundleText("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 mAlert.getButtonTypes().setAll(mButtonTypeOk, mButtonTypeCancel);

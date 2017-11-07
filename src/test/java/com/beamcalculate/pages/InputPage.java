@@ -2,6 +2,7 @@ package com.beamcalculate.pages;
 
 import com.beamcalculate.TestFXBase;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 
 import static com.beamcalculate.JavaFXIds.*;
@@ -18,7 +19,12 @@ public class InputPage {
     }
 
     public InputPage enterValue(double value, String targetField){
-        driver.clickOn(targetField).write(String.valueOf(value));
+        driver.clickOn(targetField).write(String.valueOf(value)).type(KeyCode.ENTER);
+        return this;
+    }
+
+    public InputPage enterValue(String value, String targetField){
+        driver.clickOn(targetField).write(value).type(KeyCode.ENTER);
         return this;
     }
 
@@ -26,6 +32,30 @@ public class InputPage {
         driver.clickOn(targetChoiceBox).clickOn(String.valueOf(value));
         return this;
     }
+//    public void assertPopupIsNotVisible(Node ownedBy) {
+//        WaitForAsyncUtils.waitForFxEvents();
+//        for (Window w : driver.listWindows() ) {
+//            if (w instanceof Popup) {
+//                Popup lPopup = (Popup)w;
+//                if (ownedBy.equals(lPopup.getOwnerNode())) {
+//                    throw new IllegalStateException("Popup is visible (and should not be), owner = " + lPopup.getOwnerNode());
+//                }
+//            }
+//        }
+//    }
+//
+//    public void assertPopupIsVisible(Node ownedBy) {
+//        WaitForAsyncUtils.waitForFxEvents();
+//        for (Window w : driver.listWindows() ) {
+//            if (w instanceof Popup) {
+//                Popup lPopup = (Popup)w;
+//                if (ownedBy.equals(lPopup.getOwnerNode())) {
+//                    return;
+//                }
+//            }
+//        }
+//        throw new IllegalStateException("Popup is not visible (and should be)");
+//    }
 
     public InputPage getNSpansBeam(int n, Double[] spanLengths, Double[] supportWidths){
         if (n < 1 || n > 7){
@@ -35,17 +65,17 @@ public class InputPage {
         } else if (supportWidths.length != n+1){
             throw new IllegalArgumentException("The number of given width values should be the number of spans plus 1!");
         } else {
-            chooseValue(n, NUM_SPAN_CHOICE);
+            chooseValue(n, NUM_SPAN_CHOICE_ID);
 
             //add spans lengths to the grid pane
-            GridPane spansLengths = driver.find(SPANS_LENGTH_GRID);
+            GridPane spansLengths = driver.find(SPANS_LENGTH_GRID_ID);
             for (int spanNum = 1; spanNum < n+1; spanNum++) {
                 TextField spanLengthField = (TextField) spansLengths.getChildren().get(spanNum-1);
                 spanLengthField.setText(spanLengths[spanNum-1].toString());
             }
 
             //add supports widths to the grid pane
-            GridPane supportsWidths = driver.find(SUPPORTS_WIDTH_GRID);
+            GridPane supportsWidths = driver.find(SUPPORTS_WIDTH_GRID_ID);
             for (int supportNum = 1; supportNum < n+2; supportNum++) {
                 TextField supportWidthField = (TextField) supportsWidths.getChildren().get(supportNum-1);
                 supportWidthField.setText(supportWidths[supportNum-1].toString());
@@ -56,19 +86,19 @@ public class InputPage {
     }
 
     public InputPage setCrossSection(double height, double width){
-        enterValue(height, SECTION_HEIGHT_FIELD).enterValue(width, SECTION_WIDTH_FIELD);
+        enterValue(height, SECTION_HEIGHT_FIELD_ID).enterValue(width, SECTION_WIDTH_FIELD_ID);
         return this;
     }
 
     public InputPage setLoad(double deadLoad, double liveLoad){
-        enterValue(deadLoad, DEAD_LOAD_FIELD).enterValue(liveLoad, LIVE_LOAD_FIELD);
+        enterValue(deadLoad, DEAD_LOAD_FIELD_ID).enterValue(liveLoad, LIVE_LOAD_FIELD_ID);
         return this;
     }
 
     public InputPage setMeterial(double fck, double fyk, Character ductibility){
-        enterValue(fck, CONCRETE_STRENGTH_FIELD).
-                enterValue(fyk, STEEL_STRENGTH_FIELD).
-                chooseValue(ductibility, DUCTIBILITY_CLASS_CHOICE);
+        enterValue(fck, CONCRETE_STRENGTH_FIELD_ID).
+                enterValue(fyk, STEEL_STRENGTH_FIELD_ID).
+                chooseValue(ductibility, DUCTIBILITY_CLASS_CHOICE_ID);
         return this;
     }
 }
