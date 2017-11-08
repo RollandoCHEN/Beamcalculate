@@ -4,6 +4,7 @@ import com.beamcalculate.TestFXBase;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import org.testfx.util.WaitForAsyncUtils;
 
 import static com.beamcalculate.JavaFXIds.*;
 
@@ -66,6 +67,8 @@ public class InputPage {
             throw new IllegalArgumentException("The number of given width values should be the number of spans plus 1!");
         } else {
             chooseValue(n, NUM_SPAN_CHOICE_ID);
+
+            WaitForAsyncUtils.waitForFxEvents();
 
             //add spans lengths to the grid pane
             GridPane spansLengths = driver.find(SPANS_LENGTH_GRID_ID);

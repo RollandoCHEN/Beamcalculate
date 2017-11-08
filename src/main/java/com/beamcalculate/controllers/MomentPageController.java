@@ -51,9 +51,9 @@ import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
  * Created by Ruolin on 01/11/2017 for Beamcalculate.
  */
 public class MomentPageController {
-    @FXML AnchorPane anchorPane;
+    @FXML AnchorPane momentPageAnchorPane;
     @FXML BorderPane borderPaneContainer;
-    @FXML Spinner<Integer> spanNumSpinner;
+    @FXML Spinner<Integer> totalNumOnSpanSpinner;
     @FXML HBox methodsCheckHBox;
     @FXML Label conditionInfoLabel;
     @FXML CheckBox redistributionCheck;
@@ -211,7 +211,7 @@ public class MomentPageController {
             methodsCheckHBox.getChildren().add(methodCheck);
 
             mDisableSpinnerBoolean = Bindings.not(methodCheck.selectedProperty());
-            spanNumSpinner.disableProperty().bind(mDisableSpinnerBoolean);
+            totalNumOnSpanSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
             //Methods applying condition label
             setClickableStyle(conditionInfoLabel);
@@ -234,11 +234,11 @@ public class MomentPageController {
 
             //Define series
             XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
-            createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
+            createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
             maxELUSeries.setName(maxSeriesId);
 
             XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
-            createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
+            createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
             minELUSeries.setName(minSeriesId);
 
             //through this mStringSeriesMap to store all the series
@@ -253,11 +253,11 @@ public class MomentPageController {
             );
 
             //Set action for the spinner to re-load the moment chart line
-            spanNumSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                 mStringSeriesMap.get(maxSeriesId).getData().clear();
                 mStringSeriesMap.get(minSeriesId).getData().clear();
-                createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
-                createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
+                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
+                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
             });
 
             borderPaneContainer.setCenter(mLineChart);
@@ -274,9 +274,9 @@ public class MomentPageController {
             //        add new series to line chart
 
             XYChart.Series<Number, Number> newMaxELUSeries = new XYChart.Series<>();
-            createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MAX, newMaxELUSeries);
+            createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, newMaxELUSeries);
             XYChart.Series<Number, Number> newMinELUSeries = new XYChart.Series<>();
-            createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MIN, newMinELUSeries);
+            createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, newMinELUSeries);
 
             mStringSeriesMap.put(maxSeriesId, newMaxELUSeries);
             mStringSeriesMap.put(minSeriesId, newMinELUSeries);
@@ -287,11 +287,11 @@ public class MomentPageController {
 
 //        bind the spinner listener to the new series
 
-            spanNumSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                 newMaxELUSeries.getData().clear();
                 newMinELUSeries.getData().clear();
-                createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MAX, newMaxELUSeries);
-                createMomentSeries(spanNumSpinner.getValue(), spanMomentFunction, MIN, newMinELUSeries);
+                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, newMaxELUSeries);
+                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, newMinELUSeries);
             });
 
 //        check box to show and hide new series
@@ -315,7 +315,7 @@ public class MomentPageController {
             });
 
             mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(newMethodCheck.selectedProperty()));
-            spanNumSpinner.disableProperty().bind(mDisableSpinnerBoolean);
+            totalNumOnSpanSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
 //        add margin to the y axis
 
@@ -353,7 +353,7 @@ public class MomentPageController {
             String minSeriesId = TROIS_MOMENT.getMethodName() + "_ReducedMIN";
 
             mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(redistributionCheck.selectedProperty()));
-            spanNumSpinner.disableProperty().bind(mDisableSpinnerBoolean);
+            totalNumOnSpanSpinner.disableProperty().bind(mDisableSpinnerBoolean);
 
             MomentRedistribution momentRedistribution = new MomentRedistribution(spanMomentFunction);
 
@@ -383,21 +383,21 @@ public class MomentPageController {
                     SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
 
                     createRedistributionMomentSeries(
-                            spanNumSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
                     );
 
                     createRedistributionMomentSeries(
-                            spanNumSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
                     );
 
-                    spanNumSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
+                    totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
                         maxELUSeries.getData().clear();
                         minELUSeries.getData().clear();
                         createRedistributionMomentSeries(
-                                spanNumSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
                         );
                         createRedistributionMomentSeries(
-                                spanNumSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
                         );
                     });
 
@@ -546,7 +546,7 @@ public class MomentPageController {
     }
 
     public AnchorPane getAnchorPane() {
-        return anchorPane;
+        return momentPageAnchorPane;
     }
 
     public void createMomentPage(SpanMomentFunction... spanMomentFunctions){

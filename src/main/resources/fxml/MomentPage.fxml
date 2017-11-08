@@ -18,7 +18,7 @@
 
 <ScrollPane xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.beamcalculate.controllers.MomentPageController">
-   <AnchorPane fx:id="anchorPane" minHeight="760" minWidth="1600" prefHeight="760.0" prefWidth="1600.0">
+   <AnchorPane fx:id="momentPageAnchorPane" minHeight="760" minWidth="1600" prefHeight="760.0" prefWidth="1600.0">
       <BorderPane fx:id="borderPaneContainer"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -37,7 +37,7 @@
                </padding>
                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                   <Label text="%label.numberOfSections"/>
-                  <Spinner fx:id="spanNumSpinner" editable="true" prefWidth="70.0"
+                  <Spinner fx:id="totalNumOnSpanSpinner" editable="true" prefWidth="70.0"
                            min="10" max="40" initialValue="10" amountToStepBy="1"/>
                </HBox>
                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0"
