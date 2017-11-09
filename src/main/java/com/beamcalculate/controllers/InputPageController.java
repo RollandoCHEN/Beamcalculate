@@ -110,9 +110,10 @@ public class InputPageController implements Initializable {
                 Arrays.asList(
                         equalSupportWidth_tf, equalSpanLength_tf,
                         sectionWidth_tf, sectionHeight_tf, perpendicularSpacing_tf, slabThickness_tf,
-                        permanentLoad_tf, variableLoad_tf, fck_tf, fyk_tf
+                        fck_tf, fyk_tf
                 )
         );
+        mRealNumberControllerAdder.addRealNumberControllerTo(true, permanentLoad_tf, variableLoad_tf);
 
         // T-shaped section treatment
         notOnTSection.bind(Bindings.not(onTSection_chkb.selectedProperty()));

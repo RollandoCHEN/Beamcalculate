@@ -21,7 +21,7 @@ public class MomentPage {
     }
 
     public MomentPage uncheckMethodOfNum(int num) {
-        HBox hbox = (HBox)driver.find(METHODS_DISPLAY_CHECK_ID);
+        HBox hbox = driver.find(METHODS_DISPLAY_CHECK_ID);
         CheckBox methodCheckBox;
         if(num > hbox.getChildren().size()){
             throw new IllegalArgumentException("Have only " + hbox.getChildren().size() + " methods on the line chart!!");

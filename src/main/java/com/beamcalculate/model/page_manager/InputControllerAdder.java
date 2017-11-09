@@ -12,22 +12,26 @@ import java.util.regex.Pattern;
  */
 public class InputControllerAdder {
 
-    public void addRealNumberControllerTo(TextField... textFields){
+    public void addRealNumberControllerTo(boolean canBeZero, TextField... textFields){
         for (TextField textField : textFields) {
             textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (!newValue) { //when focus lost
-                    addPatternMatchTo(textField);
+                    addPatternMatchTo(textField, canBeZero);
                 }
             });
             textField.setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
-                    addPatternMatchTo(textField);
+                    addPatternMatchTo(textField, canBeZero);
                 }
             });
         }
     }
 
-    private void addPatternMatchTo(TextField textField) {
+    public void addRealNumberControllerTo(TextField... textFields){
+        addRealNumberControllerTo(false, textFields);
+    }
+
+    private void addPatternMatchTo(TextField textField, boolean canBeZero) {
         if (!textField.getText().matches("(?=(?:[.]|[,])?(?:\\d))(\\d*)(?:([.]|[,])(\\d*))?")) {
             //when it not matches the pattern
             //set the textField empty
@@ -47,10 +51,18 @@ public class InputControllerAdder {
                 }
             }
         }
+        if (!canBeZero && !textField.getText().isEmpty() &&
+                Double.parseDouble(textField.getText()) == 0){
+            textField.setText("");
+        }
     }
 
     public void addRealNumberControllerTo(List<TextField> list){
         list.forEach(this::addRealNumberControllerTo);
+    }
+
+    public void addRealNumberControllerTo(boolean canBeZero ,List<TextField> list){
+        list.forEach(textField -> addRealNumberControllerTo(canBeZero, textField));
     }
 
     public void addMaxValueValidation(TextField textField, double maxValue) {

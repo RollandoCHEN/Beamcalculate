@@ -24,7 +24,6 @@ import static com.beamcalculate.model.custom_alert.WarningMessage.WarningMessage
 public class InputValueGetter {
 
     private Set<String> mMissingParamWarningSet = new HashSet<>();
-    private boolean ifContinue;
 
     public void getInputValue(GridPane sourceGridPane, Map goalMap){
         sourceGridPane.getChildren().forEach(node -> {
@@ -39,6 +38,9 @@ public class InputValueGetter {
     public void getInputValue(NamedTextField sourceTextField, DoubleProperty goalProperty){
         try {
             goalProperty.set(Double.parseDouble(sourceTextField.getText()));
+            if (Double.parseDouble(sourceTextField.getText()) == 0){
+                mMissingParamWarningSet.add(sourceTextField.getParameterName());
+            }
         } catch (NumberFormatException e) {
             mMissingParamWarningSet.add(sourceTextField.getParameterName());
         }

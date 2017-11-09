@@ -1,11 +1,13 @@
 package com.beamcalculate.pages;
 
 import com.beamcalculate.TestFXBase;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import org.testfx.util.WaitForAsyncUtils;
 
+import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import static com.beamcalculate.JavaFXIds.*;
 
 /**
@@ -19,13 +21,25 @@ public class InputPage {
         this.driver = driver;
     }
 
-    public InputPage enterValue(double value, String targetField){
-        driver.clickOn(targetField).write(String.valueOf(value)).type(KeyCode.ENTER);
+    public InputPage writeValue(double value, String targetField){
+        driver.clickOn(targetField).write(String.valueOf(value));
         return this;
     }
 
-    public InputPage enterValue(String value, String targetField){
-        driver.clickOn(targetField).write(value).type(KeyCode.ENTER);
+    public InputPage writeValue(String value, String targetField){
+        driver.clickOn(targetField).write(value);
+        return this;
+    }
+
+    public InputPage writeValueWithEnter(double value, String targetField){
+        writeValue(value, targetField);
+        driver.type(KeyCode.ENTER);
+        return this;
+    }
+
+    public InputPage writeValueWithEnter(String value, String targetField){
+        writeValue(value, targetField);
+        driver.type(KeyCode.ENTER);
         return this;
     }
 
@@ -33,30 +47,16 @@ public class InputPage {
         driver.clickOn(targetChoiceBox).clickOn(String.valueOf(value));
         return this;
     }
-//    public void assertPopupIsNotVisible(Node ownedBy) {
-//        WaitForAsyncUtils.waitForFxEvents();
-//        for (Window w : driver.listWindows() ) {
-//            if (w instanceof Popup) {
-//                Popup lPopup = (Popup)w;
-//                if (ownedBy.equals(lPopup.getOwnerNode())) {
-//                    throw new IllegalStateException("Popup is visible (and should not be), owner = " + lPopup.getOwnerNode());
-//                }
-//            }
-//        }
-//    }
-//
-//    public void assertPopupIsVisible(Node ownedBy) {
-//        WaitForAsyncUtils.waitForFxEvents();
-//        for (Window w : driver.listWindows() ) {
-//            if (w instanceof Popup) {
-//                Popup lPopup = (Popup)w;
-//                if (ownedBy.equals(lPopup.getOwnerNode())) {
-//                    return;
-//                }
-//            }
-//        }
-//        throw new IllegalStateException("Popup is not visible (and should be)");
-//    }
+
+    public InputPage setTSection(boolean tSection){
+        CheckBox checkBox = driver.find(T_SHAPED_SECTION_CHECK_ID);
+        if (tSection && !checkBox.isSelected()){
+            driver.clickOn(T_SHAPED_SECTION_CHECK_ID);
+        } else if (!tSection && checkBox.isSelected()){
+            driver.clickOn(T_SHAPED_SECTION_CHECK_ID);
+        }
+        return this;
+    }
 
     public InputPage getNSpansBeam(int n, Double[] spanLengths, Double[] supportWidths){
         if (n < 1 || n > 7){
@@ -88,20 +88,32 @@ public class InputPage {
         return this;
     }
 
-    public InputPage setCrossSection(double height, double width){
-        enterValue(height, SECTION_HEIGHT_FIELD_ID).enterValue(width, SECTION_WIDTH_FIELD_ID);
+    public InputPage setCrossSection(double width, double height){
+        writeValue(width, SECTION_WIDTH_FIELD_ID).writeValueWithEnter(height, SECTION_HEIGHT_FIELD_ID);
+        return this;
+    }
+
+    public InputPage setTSectionParam(double slabThickness, double perpendicularSpacing){
+        writeValue(slabThickness, SLAB_THICKNESS_FIELD_ID).writeValueWithEnter(perpendicularSpacing, PERPENDICULAR_SPACING_FIELD_ID);
         return this;
     }
 
     public InputPage setLoad(double deadLoad, double liveLoad){
-        enterValue(deadLoad, DEAD_LOAD_FIELD_ID).enterValue(liveLoad, LIVE_LOAD_FIELD_ID);
+        writeValue(deadLoad, DEAD_LOAD_FIELD_ID).writeValueWithEnter(liveLoad, LIVE_LOAD_FIELD_ID);
         return this;
     }
 
-    public InputPage setMeterial(double fck, double fyk, Character ductibility){
-        enterValue(fck, CONCRETE_STRENGTH_FIELD_ID).
-                enterValue(fyk, STEEL_STRENGTH_FIELD_ID).
+    public InputPage setMaterial(double fck, double fyk, Character ductibility){
+        writeValue(fck, CONCRETE_STRENGTH_FIELD_ID).
+                writeValue(fyk, STEEL_STRENGTH_FIELD_ID).
                 chooseValue(ductibility, DUCTIBILITY_CLASS_CHOICE_ID);
+        return this;
+    }
+
+    public InputPage clickToContinue(int numOfClick){
+        for (int i=0; i < numOfClick; i++) {
+            driver.clickOn(getBundleText("button.continue"));
+        }
         return this;
     }
 }
