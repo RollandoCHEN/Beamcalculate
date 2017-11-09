@@ -32,7 +32,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     private final double mSectionHeight;
     private final double mSectionWidth;
     private final double mSlabThickness;
-    private final double mPerpenticularSpacing;
+    private final double mPerpendicularSpacing;
     private final double mDeadLoad;
     private final double mLiveLoad;
     private final double mConcreteStrength;
@@ -56,7 +56,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
         mSectionHeight = sectionHeight;
         mSectionWidth = sectionWidth;
         mSlabThickness = slabThickness;
-        mPerpenticularSpacing = perpendicularSpacing;
+        mPerpendicularSpacing = perpendicularSpacing;
         mDeadLoad = deadLoad;
         mLiveLoad = liveLoad;
         mConcreteStrength = concreteStrength;
@@ -71,20 +71,23 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     public static Collection<Object[]> params() {
         return Arrays.asList(new Object[][] {
                 {false, 3, new Double[]{5.1, 5.6, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2},
-                        0, 0, 0, 0,
-                        3.8, 5.9,
-                        25, 500, 'B',
-                        1, 3},
-                {false, 3, new Double[]{5.1, 5.6, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2},
                         0.4, 0.6, 0, 0,
                         3.8, 5.9,
                         25, 500, 'B',
-                        0, 3},
-                {true, 4, new Double[]{5.1, 5.0, 6.2, 7.1}, new Double[]{0.2, 0.3, 0.2, 0.2, 0.3},
-                        0.5, 0.7, 0.18, 6,
+                        0, 3
+                },
+                {false, 3, new Double[]{5.1, 5.6, 6.2}, new Double[]{0.2, 0.3, 0.2, 0.2},
+                        0, 0, 0, 0,
+                        3.8, 5.9,
+                        25, 500, 'B',
+                        1, 3
+                },                                      //missing parameter
+                {false, 4, new Double[]{5.1, 5.0, 6.2, 7.1}, new Double[]{0.2, 0.3, 0.2, 0.2, 0.3},
+                        0.5, 0.7, 0, 0,
                         3.0, 6.9,
                         25, 500, 'B',
-                        1, 2}
+                        1, 2
+                }                                       // forfaitaire condition is not satisfied
         });
     }
 
@@ -128,7 +131,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     private void allInputs(){
         mInputPage.setTSection(mTSection).getNSpansBeam(mTotalSpanNum, mSpansLengths, mSupportsWidths).
                 setLoad(mDeadLoad, mLiveLoad).
-                setCrossSection(mSectionWidth, mSectionHeight).setTSectionParam(mSlabThickness, mPerpenticularSpacing).
+                setCrossSection(mSectionWidth, mSectionHeight).setTSectionParam(mSlabThickness, mPerpendicularSpacing).
                 setMaterial(mConcreteStrength, mSteelStrength, mDuctibilityClass);
     }
 }

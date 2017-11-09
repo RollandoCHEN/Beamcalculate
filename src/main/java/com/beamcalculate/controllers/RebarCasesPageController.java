@@ -133,16 +133,7 @@ public class RebarCasesPageController {
 
         private void initializeElevationView() {
             // initialize the elevation view length depending on the scene size
-            crossSectionRebarVBox.getChildren().clear();
-            currentRebarCase.setText(" \n ");
-
-            elevationRebarVBox.getChildren().clear();       //remove the rebar symbol
-            displayedRebarLeftIndent.set(0);                //reset the rebar length annotation
-            displayedRebarRightIndent.set(0);
-            displayedRebarLength.set(0);
-            rebarLeftIndentHBox.setVisible(false);          //set invisible the rebar length annotation
-            rebarRightIndentHBox.setVisible(false);
-            rebarLengthHBox.setVisible(false);
+            clearRebarDisplaying();
 
             spanLength_cm.setValue(mGeometry.spansLengthMap().get(1) * 100);
             leftSupportWidth_cm.setValue(mGeometry.supportWidthMap().get(1) * 100);
@@ -166,6 +157,18 @@ public class RebarCasesPageController {
             rebarDimensionAnnoGridPane.setPadding(
                     new Insets(0,displayedRightSupportWidth.get()/2,0,displayedLeftSupportWidth.get()/2)
             );
+        }
+
+        private void clearRebarDisplaying() {
+            crossSectionRebarVBox.getChildren().clear();    //remove the rebar on section view
+            currentRebarCase.setText(" \n ");
+            elevationRebarVBox.getChildren().clear();       //remove the rebar symbol
+            displayedRebarLeftIndent.set(0);                //reset the rebar length annotation
+            displayedRebarRightIndent.set(0);
+            displayedRebarLength.set(0);
+            rebarLeftIndentHBox.setVisible(false);          //set invisible the rebar length annotation
+            rebarRightIndentHBox.setVisible(false);
+            rebarLengthHBox.setVisible(false);
         }
 
         private void initializeCrossSectionView() {
@@ -309,7 +312,8 @@ public class RebarCasesPageController {
                         }
                         webCompHeight.set(mReinforcement.getWebCompressionHeightMap().get(columnNum).get() * 100);
                         webCompWidth.set(webWidth.get());
-                        crossSectionRebarVBox.getChildren().clear();
+
+                        clearRebarDisplaying();
                     });
                 } else {
                     double minRebarArea = Collections.min(mRebar .getTotalRebarAreaListOfSpan(spanId));

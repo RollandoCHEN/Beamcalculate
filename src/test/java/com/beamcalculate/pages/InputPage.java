@@ -2,6 +2,7 @@ package com.beamcalculate.pages;
 
 import com.beamcalculate.TestFXBase;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
@@ -44,7 +45,12 @@ public class InputPage {
     }
 
     public InputPage chooseValue(Object value, String targetChoiceBox){
-        driver.clickOn(targetChoiceBox).clickOn(String.valueOf(value));
+        ChoiceBox choiceBox = driver.find(targetChoiceBox);
+        if (choiceBox.getItems().contains(String.valueOf(value))){
+            driver.clickOn(targetChoiceBox).clickOn(String.valueOf(value));
+        } else {
+            throw new IllegalArgumentException("Can't find the value in the choice box!");
+        }
         return this;
     }
 
