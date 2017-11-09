@@ -82,11 +82,13 @@
                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1">
                   <HBox alignment="CENTER" spacing="10.0">
                      <Label text="%label.spanNumb"/>
-                     <ChoiceBox fx:id="spanChoiceBox"/>
+                     <ChoiceBox fx:id="spanChoiceBox" prefWidth="45"/>
                   </HBox>
-                  <HBox alignment="CENTER" spacing="10.0">
+                  <HBox alignment="CENTER" spacing="5.0">
                      <Label text="%label.xOnSpan"/>
-                     <TextField fx:id="abscissaField" prefWidth="50.0"/>
+                     <HBox fx:id="abscissaFieldHBox" prefWidth="50.0">
+                     </HBox>
+                     <Label fx:id="abscissaLimit" text="(0 ~ 0)"/>
                      <Label text="m"/>
                   </HBox>
                </HBox>
