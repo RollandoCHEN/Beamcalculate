@@ -92,7 +92,10 @@ public class MomentLineChartTreater {
                 globalX += spanLength / numSection;
             }
         }
-        series.setName(getBundleText("label." + ultimateCase.toString().toLowerCase()) + " - " + eluCombination.getSpanMomentFunction().getMethod());
+        series.setName(eluCombination.getSpanMomentFunction().getMethod()
+                + " - "
+                + getBundleText("label." + ultimateCase.toString().toLowerCase())
+        );
     }
 
     public static void createRedistributionMomentSeries(
@@ -119,10 +122,10 @@ public class MomentLineChartTreater {
                 globalX += spanLength / numSection;
             }
         });
-        series.setName(getBundleText("label."
-                + ultimateCase.toString().toLowerCase())
+        series.setName(TROIS_MOMENT_R.getMethodName()
                 + " - "
-                + TROIS_MOMENT_R.getMethodName());
+                + getBundleText("label." + ultimateCase.toString().toLowerCase())
+        );
     }
 
     public static double getGlobalX(int spanId, double spanLocalX, String method, Geometry geometry) {

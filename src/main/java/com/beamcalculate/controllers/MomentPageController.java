@@ -231,8 +231,8 @@ public class MomentPageController {
 
         private void prepareMomentSeriesAndAddToLineChart(SpanMomentFunction spanMomentFunction) {
             String methodName = spanMomentFunction.getMethod();
-            String maxSeriesId = methodName + "_" + getBundleText("label.max");
-            String minSeriesId = methodName + "_" + getBundleText("label.min");
+            String maxSeriesId = methodName + " - " + getBundleText("label.max");
+            String minSeriesId = methodName + " - " + getBundleText("label.min");
             //Set checkbox to show or hide line chart
             CheckBox methodCheck = new CheckBox(methodName);
             methodCheck.selectedProperty().addListener((arg0, oldValue, newValue) -> {
@@ -240,11 +240,9 @@ public class MomentPageController {
                     //Define series
                     XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
                     createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
-                    maxELUSeries.setName(maxSeriesId);
 
                     XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
                     createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
-                    minELUSeries.setName(minSeriesId);
 
                     //through this mStringSeriesMap to store all the series
                     //when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series ??
