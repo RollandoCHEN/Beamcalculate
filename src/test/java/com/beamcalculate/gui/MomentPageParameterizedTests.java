@@ -21,7 +21,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 @RunWith(Parameterized.class)
 
-public class BeamCalculatorParameterizedTests extends TestFXBase {
+public class MomentPageParameterizedTests extends TestFXBase {
     private InputPage mInputPage;
     private MomentPage mMomentPage;
 
@@ -41,7 +41,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     private final int mNumOfContinue;
     private final int mNumOfMethods;
 
-    public BeamCalculatorParameterizedTests(
+    public MomentPageParameterizedTests(
             boolean tSection,
             int totalSpanNum, Double[] spansLengths, Double[] supportsWidths,
             double sectionHeight, double sectionWidth, double slabThickness, double perpendicularSpacing,
@@ -102,7 +102,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     public void numOfMethodsShouldBeCorrect(){
         allInputs();
         clickOn(ENVELOP_CURVE_BUTTON_ID);
-        mInputPage.clickToContinue(mNumOfContinue);     //continue when missing inputs
+        mInputPage.clickOnContinue(mNumOfContinue);     //continue when missing inputs
 
 
         verifyThat(METHODS_DISPLAY_CHECK_ID, (HBox hbox) -> hbox.getChildren().size() == mNumOfMethods);
@@ -116,7 +116,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     public void uncheckMethodShouldRemoveCorrespondingLineOnLineChart(){
         allInputs();
         clickOn(ENVELOP_CURVE_BUTTON_ID);
-        mInputPage.clickToContinue(mNumOfContinue);       //continue when missing inputs
+        mInputPage.clickOnContinue(mNumOfContinue);       //continue when missing inputs
         mMomentPage.uncheckMethodOfNum(1);
 
         WaitForAsyncUtils.waitForFxEvents();

@@ -23,12 +23,14 @@ public class InputPage {
     }
 
     public InputPage writeValue(double value, String targetField){
-        driver.clickOn(targetField).write(String.valueOf(value));
+        //double click to select exist value in order to replace it
+        driver.doubleClickOn(targetField).write(String.valueOf(value));
         return this;
     }
 
     public InputPage writeValue(String value, String targetField){
-        driver.clickOn(targetField).write(value);
+        //double click to select exist value in order to replace it
+        driver.doubleClickOn(targetField).write(value);
         return this;
     }
 
@@ -46,7 +48,7 @@ public class InputPage {
 
     public InputPage chooseValue(Object value, String targetChoiceBox){
         ChoiceBox choiceBox = driver.find(targetChoiceBox);
-        if (choiceBox.getItems().contains(String.valueOf(value))){
+        if (choiceBox.getItems().contains(String.valueOf(value))||choiceBox.getItems().contains(value)){
             driver.clickOn(targetChoiceBox).clickOn(String.valueOf(value));
         } else {
             throw new IllegalArgumentException("Can't find the value in the choice box!");
@@ -72,7 +74,7 @@ public class InputPage {
         } else if (supportWidths.length != n+1){
             throw new IllegalArgumentException("The number of given width values should be the number of spans plus 1!");
         } else {
-            chooseValue(n, NUM_SPAN_CHOICE_ID);
+            chooseValue(n, TOTAL_NUM_SPAN_CHOICE_ID);
 
             WaitForAsyncUtils.waitForFxEvents();
 
@@ -116,7 +118,21 @@ public class InputPage {
         return this;
     }
 
-    public InputPage clickToContinue(int numOfClick){
+    public InputPage setAllInputs(boolean isTSection, int n, Double[] spanLengths, Double[] supportWidths,
+                                  double sectionWidth, double sectionHeight,
+                                  double slabThickness, double perpendicularSpacing,
+                                  double deadLoad, double liveLoad,
+                                  double fck, double fyk, Character ductibility){
+        setTSection(isTSection).getNSpansBeam(n, spanLengths, supportWidths)
+                .setCrossSection(sectionWidth, sectionHeight)
+                .setLoad(deadLoad, liveLoad).setMaterial(fck, fyk, ductibility);
+        if (isTSection){
+            setTSectionParam(slabThickness, perpendicularSpacing);
+        }
+        return this;
+    }
+
+    public InputPage clickOnContinue(int numOfClick){
         for (int i=0; i < numOfClick; i++) {
             driver.clickOn(getBundleText("button.continue"));
         }

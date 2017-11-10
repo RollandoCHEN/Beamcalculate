@@ -11,7 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Beamcalculate_main" />
     <orderEntry type="library" name="Gradle: gov.nist.math:jama:1.0.3" level="project" />
-    <orderEntry type="library" name="Gradle: org.controlsfx:controlsfx:9.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.controlsfx:controlsfx:8.40.14" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Gradle: org.testfx:testfx-core:4.0.8-alpha" level="project" />
     <orderEntry type="library" name="Gradle: org.testfx:testfx-junit:4.0.8-alpha" level="project" />

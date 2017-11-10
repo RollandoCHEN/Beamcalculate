@@ -2,6 +2,7 @@ package com.beamcalculate.pages;
 
 import com.beamcalculate.TestFXBase;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 
@@ -34,5 +35,27 @@ public class MomentPage {
         return this;
     }
 
+    public MomentPage chooseValue(Object value, String targetChoiceBox){
+        ChoiceBox choiceBox = driver.find(targetChoiceBox);
+        if (choiceBox.getItems().contains(String.valueOf(value))||choiceBox.getItems().contains(value)){
+            driver.clickOn(targetChoiceBox).clickOn(String.valueOf(value));
+        } else {
+            throw new IllegalArgumentException("Can't find the value in the choice box!");
+        }
+        return this;
+    }
 
+    public MomentPage chooseIndex(int index, String targetChoiceBox){
+        ChoiceBox choiceBox = driver.find(targetChoiceBox);
+        if (index <= choiceBox.getItems().size() && index > 0){
+            driver.clickOn(targetChoiceBox);
+            for (int i=1; i<=index; i++){
+                driver.type(KeyCode.DOWN);
+            }
+            driver.type(KeyCode.ENTER);
+        } else {
+            throw new IllegalArgumentException("Can't find the value in the choice box!");
+        }
+        return this;
+    }
 }

@@ -53,7 +53,7 @@ public class InputPageController implements Initializable {
     @FXML private NamedTextField fck_tf;
     @FXML private NamedTextField fyk_tf;
     @FXML private NamedChoiceBox<String> ductibilityClass_chcb;
-    @FXML private Button diagramGenerate_button;
+    @FXML private Button envelopCurveGenerate_button;
 
 
     private Inputs mInputs;
@@ -291,7 +291,7 @@ public class InputPageController implements Initializable {
             addChangingStatusListenerTo(spansLength_gp, supportsWidth_gp);
 
 //        bind graph generating button to the text fields
-            diagramGenerate_button.disableProperty().bind(
+            envelopCurveGenerate_button.disableProperty().bind(
                     mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(permanentLoad_tf, variableLoad_tf)
                             .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(spansLength_gp))
                             .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(supportsWidth_gp))

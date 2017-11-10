@@ -86,9 +86,9 @@
                   </HBox>
                   <HBox alignment="CENTER" spacing="5">
                      <Label text="%label.xOnSpan"/>
-                     <HBox fx:id="abscissaFieldHBox" prefWidth="50.0">
+                     <HBox fx:id="abscissaFieldHBox" alignment="CENTER" prefWidth="50.0">
                      </HBox>
-                     <Label fx:id="abscissaLimit" text="(0 ~ 0)"/>
+                     <Label fx:id="abscissaLimit" text="(0 ~ 0)" style="-fx-font-weight: bold;"/>
                      <Label text="m"/>
                   </HBox>
                </HBox>
@@ -99,11 +99,11 @@
                      <VBox alignment="CENTER_LEFT">
                         <HBox prefHeight="100.0" prefWidth="220.0">
                            <Label fx:id="minCaseMomentLabel"/>
-                           <Label fx:id="minCaseMomentValue"/>
+                           <Label fx:id="minCaseMomentValue" style="-fx-font-weight: bold;"/>
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="220.0">
                            <Label fx:id="maxCaseMomentLabel"/>
-                           <Label fx:id="maxCaseMomentValue"/>
+                           <Label fx:id="maxCaseMomentValue" style="-fx-font-weight: bold;"/>
                         </HBox>
                      </VBox>
                   </HBox>

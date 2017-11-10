@@ -15,9 +15,6 @@ import java.util.regex.Pattern;
  * Created by Ruolin on 28/10/2017 for Beamcalculate.
  */
 public class InputControllerAdder {
-    private Map<Integer, ChangeListener<? super Boolean>> mMaxValueListenerMap = new HashMap<>();
-
-
     public void addRealNumberControllerTo(boolean canBeZero, TextField... textFields){
         for (TextField textField : textFields) {
 
@@ -72,34 +69,15 @@ public class InputControllerAdder {
         list.forEach(textField -> addRealNumberControllerTo(canBeZero, textField));
     }
 
-    public void addMaxValueValidation(TextField textField, int chosenSpanId, double maxValue) {
-
-        mMaxValueListenerMap.put(
-                chosenSpanId ,
-                (ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) -> {
-                    if (!newValue) { //when focus lost
-
-                        if (!textField.getText().isEmpty() &&                               //value is entered
+    public void addMaxValueValidation(TextField textField, double maxValue, boolean canBeZero) {
+        addRealNumberControllerTo(canBeZero, textField);
+        textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) { //when focus lost
+                if (!textField.getText().isEmpty() &&                               //value is entered
                         Double.parseDouble(textField.getText()) > maxValue) {       //entered value > max limit
-                            textField.setText("");                                          //remove the value
-                        }
-                    }
+                    textField.setText("");                                          //remove the value
                 }
-        );
-
-        textField.focusedProperty().addListener(mMaxValueListenerMap.get(chosenSpanId));
-
-//        textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-//            if (!newValue) { //when focus lost
-//                if (!textField.getText().isEmpty() &&                               //value is entered
-//                        Double.parseDouble(textField.getText()) > maxValue) {       //entered value > max limit
-//                    textField.setText("");                                          //remove the value
-//                }
-//            }
-//        });
-    }
-
-    public void removeMaxValueValidation(TextField textField, int chosenSpanId){
-        textField.focusedProperty().removeListener(mMaxValueListenerMap.get(chosenSpanId));
+            }
+        });
     }
 }

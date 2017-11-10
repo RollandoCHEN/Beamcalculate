@@ -217,7 +217,7 @@ public class MomentPageController {
                     TextField abscissaField = new TextField();
                     abscissaField.setPrefWidth(50);
                     abscissaFieldHBox.getChildren().clear();
-                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2));
+                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2), true);
                     abscissaFieldHBox.getChildren().add(abscissaField);
                     abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
                     momentCalculateButton.disableProperty().bind(
@@ -244,10 +244,10 @@ public class MomentPageController {
                 if (newValue) {
                     //Define series
                     XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
-                    createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
+                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
 
                     XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
-                    createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
+                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
 
                     //through this mStringSeriesMap to store all the series
                     //when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series ??
@@ -271,8 +271,8 @@ public class MomentPageController {
             totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                 mStringSeriesMap.get(maxSeriesId).getData().clear();
                 mStringSeriesMap.get(minSeriesId).getData().clear();
-                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
-                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
+                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
+                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
             });
 
             methodsCheckHBox.getChildren().add(methodCheck);
@@ -301,10 +301,8 @@ public class MomentPageController {
             methodsChoiceBox.getItems().add(spanMomentFunction);
 
             //if the method of calculate is "3 moment", add redistribution for the method
-            if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
-            //        if the method of calculate is "3 moment", add redistribution for the method
             if (spanMomentFunction.getInputs().getGeometry().getNumSpan() > 1
-                    && methodName.equals(TROIS_MOMENT.getMethodName())
+                    && spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
                     && !InputPageController.isDisabledRebarCalculate()
                     ) {
                 addRedistributionOption(spanMomentFunction);

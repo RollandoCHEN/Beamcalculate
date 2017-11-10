@@ -57,8 +57,8 @@ public class RebarCutChart {
         mXAxis = defineAxis(mSpanMoment).get(0);
         mYAxis = defineAxis(mSpanMoment).get(1);
 
-        XYChart.Series<Double, Double> maxSeries = new XYChart.Series<>();
-        XYChart.Series<Double, Double> minSeries = new XYChart.Series<>();
+        XYChart.Series<Number, Number> maxSeries = new XYChart.Series<>();
+        XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
         if (calculateMethod.equals(TROIS_MOMENT_R.getMethodName())) {
             addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
@@ -73,7 +73,7 @@ public class RebarCutChart {
         removeLineChartPoints(maxSeries);
         removeLineChartPoints(minSeries);
 
-        LineChart<Double, Double> lineChart = new LineChart(mXAxis, mYAxis);
+        LineChart<Number, Number> lineChart = new LineChart(mXAxis, mYAxis);
 
         lineChart.getData().addAll(maxSeries, minSeries);
 
@@ -107,9 +107,9 @@ public class RebarCutChart {
         switch (layer_rebarArea_map.size()){
             case 1 : {
                 setCumulativeMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
-                XYChart.Data<Double, Double> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
-                XYChart.Data<Double, Double> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
-                XYChart.Series<Double, Double> cumulativeSeries = new XYChart.Series<>();
+                XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
+                XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
+                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series<>();
                 cumulativeSeries.getData().addAll(data3, data4);
                 removeLineChartPoints(cumulativeSeries);
                 cumulativeSeries.setName(getBundleText("legend.momentRst_1stLayer"));
@@ -128,16 +128,16 @@ public class RebarCutChart {
                 setFirstLayerMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
                 setCumulativeMoment(getFirstLayerMoment() + layer_rebarArea_map.get(2) * rebarAreaMomentRatio);
 
-                XYChart.Data<Double, Double> data1 = new XYChart.Data<>(startPoint, getFirstLayerMoment());
-                XYChart.Data<Double, Double> data2 = new XYChart.Data<>(endPoint, getFirstLayerMoment());
-                XYChart.Series<Double, Double> firstLayerSeries = new XYChart.Series<>();
+                XYChart.Data<Number, Number> data1 = new XYChart.Data<>(startPoint, getFirstLayerMoment());
+                XYChart.Data<Number, Number> data2 = new XYChart.Data<>(endPoint, getFirstLayerMoment());
+                XYChart.Series<Number, Number> firstLayerSeries = new XYChart.Series<>();
                 firstLayerSeries.getData().addAll(data1, data2);
                 removeLineChartPoints(firstLayerSeries);
                 firstLayerSeries.setName(getBundleText("legend.momentRst_1stLayer"));
 
-                XYChart.Data<Double, Double> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
-                XYChart.Data<Double, Double> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
-                XYChart.Series<Double, Double> cumulativeSeries = new XYChart.Series<>();
+                XYChart.Data<Number, Number> data3 = new XYChart.Data<>(startPoint, getCumulativeMoment());
+                XYChart.Data<Number, Number> data4 = new XYChart.Data<>(endPoint, getCumulativeMoment());
+                XYChart.Series<Number, Number> cumulativeSeries = new XYChart.Series<>();
                 cumulativeSeries.getData().addAll(data3, data4);
                 removeLineChartPoints(cumulativeSeries);
                 cumulativeSeries.setName(getBundleText("legend.momentRst_1+2Layer"));
@@ -147,16 +147,16 @@ public class RebarCutChart {
                 lineChart.getData().addAll(firstLayerSeries, cumulativeSeries);
 
                 double finalMaxMomentXValue = preMaxMomentXValue;
-                XYChart.Series<Double, Double> offsetMaxSeries = new XYChart.Series<>();
+                XYChart.Series<Number, Number> offsetMaxSeries = new XYChart.Series<>();
                 maxSeries.getData().forEach(numberData -> {
                     double xValue = numberData.getXValue().doubleValue();
                     double yValue = numberData.getYValue().doubleValue();
                     if (yValue <= 0 && xValue >= startPoint && xValue <= endPoint) {
                         if (xValue < finalMaxMomentXValue) {
-                            XYChart.Data<Double, Double> data = new XYChart.Data<>(xValue - moveDistance, yValue);
+                            XYChart.Data<Number, Number> data = new XYChart.Data<>(xValue - moveDistance, yValue);
                             offsetMaxSeries.getData().add(data);
                         } else if (xValue > finalMaxMomentXValue) {
-                            XYChart.Data<Double, Double> data = new XYChart.Data<>(xValue + moveDistance, yValue);
+                            XYChart.Data<Number, Number> data = new XYChart.Data<>(xValue + moveDistance, yValue);
                             offsetMaxSeries.getData().add(data);
                         }
                     }
@@ -164,9 +164,9 @@ public class RebarCutChart {
                 offsetMaxSeries.setName(getBundleText("legend.offsetEnvelopCurve"));
                 lineChart.getData().add(offsetMaxSeries);
 
-                XYChart.Data<Double, Double> startData = new XYChart.Data<>(startPoint, getFirstLayerMoment());
-                XYChart.Data<Double, Double> endData = new XYChart.Data<>(endPoint, getFirstLayerMoment());
-                XYChart.Series<Double, Double> global = new XYChart.Series();
+                XYChart.Data<Number, Number> startData = new XYChart.Data<>(startPoint, getFirstLayerMoment());
+                XYChart.Data<Number, Number> endData = new XYChart.Data<>(endPoint, getFirstLayerMoment());
+                XYChart.Series<Number, Number> global = new XYChart.Series();
                 global.setName(getBundleText("legend.momentRst_global"));
                 lineChart.getData().add(global);
 
@@ -187,11 +187,11 @@ public class RebarCutChart {
 
                     } else {
                         secondLayerRebarCutPointsList.add(xValue);
-                        final XYChart.Data<Double, Double> firstLayerIntersectionData = new XYChart.Data<>(xValue, getFirstLayerMoment());
+                        final XYChart.Data<Number, Number> firstLayerIntersectionData = new XYChart.Data<>(xValue, getFirstLayerMoment());
                         firstLayerIntersectionData.setNode(new HoveredThresholdNode(xValue, xValue, getFirstLayerMoment()));
                         global.getData().add(firstLayerIntersectionData);
                         if (xValue < finalMaxMomentXValue) {
-                            final XYChart.Data<Double, Double> secondLayerIntersectionData =
+                            final XYChart.Data<Number, Number> secondLayerIntersectionData =
                                     new XYChart.Data<>(xValue + getAnchorageLength_mm()/1000, getCumulativeMoment());
                             secondLayerIntersectionData.setNode(
                                     new HoveredThresholdNode(
@@ -202,7 +202,7 @@ public class RebarCutChart {
                             );
                             global.getData().add(secondLayerIntersectionData);
                         } else {
-                            final XYChart.Data<Double, Double> secondLayerIntersectionData =
+                            final XYChart.Data<Number, Number> secondLayerIntersectionData =
                                     new XYChart.Data<>(xValue - getAnchorageLength_mm()/1000, getCumulativeMoment());
                             secondLayerIntersectionData.setNode(
                                     new HoveredThresholdNode(
@@ -270,10 +270,10 @@ public class RebarCutChart {
         return buttonString.toString();
     }
 
-    private void addLimitsToLineChart(LineChart<Double, Double> lineChart, double startPoint, double endPoint) {
+    private void addLimitsToLineChart(LineChart<Number, Number> lineChart, double startPoint, double endPoint) {
         DoubleProperty maxSupportMoment = new SimpleDoubleProperty();
         lineChart.getData().forEach(numberNumberSeries -> {
-            List<XYChart.Data<Double, Double>> newDataList = new ArrayList<>();
+            List<XYChart.Data<Number, Number>> newDataList = new ArrayList<>();
             numberNumberSeries.getData().forEach(numberNumberData -> {
                 if(startPoint <= numberNumberData.getXValue().doubleValue() && numberNumberData.getXValue().doubleValue() <= endPoint ){
                     newDataList.add(numberNumberData);
@@ -290,8 +290,8 @@ public class RebarCutChart {
         mXAxis.upperBoundProperty().set(endPoint + 1);
     }
 
-    private void removeLineChartPoints(XYChart.Series<Double, Double> numberSeriesSeries) {
-        for (XYChart.Data<Double, Double> data : numberSeriesSeries.getData()) {
+    private void removeLineChartPoints(XYChart.Series<Number, Number> numberSeriesSeries) {
+        for (XYChart.Data<Number, Number> data : numberSeriesSeries.getData()) {
             StackPane stackPane = new StackPane();
             stackPane.setVisible(false);
             data.setNode(stackPane);
