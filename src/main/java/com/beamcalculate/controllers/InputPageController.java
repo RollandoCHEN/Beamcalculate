@@ -184,29 +184,29 @@ public class InputPageController implements Initializable {
 
     private void addChangingStatusListenerTo(CheckBox...checkBoxes){
         for (CheckBox checkBox : checkBoxes) {
-            addListener(checkBox.selectedProperty());
+            addChangingStatusListenerToObservableValue(checkBox.selectedProperty());
         }
     }
     private void addChangingStatusListenerTo(ChoiceBox...choiceBoxes){
         for (ChoiceBox choiceBox : choiceBoxes) {
-            addListener(choiceBox.valueProperty());
+            addChangingStatusListenerToObservableValue(choiceBox.valueProperty());
         }
     }
     private void addChangingStatusListenerTo(TextField...textFields){
         for (TextField textField : textFields) {
-            addListener(textField.textProperty());
+            addChangingStatusListenerToObservableValue(textField.textProperty());
         }
     }
     private void addChangingStatusListenerTo(GridPane... gridPanes){
         for (GridPane gridPane : gridPanes){
             gridPane.getChildren().forEach(node -> {
                 TextInputControl textField = (TextInputControl) node;
-                addListener(textField.textProperty());
+                addChangingStatusListenerToObservableValue(textField.textProperty());
             });
         }
     }
 
-    private void addListener(ObservableValue goalProperty){
+    private void addChangingStatusListenerToObservableValue(ObservableValue goalProperty){
         goalProperty.addListener((observable -> {
             mNewInput.set(true);
             mMainAccessController.getShowRebarPageProperty().setValue(false);
@@ -287,6 +287,8 @@ public class InputPageController implements Initializable {
                     equalSupport_chkb, equalSupportWidth_tf,
                     supportsWidth_gp
             );
+
+            addChangingStatusListenerTo(spansLength_gp, supportsWidth_gp);
 
 //        bind graph generating button to the text fields
             diagramGenerate_button.disableProperty().bind(

@@ -40,11 +40,10 @@ import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.NumericalFormat.FOUR_DECIMALS;
-import static com.beamcalculate.enums.NumericalFormat.ONE_DECIMAL;
-import static com.beamcalculate.enums.NumericalFormat.THREE_DECIMALS;
+import static com.beamcalculate.enums.NumericalFormat.*;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.model.MyMethods.round;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
 
@@ -63,7 +62,7 @@ public class MomentPageController {
     @FXML Button rebarCalculateButton;
     @FXML ChoiceBox<Integer> spanChoiceBox;
     @FXML Label abscissaLimit;
-    @FXML TextField abscissaField;
+    @FXML HBox abscissaFieldHBox;
     @FXML Button momentCalculateButton;
     @FXML Label maxCaseMomentLabel;
     @FXML Label maxCaseMomentValue;
@@ -80,16 +79,15 @@ public class MomentPageController {
     private BooleanProperty mShowRebarPage = new SimpleBooleanProperty(false);
 
     public class MomentPageCreator {
-        private LineChart mLineChart;
-        private BooleanBinding mDisableSpinnerBoolean;
+        private LineChart<Number, Number> mLineChart;
+        private BooleanBinding mDisableSpinnerBoolean = null;
         private NumberAxis mXAxis = new NumberAxis();
         private NumberAxis mYAxis = new NumberAxis();
-        private Map<String, XYChart.Series<Double, Double>> mStringSeriesMap = new HashMap<>();
+        private Map<String, XYChart.Series<Number, Number>> mStringSeriesMap = new HashMap<>();
         private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
 
         public MomentPageCreator(SpanMomentFunction spanMomentFunction) {
             final String methodName = spanMomentFunction.getMethod();
-
             mInputs = spanMomentFunction.getInputs();
             mGeometry = mInputs.getGeometry();
 
@@ -105,42 +103,49 @@ public class MomentPageController {
             maxCaseMomentValue.setText(FOUR_DECIMALS.format(0));
             minCaseMomentValue.setText(FOUR_DECIMALS.format(0));
 
+            //define axes
+            mXAxis = defineAxis(spanMomentFunction).get(0);
+            mYAxis = defineAxis(spanMomentFunction).get(1);
 
-            //methods applying condition label
+            //create line chart
+            mLineChart = new LineChart<>(mXAxis, mYAxis);
+            mLineChart.setTitle("");
+            mLineChart.setCursor(Cursor.CROSSHAIR);
+            borderPaneContainer.setCenter(mLineChart);
+
+            //Methods applying condition label
             setClickableStyle(conditionInfoLabel);
             conditionInfoLabel.setOnMouseClicked(e -> new InfoMessage(
                     "info.title.methodConditions",
                     "info.head.methodConditions",
                     "info.content.methodConditions"
             ));
+
             methodsCheckHBox.getChildren().clear();                 //Clear the existed check boxes
-
-            //defining the axes
-            mXAxis = defineAxis(spanMomentFunction).get(0);
-            mYAxis = defineAxis(spanMomentFunction).get(1);
-
-            //creating the chart
-            mLineChart = new LineChart(mXAxis, mYAxis);
-            mLineChart.setTitle("");
-            mLineChart.setCursor(Cursor.CROSSHAIR);
-            borderPaneContainer.setCenter(mLineChart);
-
-            prepareSeriesAndAddToLineChart(spanMomentFunction);
+            prepareMomentSeriesAndAddToLineChart(spanMomentFunction);
 
             //Calculating Module : moment calculating and rebar calculating
 
             addMethodsChoicesForCalculating(spanMomentFunction);
 
             //Moment Calculating Button setting : disable value and on action
+            abscissaLimit.setText("(0 ~ 0)");
+            abscissaFieldHBox.getChildren().clear();
+            TextField textField = new TextField();
+            textField.setPrefWidth(50);
+            textField.setDisable(true);
+            abscissaFieldHBox.getChildren().add(textField);
+
             momentCalculateButton.disableProperty().bind(
                     Bindings.isNull(methodsChoiceBox.valueProperty())
                             .or(Bindings.isNull(spanChoiceBox.valueProperty()))
-                            .or(Bindings.isEmpty(abscissaField.textProperty()))
+                            .or(Bindings.isEmpty(textField.textProperty()))
             );
             momentCalculateButton.setOnAction(e -> {
                 double maxY, minY;
                 int chosenSpan = spanChoiceBox.getValue();
-                double enteredXValue = Double.parseDouble(abscissaField.getText());
+                TextField textField1 = (TextField)abscissaFieldHBox.getChildren().get(0);
+                double enteredXValue = Double.parseDouble(textField1.getText());
                 AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
 
                 if (chosenMethod.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
@@ -205,50 +210,48 @@ public class MomentPageController {
 
             // match the calculate methodName name to the related spanMomentFunction
             spanChoiceBox.setItems(FXCollections.observableArrayList(mGeometry.spansLengthMap().keySet()));
-            //add max value validation to the abscissa field
-            //when method choice or span choice is changed, it should be refreshed
-            spanChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            spanChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
                 if (newValue != null) {
+                    int selectedSpanId = spanChoiceBox.getValue();
                     AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
-                    inputControllerAdder.addRealNumberControllerTo(true, abscissaField);
-                    inputControllerAdder.addMaxValueValidation(abscissaField, newValue, chosenMethod.getCalculateSpanLengthMap().get(newValue));
-                    if (oldValue != null) {
-                        inputControllerAdder.removeMaxValueValidation(abscissaField, oldValue);
-                    }
-                    abscissaLimit.setText("(0 ~ " + ONE_DECIMAL.format(chosenMethod.getCalculateSpanLengthMap().get(newValue)) + ")");
+                    TextField abscissaField = new TextField();
+                    abscissaField.setPrefWidth(50);
+                    abscissaFieldHBox.getChildren().clear();
+                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2));
+                    abscissaFieldHBox.getChildren().add(abscissaField);
+                    abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
+                    momentCalculateButton.disableProperty().bind(
+                            Bindings.isNull(methodsChoiceBox.valueProperty())
+                                    .or(Bindings.isNull(spanChoiceBox.valueProperty()))
+                                    .or(Bindings.isEmpty(abscissaField.textProperty()))
+                    );
+                    abscissaLimit.setText("(0 ~ "
+                            + TWO_DECIMALS.format(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId))
+                            + ")");
                 }
-            });
-
+            }));
             spanChoiceBox.disableProperty().bind(Bindings.isNull(methodsChoiceBox.valueProperty()));
-            abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
+
         }
 
-        private void prepareSeriesAndAddToLineChart(SpanMomentFunction spanMomentFunction) {
+        private void prepareMomentSeriesAndAddToLineChart(SpanMomentFunction spanMomentFunction) {
             String methodName = spanMomentFunction.getMethod();
-            String maxSeriesId = methodName + "_" + getBundleText("label.max");
-            String minSeriesId = methodName + "_" + getBundleText("label.min");
-            //Set action for the spinner to re-load the moment chart line
-            totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                mStringSeriesMap.get(maxSeriesId).getData().clear();
-                mStringSeriesMap.get(minSeriesId).getData().clear();
-                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
-                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
-            });
-
+            String maxSeriesId = methodName + " - " + getBundleText("label.max");
+            String minSeriesId = methodName + " - " + getBundleText("label.min");
             //Set checkbox to show or hide line chart
-            CheckBox methodCheck = new CheckBox(spanMomentFunction.getMethod());
+            CheckBox methodCheck = new CheckBox(methodName);
             methodCheck.selectedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (newValue) {
                     //Define series
-                    XYChart.Series<Double, Double> maxELUSeries = new XYChart.Series<>();
-                    XYChart.Series<Double, Double> minELUSeries = new XYChart.Series<>();
+                    XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
+                    createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
 
-                    //Add data to series
-                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
-                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
+                    XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
+                    createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
 
                     //through this mStringSeriesMap to store all the series
-                    //when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series
+                    //when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series ??
+
                     mStringSeriesMap.put(maxSeriesId, maxELUSeries);
                     mStringSeriesMap.put(minSeriesId, minELUSeries);
 
@@ -264,20 +267,31 @@ public class MomentPageController {
                 }
             });
             methodCheck.setSelected(true);
+            //Set action for the spinner to re-load the moment chart line
+            totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+                mStringSeriesMap.get(maxSeriesId).getData().clear();
+                mStringSeriesMap.get(minSeriesId).getData().clear();
+                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
+                createMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
+            });
+
             methodsCheckHBox.getChildren().add(methodCheck);
 
-            mDisableSpinnerBoolean = Bindings.not(methodCheck.selectedProperty());
+            if (mDisableSpinnerBoolean == null){
+                mDisableSpinnerBoolean = Bindings.not(methodCheck.selectedProperty());
+            }else {
+                mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(methodCheck.selectedProperty()));
+            }
             totalNumOnSpanSpinner.disableProperty().bind(mDisableSpinnerBoolean);
+
+
         }
 
         private void addNewMomentChart(SpanMomentFunction spanMomentFunction) {
-            final String methodName = spanMomentFunction.getMethod();
+            prepareMomentSeriesAndAddToLineChart(spanMomentFunction);
+
+            //add margin to the y axis
             ELUCombination combination = new ELUCombination(spanMomentFunction);
-
-            prepareSeriesAndAddToLineChart(spanMomentFunction);
-
-//        add margin to the y axis
-
             double maxSpanMomentValue = -Math.max(-mYAxis.getLowerBound(), 1.2 * combination.getUltimateMomentValue(MAX));
             double maxSupportMomentValue = -Math.min(-mYAxis.getUpperBound(), 1.2 * combination.getUltimateMomentValue(MIN));
 
@@ -286,6 +300,8 @@ public class MomentPageController {
 
             methodsChoiceBox.getItems().add(spanMomentFunction);
 
+            //if the method of calculate is "3 moment", add redistribution for the method
+            if (spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
             //        if the method of calculate is "3 moment", add redistribution for the method
             if (spanMomentFunction.getInputs().getGeometry().getNumSpan() > 1
                     && methodName.equals(TROIS_MOMENT.getMethodName())
@@ -327,8 +343,8 @@ public class MomentPageController {
             methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap));
 
             redistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                XYChart.Series<Double, Double> maxELUSeries = new XYChart.Series<>();
-                XYChart.Series<Double, Double> minELUSeries = new XYChart.Series<>();
+                XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
+                XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
                 if (newValue) {
                     for (int i = 1; i < mGeometry.getNumSupport(); i++) {
                         try {

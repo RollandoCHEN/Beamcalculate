@@ -101,7 +101,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     @Test
     public void numOfMethodsShouldBeCorrect(){
         allInputs();
-        clickOn(DIAGRAM_BUTTON_ID);
+        clickOn(ENVELOP_CURVE_BUTTON_ID);
         mInputPage.clickToContinue(mNumOfContinue);     //continue when missing inputs
 
 
@@ -115,7 +115,7 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     @Test
     public void uncheckMethodShouldRemoveCorrespondingLineOnLineChart(){
         allInputs();
-        clickOn(DIAGRAM_BUTTON_ID);
+        clickOn(ENVELOP_CURVE_BUTTON_ID);
         mInputPage.clickToContinue(mNumOfContinue);       //continue when missing inputs
         mMomentPage.uncheckMethodOfNum(1);
 
@@ -129,9 +129,11 @@ public class BeamCalculatorParameterizedTests extends TestFXBase {
     }
 
     private void allInputs(){
-        mInputPage.setTSection(mTSection).getNSpansBeam(mTotalSpanNum, mSpansLengths, mSupportsWidths).
-                setLoad(mDeadLoad, mLiveLoad).
-                setCrossSection(mSectionWidth, mSectionHeight).setTSectionParam(mSlabThickness, mPerpendicularSpacing).
-                setMaterial(mConcreteStrength, mSteelStrength, mDuctibilityClass);
+        mInputPage.setAllInputs(
+                mTSection, mTotalSpanNum, mSpansLengths, mSupportsWidths,
+                mSectionWidth, mSectionHeight, mSlabThickness, mPerpendicularSpacing,
+                mDeadLoad, mLiveLoad,
+                mConcreteStrength, mSteelStrength, mDuctibilityClass
+        );
     }
 }

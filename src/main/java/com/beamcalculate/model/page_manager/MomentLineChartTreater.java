@@ -69,7 +69,7 @@ public class MomentLineChartTreater {
     public static void addDataToMomentSeries(
             int numSection,
             AbstractSpanMoment spanMomentFunction, UltimateCase ultimateCase,
-            XYChart.Series<Double, Double> series
+            XYChart.Series<Number, Number> series
     ) {
         Geometry geometry = spanMomentFunction.getInputs().getGeometry();
         ELUCombination eluCombination = new ELUCombination(spanMomentFunction);
@@ -84,24 +84,23 @@ public class MomentLineChartTreater {
                 // TODO When inverse the y axis properly, this negative sign should be removed
                 // negative just because can't inverse the Y axis to show the span_function moment underside of 0 axis
                 double moment = - eluCombination.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);
-                final XYChart.Data<Double, Double> data = new XYChart.Data<>(globalX, moment);
+                final XYChart.Data<Number, Number> data = new XYChart.Data<>(globalX, moment);
                 data.setNode(new HoveredThresholdNode(globalX, spanLocalX, moment));
                 series.getData().add(data);
                 spanLocalX += spanLength / numSection;
                 globalX += spanLength / numSection;
             }
         }
-        series.setName(
-                getBundleText("label." + ultimateCase.toString().toLowerCase())
+        series.setName(eluCombination.getSpanMomentFunction().getMethod()
                 + " - "
-                + eluCombination.getSpanMomentFunction().getMethod()
+                + getBundleText("label." + ultimateCase.toString().toLowerCase())
         );
     }
 
     public static void addDataToRedistributionMomentSeries(
             int numSection,
             SpanMomentFunction_SpecialLoadCase spanMomentFunction, UltimateCase ultimateCase,
-            XYChart.Series<Double, Double> series
+            XYChart.Series series
     ) {
         Geometry geometry = spanMomentFunction.getGeometry();
         spanMomentFunction.getSpanMomentFunctionMap().forEach((spanId, loadCaseMomentFunctionMap) -> {
@@ -122,10 +121,9 @@ public class MomentLineChartTreater {
                 globalX += spanLength / numSection;
             }
         });
-        series.setName(
-                getBundleText("label." + ultimateCase.toString().toLowerCase())
+        series.setName(TROIS_MOMENT_R.getMethodName()
                 + " - "
-                + TROIS_MOMENT_R.getMethodName()
+                + getBundleText("label." + ultimateCase.toString().toLowerCase())
         );
     }
 

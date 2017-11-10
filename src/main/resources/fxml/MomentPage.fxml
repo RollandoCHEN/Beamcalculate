@@ -86,7 +86,8 @@
                   </HBox>
                   <HBox alignment="CENTER" spacing="5">
                      <Label text="%label.xOnSpan"/>
-                     <TextField fx:id="abscissaField" prefWidth="50.0"/>
+                     <HBox fx:id="abscissaFieldHBox" prefWidth="50.0">
+                     </HBox>
                      <Label fx:id="abscissaLimit" text="(0 ~ 0)"/>
                      <Label text="m"/>
                   </HBox>

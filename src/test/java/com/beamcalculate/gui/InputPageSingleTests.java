@@ -3,9 +3,8 @@ package com.beamcalculate.gui;
 import com.beamcalculate.TestFXBase;
 import com.beamcalculate.pages.InputPage;
 import com.beamcalculate.pages.MomentPage;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.matcher.base.NodeMatchers;
@@ -30,14 +29,23 @@ public class BeamCalculatorSingleTests extends TestFXBase {
 
 
     @Test
-    public void buttonShouldDisabled(){
+    public void momentGenerationButtonShouldDisabled(){
         sleep(500);
 
-        verifyThat(DIAGRAM_BUTTON_ID, NodeMatchers.isDisabled());
+        verifyThat(ENVELOP_CURVE_BUTTON_ID, Node::isDisabled);
     }
 
     @Test
-    public void zeroShouldNotBeAllowedForGeometry(){
+    public void momentAndRebarPageButtonsShouldDisabled(){
+        sleep(500);
+
+        verifyThat(MOMENT_PAGE_BUTTON_ID, Node::isDisabled);
+        verifyThat(REBAR_CASES_PAGE_BUTTON_ID, Node::isDisabled);
+    }
+
+    @Test
+    public void zeroShouldNotBeAllowedForGeometryAndMaterialParam(){
+        mInputPage.writeValueWithEnter(0, SECTION_HEIGHT_FIELD_ID);
         mInputPage.writeValueWithEnter(0, SECTION_HEIGHT_FIELD_ID);
 
         verifyThat(SECTION_HEIGHT_FIELD_ID, (TextField textField) -> textField.getText().isEmpty());
@@ -46,8 +54,10 @@ public class BeamCalculatorSingleTests extends TestFXBase {
     @Test
     public void zeroShouldBeAllowedForLoad(){
         mInputPage.writeValueWithEnter(0, DEAD_LOAD_FIELD_ID);
+        mInputPage.writeValueWithEnter(0, LIVE_LOAD_FIELD_ID);
 
         verifyThat(DEAD_LOAD_FIELD_ID, (TextField textField) -> Double.parseDouble(textField.getText()) == 0);
+        verifyThat(LIVE_LOAD_FIELD_ID, (TextField textField) -> Double.parseDouble(textField.getText()) == 0);
     }
 
     @Test
@@ -64,14 +74,39 @@ public class BeamCalculatorSingleTests extends TestFXBase {
     }
 
     @Test
+    public void momentPageButtonShouldBeAvailableOnceGeneratingEnvelopCurve(){
+        setSampleOfTotalInputs();
+        clickOn(ENVELOP_CURVE_BUTTON_ID);
+
+        verifyThat(MOMENT_PAGE_BUTTON_ID, ((ToggleButton button) -> !button.isDisabled()));
+    }
+
+    @Test
+    public void momentPageButtonShouldBeDisabledWhenAnInputIsChanged(){
+        setSampleOfTotalInputs();
+        clickOn(ENVELOP_CURVE_BUTTON_ID);
+        clickOn(INPUT_PAGE_BUTTON_ID);
+        mInputPage.writeValueWithEnter(7.4, DEAD_LOAD_FIELD_ID);
+
+        verifyThat(MOMENT_PAGE_BUTTON_ID, Node::isDisabled);
+    }
+
+    @Test
     public void redistributionAndRebarCalculatingShouldBeInvisibleWhenMissingInputs(){
         mInputPage.getNSpansBeam(2, new Double[]{3.2, 3.4}, new Double[]{0.2, 0.3, 0.2}).
                 setLoad(5.2, 6.2);
-        clickOn(DIAGRAM_BUTTON_ID);
+        clickOn(ENVELOP_CURVE_BUTTON_ID);
         mInputPage.clickToContinue(1);       //continue when missing inputs
 
         verifyThat(REDISTRIBUTION_CHECK_ID, (CheckBox checkBox) -> !checkBox.isVisible());
         verifyThat(CONFIGURATION_BUTTON_ID, (Button button) -> !button.isVisible());
         verifyThat(REBAR_CALCULATE_BUTTON_ID, (Button button) -> !button.isVisible());
+    }
+
+    private void setSampleOfTotalInputs(){
+        mInputPage.setAllInputs(false,3, new Double[]{3.2, 3.4, 4.0}, new Double[]{0.2, 0.3, 0.2, 0.2},
+                0.4, 0.6, 0,0, 5.4, 6.4,
+                25, 500, 'B'
+        );
     }
 }
