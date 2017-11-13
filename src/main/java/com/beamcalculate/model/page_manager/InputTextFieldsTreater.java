@@ -1,5 +1,6 @@
 package com.beamcalculate.model.page_manager;
 
+import com.jfoenix.controls.JFXTextField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.Node;
@@ -57,7 +58,9 @@ public class InputTextFieldsTreater {
     ){
         InputControllerAdder controllerAdder = new InputControllerAdder();
         for (int i=0;i<numField;i++){
-            TextField textField = new TextField();
+            JFXTextField textField = new JFXTextField();
+            textField.setMaxWidth(69);
+            textField.getStyleClass().add("text-field-grid");
             String textFieldId = Integer.toString(i+1);
             textField.setId(textFieldId);
 

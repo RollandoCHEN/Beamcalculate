@@ -1,8 +1,8 @@
 package com.beamcalculate.model.custom_node;
 
-import javafx.scene.control.TextField;
+import com.jfoenix.controls.JFXTextField;
 
-public class NamedTextField extends TextField{
+public class NamedTextField extends JFXTextField {
     private String mParameterName;
 
     public String getParameterName() {

@@ -1,0 +1,108 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+}
+
+#inputPageAnchorPane{
+    -fx-background-color: #3D4956;
+}
+
+
+.hbox{
+    -fx-spacing: 10px;
+    -fx-alignment:center-left;
+}
+
+.label{
+    -fx-font-family: "Microsoft YaHei";
+    -fx-font-size: 16px;
+    -fx-text-fill: silver;
+}
+
+.label-prompt{
+    -fx-font-size: 13px;
+}
+
+.label-title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.text-field{
+    -fx-font-family: "Microsoft YaHei";
+    -fx-font-size: 16px;
+    -fx-text-fill:white;
+    -fx-prompt-text-fill: silver;
+    -jfx-focus-color: #00d0bb;
+    -jfx-unfocus-color: silver;
+    -jfx-label-float: true;
+}
+
+.text-field:focused{
+    -fx-text-fill: #00d0bb;
+}
+
+.text-field-grid{
+    -fx-max-width: 69px;
+    -fx-alignment: center;
+}
+
+.button{
+    -fx-pref-width: 220;
+    -fx-min-height: 40;
+    -fx-text-fill: #3d4956;
+    -fx-font-family: "Microsoft YaHei";
+    -fx-font-weight: bold;
+    -fx-background-color: #eda678;
+    -jfx-button-type: RAISED;
+}
+
+.jfx-button .jfx-rippler{
+    -jfx-rippler-fill: white;
+}
+
+.combo-box {
+    -fx-font-family: "Microsoft YaHei";
+    -fx-font-size: 16px;
+    -fx-prompt-text-fill: silver;
+    -jfx-focus-color: #00d0bb;
+    -jfx-unfocus-color: silver;
+    -jfx-label-float: true;
+}
+
+.combo-box-base{
+    -fx-color: #3D4956;
+}
+
+.combo-box .cell{
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-cell{
+    -fx-background-color: grey;
+}
+
+
+.combo-box .list-cell:hover{
+    -fx-background-color: #eda678;
+}
+
+
+.combo-box .list-cell:selected{
+    -fx-background-color: #3D4956;
+}
+
+.check-box{
+    -fx-font-size: 16px;
+    -fx-font-family: "Microsoft YaHei";
+    -fx-text-fill: silver;
+}
+
+
+.toggle-button {
+    -fx-font-size: 16px;
+    -fx-font-family: "Microsoft YaHei";
+    -fx-text-fill: silver;
+    -jfx-toggle-color: #0f9d58;
+}

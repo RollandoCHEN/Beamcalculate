@@ -44,7 +44,7 @@ public class MomentPageParameterizedTests extends TestFXBase {
     public MomentPageParameterizedTests(
             boolean tSection,
             int totalSpanNum, Double[] spansLengths, Double[] supportsWidths,
-            double sectionHeight, double sectionWidth, double slabThickness, double perpendicularSpacing,
+            double sectionWidth, double sectionHeight, double slabThickness, double perpendicularSpacing,
             double deadLoad, double liveLoad,
             double concreteStrength, double steelStrength, Character ductibilityClass,
             int numOfContinue, int numOfMethods
@@ -53,8 +53,8 @@ public class MomentPageParameterizedTests extends TestFXBase {
         mTotalSpanNum = totalSpanNum;
         mSpansLengths = spansLengths;
         mSupportsWidths = supportsWidths;
-        mSectionHeight = sectionHeight;
         mSectionWidth = sectionWidth;
+        mSectionHeight = sectionHeight;
         mSlabThickness = slabThickness;
         mPerpendicularSpacing = perpendicularSpacing;
         mDeadLoad = deadLoad;

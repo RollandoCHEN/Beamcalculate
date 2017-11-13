@@ -1,13 +1,9 @@
 package com.beamcalculate.model.page_manager;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +13,6 @@ import java.util.regex.Pattern;
 public class InputControllerAdder {
     public void addRealNumberControllerTo(boolean canBeZero, TextField... textFields){
         for (TextField textField : textFields) {
-
             textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (!newValue) { //when focus lost
                     addPatternMatchTo(textField, canBeZero);
@@ -73,6 +68,14 @@ public class InputControllerAdder {
         addRealNumberControllerTo(canBeZero, textField);
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (!newValue) { //when focus lost
+                if (!textField.getText().isEmpty() &&                               //value is entered
+                        Double.parseDouble(textField.getText()) > maxValue) {       //entered value > max limit
+                    textField.setText("");                                          //remove the value
+                }
+            }
+        });
+        textField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
                 if (!textField.getText().isEmpty() &&                               //value is entered
                         Double.parseDouble(textField.getText()) > maxValue) {       //entered value > max limit
                     textField.setText("");                                          //remove the value

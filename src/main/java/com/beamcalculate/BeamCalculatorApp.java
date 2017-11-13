@@ -5,6 +5,7 @@ import static com.beamcalculate.model.page_manager.LanguageManager.AppSettings;
 import com.beamcalculate.model.page_manager.LanguageManager;
 import javafx.application.Application;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class BeamCalculatorApp extends Application {
@@ -14,6 +15,10 @@ public class BeamCalculatorApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
+        Font.loadFont(BeamCalculatorApp.class.getResource("/fonts/Microsoft-YaHei.ttf").toExternalForm(), 10);
+        Font.loadFont(BeamCalculatorApp.class.getResource("/fonts/Microsoft-YaHei-Bold.ttf").toExternalForm(), 10);
+//        Font.loadFont(BeamCalculatorApp.class.getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 10);
+//        Font.loadFont(BeamCalculatorApp.class.getResource("/fonts/Roboto-Bold.ttf").toExternalForm(), 10);
         mLanguageManager.setAppLanguage(AppSettings.getCurrentLocal());
         mPrimaryStage.setTitle("BeamCalculator 1.1.0-SNAPSHOT");
         mPrimaryStage.getIcons().add(new Image("image/icon.png"));

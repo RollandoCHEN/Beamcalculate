@@ -36,7 +36,7 @@ public class JavaFXIds {
 
     //Moment Window
     public final static String MOMENT_PAGE_BORDER_PANE_ID = "#borderPaneContainer";
-    public final static String TOTAL_NUM_ON_SPAN_SPINNER_ID = "#totalNumOnSpanSpinner";
+    public final static String TOTAL_POINTS_NUM_SPINNER_ID = "#totalNumOnSpanSpinner";
     public final static String METHODS_DISPLAY_CHECK_ID = "#methodsCheckHBox";
     public final static String CONDITION_INFO_LABEL_ID = "#conditionInfoLabel";
     public final static String REDISTRIBUTION_CHECK_ID = "#redistributionCheck";
@@ -44,7 +44,7 @@ public class JavaFXIds {
     public final static String METHOD_CHOICE_ID = "#methodsChoiceBox";
     public final static String REBAR_CALCULATE_BUTTON_ID = "#rebarCalculateButton";
     public final static String SPAN_CHOICE_ID = "#spanChoiceBox";
-    public final static String ABSCISSA_FIELD_ID = "#abscissaField";
+    public final static String ABSCISSA_FIELD_HBOX_ID = "#abscissaFieldHBox";
     public final static String ABSCISSA_LIMIT_LABEL_ID = "#abscissaLimit";
     public final static String MOMENT_CALCULATE_BUTTON_ID = "#momentCalculateButton";
     public final static String MIN_MOMENT_VALUE_LABEL_ID = "#minCaseMomentValue";

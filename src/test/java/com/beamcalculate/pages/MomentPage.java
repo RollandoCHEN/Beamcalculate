@@ -3,6 +3,7 @@ package com.beamcalculate.pages;
 import com.beamcalculate.TestFXBase;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 
@@ -17,7 +18,7 @@ public class MomentPage {
     }
 
     public MomentPage changeSpannerValue(int num) {
-        driver.clickOn(TOTAL_NUM_ON_SPAN_SPINNER_ID).write(String.valueOf(num)).type(KeyCode.ENTER);
+        driver.clickOn(TOTAL_POINTS_NUM_SPINNER_ID).write(String.valueOf(num)).type(KeyCode.ENTER);
         return this;
     }
 
@@ -29,6 +30,17 @@ public class MomentPage {
         } else {
             methodCheckBox = (CheckBox) hbox.getChildren().get(num - 1);
             if (methodCheckBox.isSelected()){
+                driver.clickOn(methodCheckBox);
+            }
+        }
+        return this;
+    }
+
+    public MomentPage uncheckAllMethods(){
+        HBox hbox = driver.find(METHODS_DISPLAY_CHECK_ID);
+        for (int i=0;i<hbox.getChildren().size();i++) {
+            CheckBox methodCheckBox = (CheckBox) hbox.getChildren().get(i);
+            if (methodCheckBox.isSelected()) {
                 driver.clickOn(methodCheckBox);
             }
         }
@@ -57,5 +69,15 @@ public class MomentPage {
             throw new IllegalArgumentException("Can't find the value in the choice box!");
         }
         return this;
+    }
+
+    public MomentPage enterAbscissa(double abscissa){
+        driver.doubleClickOn(getAbscissaField()).write(String.valueOf(abscissa)).type(KeyCode.ENTER);
+        return this;
+    }
+
+    public TextField getAbscissaField(){
+        HBox hBox = driver.find(ABSCISSA_FIELD_HBOX_ID);
+        return (TextField) hBox.getChildren().get(0);
     }
 }

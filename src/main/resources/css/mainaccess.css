@@ -1,0 +1,13 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+}
+
+.split-pane{
+    -fx-background-color:#3D4956;
+}
+
+.toggle-button {
+    -fx-font-weight: bold;
+
+}
+

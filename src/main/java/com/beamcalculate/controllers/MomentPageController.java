@@ -451,7 +451,7 @@ public class MomentPageController {
             });
 
             HBox bottomHBox = new HBox();
-            bottomHBox.setSpacing(20);
+            bottomHBox.setSpacing(10);
             bottomHBox.setAlignment(Pos.CENTER_RIGHT);
             Button confirmButton = new Button(getBundleText("button.ok"));
             Button applyButton = new Button(getBundleText("button.apply"));

@@ -1,15 +1,13 @@
 package com.beamcalculate.model.page_manager;
 
-import com.beamcalculate.model.custom_node.NamedChoiceBox;
+import com.beamcalculate.model.custom_node.NamedComboBox;
 import com.beamcalculate.model.custom_node.NamedTextField;
 import com.beamcalculate.model.custom_alert.WarningMessage;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextInputControl;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.util.HashSet;
@@ -46,23 +44,23 @@ public class InputValueGetter {
         }
     }
 
-    public void getInputValue(NamedChoiceBox<String> sourceChoiceBox, StringProperty goalProperty){
+    public void getInputValue(NamedComboBox<String> sourceComboBox, StringProperty goalProperty){
         try {
-            goalProperty.set(sourceChoiceBox.getValue());
-            if(sourceChoiceBox.getValue() == null){
-                mMissingParamWarningSet.add(sourceChoiceBox.getParameterName());
+            goalProperty.set(sourceComboBox.getValue());
+            if(sourceComboBox.getValue() == null){
+                mMissingParamWarningSet.add(sourceComboBox.getParameterName());
             }
         } catch (Exception e) {
-            mMissingParamWarningSet.add(sourceChoiceBox.getParameterName());
+            mMissingParamWarningSet.add(sourceComboBox.getParameterName());
         }
     }
 
-    public void getInputValue(ChoiceBox<Integer> sourceChoiceBox, IntegerProperty goalProperty){
-        goalProperty.set(sourceChoiceBox.getValue());
+    public void getInputValue(ComboBox<Integer> sourceComboBox, IntegerProperty goalProperty){
+        goalProperty.set(sourceComboBox.getValue());
     }
 
-    public void getInputValue(CheckBox sourceCheckBox, BooleanProperty goalProperty){
-        goalProperty.set(sourceCheckBox.isSelected());
+    public void getInputValue(ToggleButton sourceToggleButton, BooleanProperty goalProperty){
+        goalProperty.set(sourceToggleButton.isSelected());
     }
 
     public boolean continueAfterShowingWarning(){

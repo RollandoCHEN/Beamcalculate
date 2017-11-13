@@ -97,12 +97,16 @@ public class InputPage {
     }
 
     public InputPage setCrossSection(double width, double height){
-        writeValue(width, SECTION_WIDTH_FIELD_ID).writeValueWithEnter(height, SECTION_HEIGHT_FIELD_ID);
+        if (width!=0 && height !=0) {
+            writeValue(width, SECTION_WIDTH_FIELD_ID).writeValueWithEnter(height, SECTION_HEIGHT_FIELD_ID);
+        }
         return this;
     }
 
     public InputPage setTSectionParam(double slabThickness, double perpendicularSpacing){
-        writeValue(slabThickness, SLAB_THICKNESS_FIELD_ID).writeValueWithEnter(perpendicularSpacing, PERPENDICULAR_SPACING_FIELD_ID);
+        if (slabThickness!=0 && perpendicularSpacing!=0) {
+            writeValue(slabThickness, SLAB_THICKNESS_FIELD_ID).writeValueWithEnter(perpendicularSpacing, PERPENDICULAR_SPACING_FIELD_ID);
+        }
         return this;
     }
 
@@ -112,9 +116,11 @@ public class InputPage {
     }
 
     public InputPage setMaterial(double fck, double fyk, Character ductibility){
-        writeValue(fck, CONCRETE_STRENGTH_FIELD_ID).
-                writeValue(fyk, STEEL_STRENGTH_FIELD_ID).
-                chooseValue(ductibility, DUCTIBILITY_CLASS_CHOICE_ID);
+        if (fck!=0 && fyk!=0 && ductibility!=null) {
+            writeValue(fck, CONCRETE_STRENGTH_FIELD_ID).
+                    writeValue(fyk, STEEL_STRENGTH_FIELD_ID).
+                    chooseValue(ductibility, DUCTIBILITY_CLASS_CHOICE_ID);
+        }
         return this;
     }
 

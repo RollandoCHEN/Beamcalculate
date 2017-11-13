@@ -4,7 +4,7 @@ import com.beamcalculate.model.custom_alert.WarningMessage;
 import com.beamcalculate.model.page_manager.InputControllerAdder;
 import com.beamcalculate.model.page_manager.InputTextFieldsTreater;
 import com.beamcalculate.model.page_manager.InputValueGetter;
-import com.beamcalculate.model.custom_node.NamedChoiceBox;
+import com.beamcalculate.model.custom_node.NamedComboBox;
 import com.beamcalculate.model.custom_node.NamedTextField;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import com.beamcalculate.model.calculate.support_moment.ForfaitaireConditionVerifier;
@@ -15,6 +15,8 @@ import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 import com.beamcalculate.model.entites.Material;
 import com.beamcalculate.model.calculate.support_moment.SupportMomentForfaitaire;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXToggleButton;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -34,9 +36,9 @@ import static com.beamcalculate.model.custom_alert.WarningMessage.WarningMessage
 
 public class InputPageController implements Initializable {
     @FXML private AnchorPane inputPageAnchorPane;
-    @FXML private CheckBox onTSection_chkb;
+    @FXML private JFXToggleButton onTSection_tgglbttn;
     @FXML private CheckBox sampleInputs_chkb;
-    @FXML private ChoiceBox<Integer> numSpans_chcb;
+    @FXML private JFXComboBox<Integer> numSpans_cmbb;
     @FXML private CheckBox equalSupport_chkb;
     @FXML private CheckBox equalSpan_chkb;
     @FXML private GridPane spansLength_gp;
@@ -52,7 +54,7 @@ public class InputPageController implements Initializable {
     @FXML private NamedTextField variableLoad_tf;
     @FXML private NamedTextField fck_tf;
     @FXML private NamedTextField fyk_tf;
-    @FXML private NamedChoiceBox<String> ductibilityClass_chcb;
+    @FXML private NamedComboBox<String> ductibilityClass_chcb;
     @FXML private Button envelopCurveGenerate_button;
 
 
@@ -85,8 +87,8 @@ public class InputPageController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        addChangingStatusListenerTo(onTSection_chkb, sampleInputs_chkb, equalSupport_chkb, equalSpan_chkb);
-        addChangingStatusListenerTo(numSpans_chcb, ductibilityClass_chcb);
+        addChangingStatusListenerTo(onTSection_tgglbttn, sampleInputs_chkb, equalSupport_chkb, equalSpan_chkb);
+        addChangingStatusListenerTo(numSpans_cmbb, ductibilityClass_chcb);
         addChangingStatusListenerTo(
                 equalSupportWidth_tf, equalSpanLength_tf, sectionWidth_tf, sectionHeight_tf,
                 perpendicularSpacing_tf, slabThickness_tf,
@@ -116,14 +118,14 @@ public class InputPageController implements Initializable {
         mRealNumberControllerAdder.addRealNumberControllerTo(true, permanentLoad_tf, variableLoad_tf);
 
         // T-shaped section treatment
-        notOnTSection.bind(Bindings.not(onTSection_chkb.selectedProperty()));
-        onTSection.bind(onTSection_chkb.selectedProperty());
+        notOnTSection.bind(Bindings.not(onTSection_tgglbttn.selectedProperty()));
+        onTSection.bind(onTSection_tgglbttn.selectedProperty());
 
         // Sample data check box treatment
         sampleInputs_chkb.selectedProperty().addListener(((observable, oldValue, newValue) -> {
             if (newValue){
-                onTSection_chkb.setSelected(true);
-                numSpans_chcb.getSelectionModel().select(2);
+                onTSection_tgglbttn.setSelected(true);
+                numSpans_cmbb.getSelectionModel().select(2);
                 equalSpan_chkb.setSelected(false);
                 equalSupport_chkb.setSelected(false);
                 sectionWidth_tf.setText("0.4");
@@ -137,17 +139,17 @@ public class InputPageController implements Initializable {
                 ductibilityClass_chcb.getSelectionModel().select("B");
                 double[] spanLengths = {5.2, 4.5, 6.1};
                 double[] supportWidths = {0.25, 0.20, 0.20, 0.3};
-                for (int i=0; i<numSpans_chcb.getValue();i++){
+                for (int i = 0; i< numSpans_cmbb.getValue(); i++){
                     TextField textField = (TextField)spansLength_gp.getChildren().get(i);
                     textField.setText(String.valueOf(spanLengths[i]));
                 }
-                for (int i=0; i<numSpans_chcb.getValue()+1;i++){
+                for (int i = 0; i< numSpans_cmbb.getValue()+1; i++){
                     TextField textField = (TextField)supportsWidth_gp.getChildren().get(i);
                     textField.setText(String.valueOf(supportWidths[i]));
                 }
             } else {
-                onTSection_chkb.setSelected(false);
-                numSpans_chcb.getSelectionModel().clearSelection();
+                onTSection_tgglbttn.setSelected(false);
+                numSpans_cmbb.getSelectionModel().clearSelection();
                 sectionWidth_tf.clear();
                 sectionHeight_tf.clear();
                 slabThickness_tf.clear();
@@ -156,6 +158,7 @@ public class InputPageController implements Initializable {
                 variableLoad_tf.clear();
                 fck_tf.clear();
                 fyk_tf.clear();
+                ductibilityClass_chcb.getSelectionModel().clearSelection();
                 spansLength_gp.getChildren().forEach(node -> ((TextField) node).clear());
                 supportsWidth_gp.getChildren().forEach(node -> ((TextField) node).clear());
             }
@@ -182,14 +185,15 @@ public class InputPageController implements Initializable {
         });
     }
 
-    private void addChangingStatusListenerTo(CheckBox...checkBoxes){
+    private void addChangingStatusListenerTo(ToggleButton toggleButton ,CheckBox...checkBoxes){
+        addChangingStatusListenerToObservableValue(toggleButton.selectedProperty());
         for (CheckBox checkBox : checkBoxes) {
             addChangingStatusListenerToObservableValue(checkBox.selectedProperty());
         }
     }
-    private void addChangingStatusListenerTo(ChoiceBox...choiceBoxes){
-        for (ChoiceBox choiceBox : choiceBoxes) {
-            addChangingStatusListenerToObservableValue(choiceBox.valueProperty());
+    private void addChangingStatusListenerTo(ComboBox...choiceBoxes){
+        for (ComboBox comboBox : choiceBoxes) {
+            addChangingStatusListenerToObservableValue(comboBox.valueProperty());
         }
     }
     private void addChangingStatusListenerTo(TextField...textFields){
@@ -244,7 +248,7 @@ public class InputPageController implements Initializable {
         mInputValueGetter.getInputValue(fck_tf, material.fckProperty());
         mInputValueGetter.getInputValue(fyk_tf, material.fykProperty());
         mInputValueGetter.getInputValue(ductibilityClass_chcb, material.ductibilityClassProperty());
-        mInputValueGetter.getInputValue(onTSection_chkb, mGeometry.onTSectionProperty());
+        mInputValueGetter.getInputValue(onTSection_tgglbttn, mGeometry.onTSectionProperty());
         if (isOnTSection()) {
             mInputValueGetter.getInputValue(slabThickness_tf, mGeometry.slabThicknessProperty());
             mInputValueGetter.getInputValue(perpendicularSpacing_tf, mGeometry.perpendicularSpacingProperty());
@@ -265,8 +269,8 @@ public class InputPageController implements Initializable {
 
     @FXML
     private void generateGeometryDiagram(ActionEvent actionEvent) {
-        if (!numSpans_chcb.getSelectionModel().isEmpty()) {
-            mInputValueGetter.getInputValue(numSpans_chcb, mGeometry.numSpanProperty());
+        if (!numSpans_cmbb.getSelectionModel().isEmpty()) {
+            mInputValueGetter.getInputValue(numSpans_cmbb, mGeometry.numSpanProperty());
             double hGapValue = (880 - mGeometry.getNumSpan() * 69) / mGeometry.getNumSpan();
 
             spansLength_gp.getChildren().clear();
