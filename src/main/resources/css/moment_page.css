@@ -1,0 +1,105 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+}
+
+.scroll-pane {
+   -fx-background: #3D4956;
+   -fx-border-color: #3D4956;
+}
+
+.label{
+    -fx-font-size: 13px;
+    -fx-text-fill: silver;
+}
+
+.label.clickable{
+    -fx-underline: true;
+}
+
+.label.clickable-mouse-enter{
+    -fx-text-fill: #00d0bb;
+}
+
+.check-box{
+    -fx-font-size: 14px;
+    -fx-text-fill: silver;
+}
+
+.hovered-threshold{
+    -fx-background-color: #0f9d58;
+    -fx-border-radius: 5px;
+}
+
+.hovered-threshold .label{
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.text-field{
+    -fx-pref-width: 150;
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: silver;
+    -jfx-focus-color: #00d0bb;
+    -jfx-unfocus-color: silver;
+    -jfx-label-float: true;
+}
+
+.text-field:focused{
+    -fx-text-fill: #00d0bb;
+}
+
+.combo-box {
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: silver;
+    -jfx-focus-color: #00d0bb;
+    -jfx-unfocus-color: silver;
+    -jfx-label-float: true;
+}
+
+.combo-box-base{
+    -fx-color: #3D4956;
+}
+
+.combo-box .cell{
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-cell{
+    -fx-background-color: grey;
+}
+
+
+.combo-box .list-cell:hover{
+    -fx-background-color: #eda678;
+}
+
+
+.combo-box .list-cell:selected{
+    -fx-background-color: #3D4956;
+}
+
+.spinner .text-field{
+    -fx-background-color: #3D4956;
+}
+
+.button{
+    -fx-pref-width: 140;
+    -fx-min-height: 30;
+    -fx-text-fill: #3d4956;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-color: #eda678;
+    -jfx-button-type: RAISED;
+}
+
+.button-config{
+    -fx-text-fill: silver;
+    -fx-background-color: #515d6d;
+}
+
+.jfx-button .jfx-rippler{
+    -jfx-rippler-fill: white;
+}

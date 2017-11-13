@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<ScrollPane stylesheets="@../css/rebar_cases.css"
+<?import com.jfoenix.controls.JFXButton?>
+<ScrollPane stylesheets="@../css/rebar_cases_page.css"
             xmlns="http://javafx.com/javafx/8.0.141"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.beamcalculate.controllers.RebarCasesPageController">
@@ -29,7 +29,7 @@
 
                     <HBox spacing="15" alignment="CENTER_RIGHT">
                         <padding><Insets right="50"/></padding>
-                        <Button fx:id="rebarAreaDetailButton" text="%button.rebarAreaCalculate" styleClass="promptText"
+                        <JFXButton fx:id="rebarAreaDetailButton" text="%button.rebarAreaCalculate"
                                 onAction="#showCalculateDetail"/>
                     </HBox>
                 </VBox>
@@ -57,21 +57,21 @@
 
                                                 <Label text="${controller.compRegionHeightString}" />
                                                 <VBox alignment="TOP_CENTER">
-                                                    <Line endX="5.0" startX="-5.0" />
-                                                    <Line startY="${controller.displayedCompRegionHeight}" />
-                                                    <Line endX="5.0" startX="-5.0" />
+                                                    <Line endX="5.0" startX="-5.0" styleClass="line"/>
+                                                    <Line startY="${controller.displayedCompRegionHeight}" styleClass="line"/>
+                                                    <Line endX="5.0" startX="-5.0" styleClass="line"/>
                                                 </VBox>
                                             </HBox>
 
                                             <VBox fx:id="widthVBox" alignment="TOP_CENTER" spacing="10">
                                                 <StackPane id="Diagram" alignment="TOP_CENTER">
 
-                                                    <Rectangle fill="Silver" stroke="BLACK" strokeType="OUTSIDE"
+                                                    <Rectangle fill="Silver" stroke="black" strokeType="OUTSIDE" strokeWidth="1.5"
                                                                height="${controller.displayedTotalHeight}" width="${controller.displayedWebWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                     </Rectangle>
 
-                                                    <Rectangle fill="Silver" stroke="BLACK" strokeType="OUTSIDE"
+                                                    <Rectangle fill="Silver" stroke="black" strokeType="OUTSIDE" strokeWidth="1.5"
                                                                height="${controller.displayedFlangeHeight}" width="${controller.displayedFlangeWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                     </Rectangle>
@@ -80,23 +80,23 @@
                                                                height="${controller.displayedTotalHeight}" width="${controller.displayedWebWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                         <StackPane.margin>
-                                                            <Insets top="1.0" />
+                                                            <Insets top="1.5" />
                                                         </StackPane.margin>
                                                     </Rectangle>
 
-                                                    <Rectangle fill="GRAY"
+                                                    <Rectangle fill="dimgrey"
                                                                height="${controller.displayedFlangeCompHeight}" width="${controller.displayedFlangeCompWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                         <StackPane.margin>
-                                                            <Insets top="1.0" />
+                                                            <Insets top="1.5" />
                                                         </StackPane.margin>
                                                     </Rectangle>
 
-                                                    <Rectangle fill="GRAY"
+                                                    <Rectangle fill="dimgrey"
                                                                height="${controller.displayedWebCompHeight}" width="${controller.displayedWebCompWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                         <StackPane.margin>
-                                                            <Insets top="1.0" />
+                                                            <Insets top="1.5" />
                                                         </StackPane.margin>
                                                     </Rectangle>
 
@@ -105,44 +105,44 @@
                                                 </StackPane>
 
                                                 <HBox id="Web Width" alignment="CENTER">
-                                                    <Line endY="5.0" startY="-5.0" />
+                                                    <Line endY="5.0" startY="-5.0" styleClass="line"/>
                                                     <VBox alignment="CENTER">
                                                         <Label text="${controller.webCompWidthString}" />
-                                                        <Line fill="RED" startX="${controller.displayedWebCompWidth}" />
+                                                        <Line startX="${controller.displayedWebCompWidth}" styleClass="line"/>
                                                         <Label />
                                                     </VBox>
-                                                    <Line endY="5.0" startY="-5.0" />
+                                                    <Line endY="5.0" startY="-5.0" styleClass="line"/>
                                                 </HBox>
 
                                                 <HBox fx:id="flangeWidthHBox" id="Flange Width" alignment="CENTER">
-                                                    <Line endY="5.0" startY="-5.0" />
+                                                    <Line endY="5.0" startY="-5.0" styleClass="line"/>
                                                     <VBox alignment="CENTER">
                                                         <Label text="${controller.flangeWidthString}" />
-                                                        <Line fill="RED" startX="${controller.displayedFlangeWidth}" />
+                                                        <Line startX="${controller.displayedFlangeWidth}" styleClass="line"/>
                                                         <Label />
                                                     </VBox>
-                                                    <Line endY="5.0" startY="-5.0" />
+                                                    <Line endY="5.0" startY="-5.0" styleClass="line"/>
                                                 </HBox>
                                             </VBox>
 
                                             <VBox fx:id="flangeHeightVBox" id="Flange Height" alignment="TOP_CENTER">
-                                                <Line endX="5.0" startX="-5.0" />
+                                                <Line endX="5.0" startX="-5.0" styleClass="line"/>
                                                 <HBox alignment="CENTER">
                                                     <Label rotate="-90.0" text="${controller.flangeHeightString}" />
-                                                    <Line fill="RED" startY="${controller.displayedFlangeHeight}" />
+                                                    <Line startY="${controller.displayedFlangeHeight}" styleClass="line"/>
                                                     <Label rotate="-90.0" text="    " />
                                                 </HBox>
-                                                <Line endX="5.0" startX="-5.0" />
+                                                <Line endX="5.0" startX="-5.0" styleClass="line"/>
                                             </VBox>
 
                                             <VBox id="Total Height" alignment="TOP_CENTER">
-                                                <Line endX="5.0" startX="-5.0" />
+                                                <Line endX="5.0" startX="-5.0" styleClass="line" />
                                                 <HBox alignment="CENTER">
                                                     <Label rotate="-90.0" text="${controller.totalHeightString}" />
-                                                    <Line fill="RED" startY="${controller.displayedTotalHeight}" />
+                                                    <Line startY="${controller.displayedTotalHeight}" styleClass="line"/>
                                                     <Label rotate="-90.0" text="    " />
                                                 </HBox>
-                                                <Line endX="5.0" startX="-5.0" />
+                                                <Line endX="5.0" startX="-5.0" styleClass="line" />
                                             </VBox>
                                         </HBox>
 
@@ -151,10 +151,10 @@
                                                 <Insets bottom="20" right="20" />
                                             </padding>
 
-                                            <Rectangle fill="GREY"
+                                            <Rectangle fill="dimgrey"
                                                        height="15.0" width="20.0"
                                                        stroke="BLACK" strokeType="INSIDE" />
-                                            <Label styleClass="promptText" text="%label.compressionRegion" />
+                                            <Label styleClass="prompt" text="%label.compressionRegion" />
                                         </HBox>
                                     </VBox>
                                 </center>
@@ -188,9 +188,9 @@
                                 </HBox>
 
                                 <HBox spacing="15" alignment="CENTER_RIGHT">
-                                    <Button fx:id="elevationDetailButton" disable="true"
-                                            text="%button.elevationCalculate" styleClass="promptText"
-                                            onAction="#showElevationDetail"/>
+                                    <JFXButton fx:id="elevationDetailButton" disable="true"
+                                               text="%button.elevationCalculate"
+                                               onAction="#showElevationDetail"/>
                                     <padding><Insets right="50" bottom="25"/></padding>
                                 </HBox>
                             </StackPane>
@@ -200,7 +200,7 @@
                             <VBox alignment="CENTER">
                                 <StackPane>
                                     <Rectangle  height="${controller.displayedElevationTotalHeight}" width="${controller.totalLength}"
-                                                fill="SILVER" stroke="BLACK" strokeType="INSIDE"/>
+                                                fill="SILVER" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.5"/>
                                     <VBox fx:id="elevationRebarVBox" alignment="BOTTOM_LEFT" maxWidth="${controller.totalLength}">
 
                                     </VBox>
@@ -213,12 +213,12 @@
                                     </columnConstraints>
                                     <HBox alignment="TOP_LEFT"
                                           GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                        <Rectangle fill="SILVER" stroke="BLACK" strokeType="OUTSIDE"
+                                        <Rectangle fill="SILVER" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="1.5"
                                                    height="30.0" width="${controller.displayedLeftSupportWidth}" />
                                     </HBox>
                                     <HBox alignment="TOP_RIGHT"
                                           GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                        <Rectangle fill="SILVER" stroke="BLACK" strokeType="OUTSIDE"
+                                        <Rectangle fill="SILVER" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="1.5"
                                                    height="30.0" width="${controller.displayedRightSupportWidth}" />
                                     </HBox>
                                 </GridPane>
@@ -226,61 +226,61 @@
                                 <GridPane fx:id="rebarDimensionAnnoGridPane" alignment="CENTER">
                                     <HBox fx:id="rebarLeftIndentHBox" alignment="CENTER_LEFT" visible="false"
                                           GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                         <VBox alignment="CENTER">
                                             <Label text="${controller.rebarLeftIndentString}" />
-                                            <Line endX="${controller.displayedRebarLeftIndent}" />
+                                            <Line endX="${controller.displayedRebarLeftIndent}" styleClass="line"/>
                                             <Label text="  " />
                                         </VBox>
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                     </HBox>
 
                                     <HBox fx:id="rebarLengthHBox" alignment="CENTER" visible="false"
                                           GridPane.columnIndex="1" GridPane.rowIndex="0">
                                         <VBox alignment="CENTER">
                                             <Label text="${controller.rebarLengthString}" />
-                                            <Line endX="${controller.displayedRebarLength}" />
+                                            <Line endX="${controller.displayedRebarLength}" styleClass="line"/>
                                             <Label text="  " />
                                         </VBox>
                                     </HBox>
 
                                     <HBox fx:id="rebarRightIndentHBox" alignment="CENTER_RIGHT" visible="false"
                                           GridPane.columnIndex="2" GridPane.rowIndex="0">
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                         <VBox alignment="CENTER">
                                             <Label text="${controller.rebarRightIndentString}" />
-                                            <Line endX="${controller.displayedRebarRightIndent}" />
+                                            <Line endX="${controller.displayedRebarRightIndent}" styleClass="line"/>
                                             <Label text="  " />
                                         </VBox>
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                     </HBox>
                                 </GridPane>
 
                                 <HBox alignment="CENTER">
                                     <HBox alignment="CENTER">
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                         <VBox alignment="CENTER">
                                             <Label text="${controller.leftSupportWidthString}" />
-                                            <Line endX="${controller.displayedLeftSupportWidth}" />
+                                            <Line endX="${controller.displayedLeftSupportWidth}" styleClass="line"/>
                                             <Label text="  " />
                                         </VBox>
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                     </HBox>
                                     <HBox alignment="CENTER">
                                         <VBox alignment="CENTER">
                                             <Label text="${controller.spanLengthString}" />
-                                            <Line endX="${controller.displayedSpanLength}" />
+                                            <Line endX="${controller.displayedSpanLength}" styleClass="line"/>
                                             <Label text="  " />
                                         </VBox>
                                     </HBox>
                                     <HBox alignment="CENTER">
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                         <VBox alignment="CENTER">
                                             <Label text="${controller.rightSupportWidthString}" />
-                                            <Line endX="${controller.displayedRightSupportWidth}" />
+                                            <Line endX="${controller.displayedRightSupportWidth}" styleClass="line"/>
                                             <Label text="  " />
                                         </VBox>
-                                        <Line endY="-5.0" startY="5.0" />
+                                        <Line endY="-5.0" startY="5.0" styleClass="line"/>
                                     </HBox>
                                 </HBox>
                             </VBox>

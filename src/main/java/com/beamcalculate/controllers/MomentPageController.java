@@ -11,6 +11,9 @@ import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTextField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -56,11 +59,11 @@ public class MomentPageController {
     @FXML Spinner<Integer> totalNumOnSpanSpinner;
     @FXML HBox methodsCheckHBox;
     @FXML Label conditionInfoLabel;
-    @FXML CheckBox redistributionCheck;
+    @FXML JFXCheckBox redistributionCheck;
     @FXML Button configurationButton;
-    @FXML ChoiceBox<AbstractSpanMoment> methodsChoiceBox;
+    @FXML JFXComboBox<AbstractSpanMoment> methodsChoiceBox;
     @FXML Button rebarCalculateButton;
-    @FXML ChoiceBox<Integer> spanChoiceBox;
+    @FXML JFXComboBox<Integer> spanChoiceBox;
     @FXML Label abscissaLimit;
     @FXML HBox abscissaFieldHBox;
     @FXML Button momentCalculateButton;
@@ -114,7 +117,8 @@ public class MomentPageController {
             borderPaneContainer.setCenter(mLineChart);
 
             //Methods applying condition label
-            setClickableStyle(conditionInfoLabel);
+            conditionInfoLabel.setOnMouseEntered(e -> conditionInfoLabel.getStyleClass().add("clickable-mouse-enter"));
+            conditionInfoLabel.setOnMouseExited(e -> conditionInfoLabel.getStyleClass().remove("clickable-mouse-enter"));
             conditionInfoLabel.setOnMouseClicked(e -> new InfoMessage(
                     "info.title.methodConditions",
                     "info.head.methodConditions",
@@ -131,9 +135,9 @@ public class MomentPageController {
             //Moment Calculating Button setting : disable value and on action
             abscissaLimit.setText("(0 ~ 0)");
             abscissaFieldHBox.getChildren().clear();
-            TextField textField = new TextField();
-            textField.setPrefWidth(50);
+            JFXTextField textField = new JFXTextField();
             textField.setDisable(true);
+            textField.setPromptText(getBundleText("label.xOnSpan"));
             abscissaFieldHBox.getChildren().add(textField);
 
             momentCalculateButton.disableProperty().bind(
@@ -214,8 +218,8 @@ public class MomentPageController {
                 if (newValue != null) {
                     int selectedSpanId = spanChoiceBox.getValue();
                     AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
-                    TextField abscissaField = new TextField();
-                    abscissaField.setPrefWidth(50);
+                    JFXTextField abscissaField = new JFXTextField();
+                    abscissaField.setPromptText(getBundleText("label.xOnSpan"));
                     abscissaFieldHBox.getChildren().clear();
                     inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2), true);
                     abscissaFieldHBox.getChildren().add(abscissaField);
@@ -239,7 +243,7 @@ public class MomentPageController {
             String maxSeriesId = methodName + " - " + getBundleText("label.max");
             String minSeriesId = methodName + " - " + getBundleText("label.min");
             //Set checkbox to show or hide line chart
-            CheckBox methodCheck = new CheckBox(methodName);
+            JFXCheckBox methodCheck = new JFXCheckBox(methodName);
             methodCheck.selectedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (newValue) {
                     //Define series
@@ -307,18 +311,6 @@ public class MomentPageController {
                     ) {
                 addRedistributionOption(spanMomentFunction);
             }
-        }
-
-        private void setClickableStyle(Label label) {
-            label.setStyle(
-                    "-fx-text-fill: black; -fx-font-style: italic;"
-            );
-            label.setOnMouseEntered(e -> label.setStyle(
-                    "-fx-text-fill: blue; -fx-underline : true; -fx-font-style: italic;"
-            ));
-            label.setOnMouseExited(e -> label.setStyle(
-                    "-fx-text-fill: black; -fx-font-style: italic;"
-            ));
         }
 
         private void addRedistributionOption(SpanMomentFunction spanMomentFunction) {

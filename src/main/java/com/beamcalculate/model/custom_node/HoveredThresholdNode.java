@@ -43,11 +43,9 @@ public class HoveredThresholdNode extends StackPane {
         );
 
         VBox vbox = new VBox(labelX, labelY);
-        vbox.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+        vbox.getStyleClass().addAll("hovered-threshold", "chart-line-symbol");
         vbox.setStyle("-fx-alignment: center");
 
-        labelX.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
-        labelY.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
         labelX.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
         labelY.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
 

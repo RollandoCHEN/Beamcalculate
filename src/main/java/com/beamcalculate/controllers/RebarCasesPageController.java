@@ -8,6 +8,7 @@ import com.beamcalculate.model.calculate.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.result.RebarCutChart;
 import com.beamcalculate.model.result.ReinforcementResultTable;
+import com.jfoenix.controls.JFXButton;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -52,8 +53,8 @@ public class RebarCasesPageController {
     @FXML private VBox flangeHeightVBox;
     @FXML private VBox widthVBox;
     @FXML private HBox heightHBox;
-    @FXML private Button elevationDetailButton;
-    @FXML private Button rebarAreaDetailButton;
+    @FXML private JFXButton elevationDetailButton;
+    @FXML private JFXButton rebarAreaDetailButton;
     @FXML private GridPane rebarDimensionAnnoGridPane;
     @FXML private HBox rebarLeftIndentHBox;
     @FXML private HBox rebarRightIndentHBox;
@@ -286,13 +287,13 @@ public class RebarCasesPageController {
 
             for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++) {
                 Label spanIdLabel = new Label(getBundleText("label.span") + " " + spanId);
-                spanIdLabel.setStyle("-fx-font-weight: bold;");
+                spanIdLabel.getStyleClass().add("label-black-bold");
 
                 double calculatedArea = mReinforcement.getSpanReinforceParam().get(spanId).get(j_A_S);
                 Label calculatedAreaLabel = new Label(
                         j_A_S.getSymbol() + " = " + TWO_DECIMALS.format(calculatedArea) + " " + getBundleText("unit.area.cm2")
                 );
-                calculatedAreaLabel.setStyle("-fx-font-style: italic; -fx-font-weight: bold;");
+                calculatedAreaLabel.getStyleClass().add("label-black-bold");
 
                 VBox spanVBox = new VBox(spanIdLabel, calculatedAreaLabel);
 
@@ -325,7 +326,8 @@ public class RebarCasesPageController {
                         int caseNum = caseVariable;
 
                         //create button for each rebar case
-                        Button rebarCaseButton = new Button();
+                        JFXButton rebarCaseButton = new JFXButton();
+                        rebarCaseButton.getStyleClass().add("button-cases");
                         //set rebar selection for button text
                         rebarCaseButton.setText(getRebarCaseString(rebarCasesList, caseNum));
 
@@ -336,9 +338,8 @@ public class RebarCasesPageController {
                                         + TWO_DECIMALS.format(rebarArea)
                                         + " " + getBundleText("unit.area.cm2")
                         );
-                        rebarAreaLabel.setStyle("-fx-font-style: italic");
                         if (rebarArea == minRebarArea){
-                            rebarAreaLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-font-style: italic;");
+                            rebarAreaLabel.getStyleClass().add("label-red-bold");
                         }
 
                         //add button and area label to the span_function rebar selection grid pane

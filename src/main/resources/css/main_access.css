@@ -1,0 +1,31 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+}
+
+.split-pane{
+    -fx-background-color: #3D4956;
+}
+
+.split-pane-divider {
+   -fx-border-color:  transparent silver transparent grey;
+   -fx-background-color: darkgray;
+   -fx-padding: 0 .1em 0 0.1em;
+}
+
+.toggle-button-menu {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border,
+        -fx-inner-border, -fx-body-color;
+    -fx-font-weight: bold;
+}
+
+.toggle-button-menu:selected {
+    -fx-background-color:
+        -fx-shadow-highlight-color,
+        linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
+        linear-gradient(to bottom,
+                derive(-fx-color, -22%) 0%,
+                derive(-fx-color, -13%) 20%,
+                derive(-fx-color, -11%) 50%);
+
+}
+

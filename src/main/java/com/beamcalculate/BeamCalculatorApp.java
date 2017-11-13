@@ -3,7 +3,9 @@ package com.beamcalculate;
 import static com.beamcalculate.model.page_manager.LanguageManager.AppSettings;
 
 import com.beamcalculate.model.page_manager.LanguageManager;
+import com.jfoenix.controls.JFXSlider;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;

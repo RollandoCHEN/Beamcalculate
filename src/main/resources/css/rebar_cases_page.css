@@ -1,0 +1,57 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+}
+
+.scroll-pane {
+   -fx-background: #3D4956;
+   -fx-border-color: #3D4956;
+}
+
+.label{
+    -fx-font-size: 15px;
+    -fx-text-fill: silver;
+}
+
+.label.title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.label.prompt{
+    -fx-font-size: 13px;
+}
+
+.label-red-bold{
+    -fx-text-fill: #eda678;
+    -fx-font-weight: bold;
+}
+
+.label-black-bold{
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button{
+    -fx-pref-width: 150;
+    -fx-min-height: 30;
+    -fx-text-fill: #3d4956;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-color: #eda678;
+    -jfx-button-type: RAISED;
+}
+
+.button-cases{
+    -fx-pref-width: 140;
+    -fx-text-fill: silver;
+    -fx-background-color: #515d6d;
+}
+
+.jfx-button .jfx-rippler{
+    -jfx-rippler-fill: white;
+}
+
+.line {
+    -fx-stroke: silver;
+}

@@ -17,7 +17,7 @@
 
 <?import javafx.scene.control.ToggleButton?>
 <AnchorPane minHeight="900" minWidth="1800"
-            stylesheets="@../css/mainaccess.css"
+            stylesheets="@../css/main_access.css"
             xmlns="http://javafx.com/javafx/8.0.141"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.beamcalculate.controllers.MainAccessController">
@@ -39,7 +39,7 @@
     </MenuBar>
     <SplitPane dividerPositions="0.3" layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-        <AnchorPane fx:id="leftPartOfSplitPane" maxWidth="220.0" minWidth="220.0">
+        <AnchorPane fx:id="leftPartOfSplitPane" maxWidth="240.0" minWidth="240.0">
             <VBox alignment="TOP_CENTER" spacing="5.0"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                   AnchorPane.topAnchor="0.0">
@@ -48,7 +48,8 @@
                 </padding>
                 <StackPane>
                     <ToggleButton fx:id="inputPageButton" mnemonicParsing="false"
-                                  prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                                  styleClass="toggle-button-menu"
+                                  prefHeight="70.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
                     <HBox alignment="CENTER" mouseTransparent="true"
                           disable="${inputPageButton.disabled}">
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -61,7 +62,8 @@
                 </StackPane>
                 <StackPane>
                     <ToggleButton fx:id="momentPageButton" disable="true" mnemonicParsing="false"
-                                  prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                                  styleClass="toggle-button-menu"
+                                  prefHeight="70.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
                     <HBox alignment="CENTER" mouseTransparent="true"
                           disable="${momentPageButton.disabled}">
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -73,9 +75,9 @@
                     </HBox>
                 </StackPane>
                 <StackPane>
-                    <ToggleButton fx:id="rebarCasesPageButton" disable="true"
-                                  mnemonicParsing="false"
-                                  prefHeight="60.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                    <ToggleButton fx:id="rebarCasesPageButton" disable="true" mnemonicParsing="false"
+                                  styleClass="toggle-button-menu"
+                                  prefHeight="70.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
                     <HBox alignment="CENTER" mouseTransparent="true"
                           disable="${rebarCasesPageButton.disabled}">
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -88,7 +90,7 @@
                 </StackPane>
             </VBox>
         </AnchorPane>
-        <AnchorPane minHeight="0.0" minWidth="0.0">
+        <AnchorPane  styleClass="pane" minHeight="0.0" minWidth="0.0">
             <TabPane fx:id="mainPageTabPane" tabClosingPolicy="UNAVAILABLE"
                      tabMinHeight="30"
                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
