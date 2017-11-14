@@ -224,10 +224,10 @@ public class RebarCutChart {
 
                 } else {
                     mSecondLayerRebarStart = getSpanLocalX(
-                            spanId, Collections.min(secondLayerRebarCutPointsList), calculateMethod, mGeometry
+                            Collections.min(secondLayerRebarCutPointsList), mSpanMoment
                     );
                     mSecondLayerRebarEnd = getSpanLocalX(
-                            spanId, Collections.max(secondLayerRebarCutPointsList), calculateMethod, mGeometry
+                            Collections.max(secondLayerRebarCutPointsList), mSpanMoment
                     );
                 }
             }

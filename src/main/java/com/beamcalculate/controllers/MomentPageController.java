@@ -13,6 +13,7 @@ import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -71,6 +72,7 @@ public class MomentPageController {
     @FXML Label maxCaseMomentValue;
     @FXML Label minCaseMomentLabel;
     @FXML Label minCaseMomentValue;
+    @FXML JFXSlider mySlider;
 
     private Inputs mInputs;
     private Geometry mGeometry;
@@ -93,6 +95,16 @@ public class MomentPageController {
             final String methodName = spanMomentFunction.getMethod();
             mInputs = spanMomentFunction.getInputs();
             mGeometry = mInputs.getGeometry();
+
+            mySlider.setMin(0);
+            mySlider.setMax(spanMomentFunction.getInputs().getGeometry().getTotalLength());
+            mySlider.setValueFactory(slider ->
+                    Bindings.createStringBinding(
+                            () -> (TWO_DECIMALS.format(slider.getValue())) + "",
+                            slider.valueProperty()
+                    )
+            );
+            mySlider.disableProperty().bind(spanChoiceBox.disableProperty());
 
             //initialize moment calculating label and value
             maxCaseMomentLabel.setText(
@@ -210,12 +222,25 @@ public class MomentPageController {
             methodsChoiceBox.valueProperty().addListener((observable -> {
                 spanChoiceBox.getSelectionModel().clearSelection();
                 abscissaLimit.setText("(0 ~ 0)");
+                spanChoiceBox.valueProperty().bind(
+                        Bindings.createObjectBinding(
+                                () -> getSpanId(mySlider.valueProperty().get(), methodsChoiceBox.getValue()), mySlider.valueProperty()
+                        )
+                );
+
+                TextField textField = (TextField) abscissaFieldHBox.getChildren().get(0);
+                textField.textProperty().bind(
+                        Bindings.createStringBinding(
+                                ()-> TWO_DECIMALS.format(getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()))+"", mySlider.valueProperty()
+                        )
+                );
+
             }));
 
             // match the calculate methodName name to the related spanMomentFunction
             spanChoiceBox.setItems(FXCollections.observableArrayList(mGeometry.spansLengthMap().keySet()));
             spanChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
-                if (newValue != null) {
+                if (newValue != null && newValue != 0) {
                     int selectedSpanId = spanChoiceBox.getValue();
                     AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
                     JFXTextField abscissaField = new JFXTextField();
@@ -224,6 +249,12 @@ public class MomentPageController {
                     inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2), true);
                     abscissaFieldHBox.getChildren().add(abscissaField);
                     abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
+
+                    abscissaField.textProperty().bind(
+                            Bindings.createStringBinding(
+                                    ()-> TWO_DECIMALS.format(getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()))+"", mySlider.valueProperty())
+                    );
+
                     momentCalculateButton.disableProperty().bind(
                             Bindings.isNull(methodsChoiceBox.valueProperty())
                                     .or(Bindings.isNull(spanChoiceBox.valueProperty()))

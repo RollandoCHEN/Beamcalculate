@@ -20,6 +20,28 @@
     -fx-text-fill: #00d0bb;
 }
 
+.slider .thumb {
+    -fx-background-color: #009688;
+}
+
+.slider .track {
+    -fx-background-color: silver;
+}
+
+.slider .axis {
+    -fx-tick-label-fill: white;
+    -fx-tick-label-font-size: 13px;
+}
+
+.slider .axis .axis-tick-mark, .slider .axis .axis-minor-tick-mark {
+    -fx-stroke: silver;
+}
+
+.slider .slider-value {
+    -fx-stroke: white;
+    -fx-font-size: 11px;
+}
+
 .check-box{
     -fx-font-size: 14px;
     -fx-text-fill: silver;
@@ -103,3 +125,4 @@
 .jfx-button .jfx-rippler{
     -jfx-rippler-fill: white;
 }
+

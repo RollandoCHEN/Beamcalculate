@@ -62,8 +62,12 @@
          <center>
          </center>
          <bottom>
-            <VBox>
-               <!--<JFXSlider></JFXSlider>-->
+            <VBox alignment="CENTER">
+               <padding>
+                  <Insets top="50.0"/>
+               </padding>
+               <JFXSlider fx:id="mySlider"  minorTickCount="4"
+                          showTickLabels="true" showTickMarks="true"/>
                <GridPane alignment="CENTER" hgap="15.0" maxWidth="700" vgap="15.0" BorderPane.alignment="CENTER">
                   <padding>
                      <Insets top="20.0"/>

@@ -153,7 +153,7 @@
 
                                             <Rectangle fill="dimgrey"
                                                        height="15.0" width="20.0"
-                                                       stroke="BLACK" strokeType="INSIDE" />
+                                                       stroke="BLACK" strokeType="INSIDE" strokeWidth="1.5"/>
                                             <Label styleClass="prompt" text="%label.compressionRegion" />
                                         </HBox>
                                     </VBox>
