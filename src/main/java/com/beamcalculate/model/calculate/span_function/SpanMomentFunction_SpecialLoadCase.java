@@ -14,6 +14,7 @@ import static com.beamcalculate.enums.CombinCoef.G_UNFAVORABLE_COEF;
 import static com.beamcalculate.enums.CombinCoef.Q_UNFAVORABLE_COEF;
 import static com.beamcalculate.enums.UltimateCase.MAX;
 import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.model.MyMethods.round;
 
 public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
@@ -69,13 +70,17 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
     ){
         Map<Integer, Function<Double, Double>> loadCaseMomentFunctionMap;
         double finalMoment = 0;
-        loadCaseMomentFunctionMap = mSpanMomentFunctionMap.get(spanId);
+        double maxX = round(mGeometry.getEffectiveSpansLengthMap().get(spanId), 2);
+        double roundedX = round(x, 2);
 
-        for(Map.Entry<Integer, Function<Double, Double>> entry : loadCaseMomentFunctionMap.entrySet()){
-            if (ultimateCase == MAX) {
-                finalMoment = Math.max(finalMoment, entry.getValue().apply(x));
-            } else {
-                finalMoment = Math.min(finalMoment, entry.getValue().apply(x));
+        if (spanId != 0 && roundedX <= maxX) {
+            loadCaseMomentFunctionMap = mSpanMomentFunctionMap.get(spanId);
+            for (Map.Entry<Integer, Function<Double, Double>> entry : loadCaseMomentFunctionMap.entrySet()) {
+                if (ultimateCase == MAX) {
+                    finalMoment = Math.max(finalMoment, entry.getValue().apply(x));
+                } else {
+                    finalMoment = Math.min(finalMoment, entry.getValue().apply(x));
+                }
             }
         }
 

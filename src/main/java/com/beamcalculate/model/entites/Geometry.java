@@ -6,6 +6,8 @@ import javafx.beans.property.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.beamcalculate.model.MyMethods.round;
+
 public class Geometry {
     private final IntegerProperty mNumSpan = new SimpleIntegerProperty();
     private final IntegerProperty mNumSupport = new SimpleIntegerProperty();
@@ -113,7 +115,7 @@ public class Geometry {
     public Map<Integer, Double> getEffectiveSpansLengthMap() {
         spansLengthMap().forEach((spanId, spanLength)-> mEffectiveSpansLengthMap.put(
                 spanId,
-                spanLength + supportWidthMap().get(spanId) /2 + supportWidthMap().get(spanId + 1) /2
+                round(spanLength + supportWidthMap().get(spanId) /2 + supportWidthMap().get(spanId + 1) /2,2)
         ));
         return mEffectiveSpansLengthMap;
     }

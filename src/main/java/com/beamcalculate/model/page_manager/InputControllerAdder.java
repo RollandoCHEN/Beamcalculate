@@ -30,7 +30,7 @@ public class InputControllerAdder {
         addRealNumberControllerTo(false, textFields);
     }
 
-    private void addPatternMatchTo(TextField textField, boolean canBeZero) {
+    public void addPatternMatchTo(TextField textField, boolean canBeZero) {
         if (!textField.getText().matches("(?=(?:[.]|[,])?(?:\\d))(\\d*)(?:([.]|[,])(\\d*))?")) {
             //when it not matches the pattern
             //set the textField empty
@@ -65,9 +65,9 @@ public class InputControllerAdder {
     }
 
     public void addMaxValueValidation(TextField textField, double maxValue, boolean canBeZero) {
-        addRealNumberControllerTo(canBeZero, textField);
         textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
             if (!newValue) { //when focus lost
+                addPatternMatchTo(textField, canBeZero);
                 if (!textField.getText().isEmpty() &&                               //value is entered
                         Double.parseDouble(textField.getText()) > maxValue) {       //entered value > max limit
                     textField.setText("");                                          //remove the value
@@ -76,6 +76,7 @@ public class InputControllerAdder {
         });
         textField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
+                addPatternMatchTo(textField, canBeZero);
                 if (!textField.getText().isEmpty() &&                               //value is entered
                         Double.parseDouble(textField.getText()) > maxValue) {       //entered value > max limit
                     textField.setText("");                                          //remove the value

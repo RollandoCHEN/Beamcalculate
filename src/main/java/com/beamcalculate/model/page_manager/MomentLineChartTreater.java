@@ -1,5 +1,6 @@
 package com.beamcalculate.model.page_manager;
 
+import static com.beamcalculate.model.MyMethods.round;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 
 import com.beamcalculate.model.calculate.ELUCombination;
@@ -134,7 +135,7 @@ public class MomentLineChartTreater {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
                 double preX;
                 if (preSpanId == 0) {
-                    preX = geometry.supportWidthMap().get(1) / 2;
+                    preX = round(geometry.supportWidthMap().get(1) / 2, 2);
                 } else {
                     preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
@@ -168,12 +169,15 @@ public class MomentLineChartTreater {
                 spanLocalX = globalX;
                 double preX;
                 if (preSpanId == 0) {
-                    preX = geometry.supportWidthMap().get(1) / 2;
+                    preX = round(geometry.supportWidthMap().get(1) / 2, 2);
                 } else {
                     preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
                 globalX -= preX;
                 preSpanId++;
+                if (preSpanId > geometry.getNumSpan()){
+                    break;
+                }
             }
         } else {
             int preSpanId = 0;
@@ -206,12 +210,15 @@ public class MomentLineChartTreater {
                 spanId = preSpanId;
                 double preX;
                 if (preSpanId == 0) {
-                    preX = geometry.supportWidthMap().get(1) / 2;
+                    preX = round(geometry.supportWidthMap().get(1) / 2, 2);
                 } else {
                     preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
                 globalX -= preX;
                 preSpanId++;
+                if (preSpanId > geometry.getNumSpan()){
+                    break;
+                }
             }
         } else {
             int preSpanId = 0;

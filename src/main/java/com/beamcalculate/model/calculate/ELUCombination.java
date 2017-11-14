@@ -13,6 +13,7 @@ import static com.beamcalculate.enums.CombinCoef.*;
 import static com.beamcalculate.enums.SpecialLoadCase.SPAN_MAX;
 import static com.beamcalculate.enums.SpecialLoadCase.SUPPORT_MIN;
 import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.model.MyMethods.round;
 
 
 public class ELUCombination {
@@ -33,32 +34,37 @@ public class ELUCombination {
     ) {
         Map<Integer, Function<Double, Double>> loadCaseMomentFunctionMap;
         mMomentAfterCombination = 0;
-
-        loadCaseMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(spanId);
-        loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
-            mMomentBeforeCombination = momentFunction.apply(x);
-            switch (ultimateCase) {
-                case MAX:
-                    mUnfavorableCondition = mMomentBeforeCombination > 0;
-                    break;
-                case MIN:
-                    mUnfavorableCondition = mMomentBeforeCombination < 0;
-                    break;
+        if (spanId != 0) {
+            double maxX = mSpanMomentFunction.getCalculateSpanLengthMap().get(spanId);
+            double roundedX = round(x, 2);
+            if (roundedX >= 0 && roundedX <= maxX) {
+                loadCaseMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(spanId);
+                loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
+                    mMomentBeforeCombination = momentFunction.apply(x);
+                    switch (ultimateCase) {
+                        case MAX:
+                            mUnfavorableCondition = mMomentBeforeCombination > 0;
+                            break;
+                        case MIN:
+                            mUnfavorableCondition = mMomentBeforeCombination < 0;
+                            break;
+                    }
+                    if (loadCase == 0) {
+                        if (mUnfavorableCondition) {
+                            mMomentAfterCombination += G_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        } else {
+                            mMomentAfterCombination += G_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        }
+                    } else {
+                        if (mUnfavorableCondition) {
+                            mMomentAfterCombination += Q_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        } else {
+                            mMomentAfterCombination += Q_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        }
+                    }
+                });
             }
-            if (loadCase == 0) {
-                if (mUnfavorableCondition) {
-                    mMomentAfterCombination += G_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                } else {
-                    mMomentAfterCombination += G_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                }
-            } else {
-                if (mUnfavorableCondition) {
-                    mMomentAfterCombination += Q_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                } else {
-                    mMomentAfterCombination += Q_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                }
-            }
-        });
+        }
         return mMomentAfterCombination;
     }
 

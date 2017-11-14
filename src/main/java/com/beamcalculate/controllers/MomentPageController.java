@@ -21,6 +21,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -32,6 +34,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -98,6 +101,7 @@ public class MomentPageController {
 
             mySlider.setMin(0);
             mySlider.setMax(spanMomentFunction.getInputs().getGeometry().getTotalLength());
+            mySlider.setValue(mySlider.getMin());
             mySlider.setValueFactory(slider ->
                     Bindings.createStringBinding(
                             () -> (TWO_DECIMALS.format(slider.getValue())) + "",
@@ -159,10 +163,9 @@ public class MomentPageController {
             );
             momentCalculateButton.setOnAction(e -> {
                 double maxY, minY;
-                int chosenSpan = spanChoiceBox.getValue();
-                TextField textField1 = (TextField)abscissaFieldHBox.getChildren().get(0);
-                double enteredXValue = Double.parseDouble(textField1.getText());
                 AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
+                int chosenSpan = getSpanId(mySlider.getValue(), chosenMethod);
+                double enteredXValue = getSpanLocalX(mySlider.getValue(), chosenMethod);
 
                 if (chosenMethod.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
                     SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) chosenMethod;
@@ -222,18 +225,8 @@ public class MomentPageController {
             methodsChoiceBox.valueProperty().addListener((observable -> {
                 spanChoiceBox.getSelectionModel().clearSelection();
                 abscissaLimit.setText("(0 ~ 0)");
-                spanChoiceBox.valueProperty().bind(
-                        Bindings.createObjectBinding(
-                                () -> getSpanId(mySlider.valueProperty().get(), methodsChoiceBox.getValue()), mySlider.valueProperty()
-                        )
-                );
 
-                TextField textField = (TextField) abscissaFieldHBox.getChildren().get(0);
-                textField.textProperty().bind(
-                        Bindings.createStringBinding(
-                                ()-> TWO_DECIMALS.format(getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()))+"", mySlider.valueProperty()
-                        )
-                );
+                mySlider.valueProperty().addListener((observable1, oldValue, newValue) -> spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), methodsChoiceBox.getValue())));
 
             }));
 
@@ -246,14 +239,53 @@ public class MomentPageController {
                     JFXTextField abscissaField = new JFXTextField();
                     abscissaField.setPromptText(getBundleText("label.xOnSpan"));
                     abscissaFieldHBox.getChildren().clear();
-                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2), true);
+//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2), true);
                     abscissaFieldHBox.getChildren().add(abscissaField);
                     abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
 
-                    abscissaField.textProperty().bind(
-                            Bindings.createStringBinding(
-                                    ()-> TWO_DECIMALS.format(getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()))+"", mySlider.valueProperty())
-                    );
+                    mySlider.valueProperty().addListener((observable12, oldValue1, newValue1) -> {
+                                spanChoiceBox.setValue(getSpanId(newValue1.doubleValue(), methodsChoiceBox.getValue()));
+                                TextField textField = (TextField) abscissaFieldHBox.getChildren().get(0);
+                                textField.setText(TWO_DECIMALS.format(getSpanLocalX(newValue1.doubleValue(), chosenMethod)));
+                    });
+
+                    abscissaField.focusedProperty().addListener((observable2, oldValue2, newValue2) -> {
+                        if(!newValue2) {
+                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
+                            if (abscissaField.getText().isEmpty()){
+                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
+                            }else {
+                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
+                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
+                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
+                                } else {
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
+                                }
+                            }
+                        }
+                    });
+
+                    abscissaField.setOnKeyPressed(keyEvent -> {
+                        if (keyEvent.getCode() == KeyCode.ENTER) {
+                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
+                            if (abscissaField.getText().isEmpty()){
+                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
+                            }else {
+                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
+                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
+                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
+                                } else {
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
+                                }
+                            }
+                        }
+                    });
+//                    abscissaField.textProperty().bind(
+//                            Bindings.createStringBinding(
+//                                    ()-> TWO_DECIMALS.format(getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()))+"", mySlider.valueProperty())
+//                    );
 
                     momentCalculateButton.disableProperty().bind(
                             Bindings.isNull(methodsChoiceBox.valueProperty())

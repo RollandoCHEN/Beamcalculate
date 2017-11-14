@@ -10,6 +10,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
