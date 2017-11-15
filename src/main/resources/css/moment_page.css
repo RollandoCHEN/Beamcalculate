@@ -8,7 +8,7 @@
 }
 
 .label{
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-text-fill: silver;
 }
 
@@ -20,8 +20,14 @@
     -fx-text-fill: #00d0bb;
 }
 
+.label.moment_value{
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
 .slider .thumb {
-    -fx-background-color: #0f9d58;
+    -fx-background-color: #009688;
 }
 
 .slider .track {
@@ -30,7 +36,7 @@
 
 .slider .axis {
     -fx-tick-label-fill: white;
-    -fx-tick-label-font-size: 13px;
+    -fx-tick-label-font-size: 14px;
 }
 
 .slider .axis .axis-tick-mark, .slider .axis .axis-minor-tick-mark {
@@ -60,7 +66,7 @@
 
 .text-field{
     -fx-pref-width: 150;
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-prompt-text-fill: silver;
     -jfx-focus-color: #00d0bb;
@@ -73,7 +79,7 @@
 }
 
 .combo-box {
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-prompt-text-fill: silver;
     -jfx-focus-color: #00d0bb;
     -jfx-unfocus-color: silver;
@@ -85,7 +91,7 @@
 }
 
 .combo-box .cell{
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-text-fill: white;
 }
 
@@ -109,9 +115,9 @@
 
 .button{
     -fx-pref-width: 140;
-    -fx-min-height: 30;
+    -fx-min-height: 35;
     -fx-text-fill: #3d4956;
-    -fx-font-size: 13px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-background-color: #eda678;
     -jfx-button-type: RAISED;
@@ -126,3 +132,17 @@
     -jfx-rippler-fill: white;
 }
 
+.line {
+    -fx-stroke: #009688;
+    -fx-stroke-width: 3px
+}
+.axis {
+    -fx-stroke: silver;
+}
+
+.axis-tick-mark {
+    -fx-stroke: silver;
+}
+.axis-minor-tick-mark {
+    -fx-stroke: silver;
+}

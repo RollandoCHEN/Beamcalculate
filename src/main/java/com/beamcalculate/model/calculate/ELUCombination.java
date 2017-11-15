@@ -37,33 +37,33 @@ public class ELUCombination {
         if (spanId != 0) {
             double maxX = mSpanMomentFunction.getCalculateSpanLengthMap().get(spanId);
             double roundedX = round(x, 2);
-            if (roundedX >= 0 && roundedX <= maxX) {
-                loadCaseMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(spanId);
-                loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
-                    mMomentBeforeCombination = momentFunction.apply(x);
-                    switch (ultimateCase) {
-                        case MAX:
-                            mUnfavorableCondition = mMomentBeforeCombination > 0;
-                            break;
-                        case MIN:
-                            mUnfavorableCondition = mMomentBeforeCombination < 0;
-                            break;
-                    }
-                    if (loadCase == 0) {
-                        if (mUnfavorableCondition) {
-                            mMomentAfterCombination += G_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                        } else {
-                            mMomentAfterCombination += G_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                        }
+            if (roundedX > maxX) { x = maxX; }
+            loadCaseMomentFunctionMap = mSpanMomentFunction.getSpanMomentFunctionMap().get(spanId);
+            double finalX = x;
+            loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
+                mMomentBeforeCombination = momentFunction.apply(finalX);
+                switch (ultimateCase) {
+                    case MAX:
+                        mUnfavorableCondition = mMomentBeforeCombination > 0;
+                        break;
+                    case MIN:
+                        mUnfavorableCondition = mMomentBeforeCombination < 0;
+                        break;
+                }
+                if (loadCase == 0) {
+                    if (mUnfavorableCondition) {
+                        mMomentAfterCombination += G_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                     } else {
-                        if (mUnfavorableCondition) {
-                            mMomentAfterCombination += Q_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                        } else {
-                            mMomentAfterCombination += Q_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
-                        }
+                        mMomentAfterCombination += G_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                     }
-                });
-            }
+                } else {
+                    if (mUnfavorableCondition) {
+                        mMomentAfterCombination += Q_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                    } else {
+                        mMomentAfterCombination += Q_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                    }
+                }
+            });
         }
         return mMomentAfterCombination;
     }

@@ -139,7 +139,7 @@ public class MomentLineChartTreater {
                 } else {
                     preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
-                globalX += preX;
+                globalX = round((globalX + preX), 2);
             }
         } else {
             for (int preSpanId = 0; preSpanId < spanId; preSpanId++) {
@@ -173,7 +173,7 @@ public class MomentLineChartTreater {
                 } else {
                     preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
-                globalX -= preX;
+                globalX = round((globalX - preX), 2);
                 preSpanId++;
                 if (preSpanId > geometry.getNumSpan()){
                     break;
@@ -214,7 +214,7 @@ public class MomentLineChartTreater {
                 } else {
                     preX = geometry.getEffectiveSpansLengthMap().get(preSpanId);
                 }
-                globalX -= preX;
+                globalX = round((globalX - preX), 2);
                 preSpanId++;
                 if (preSpanId > geometry.getNumSpan()){
                     break;
