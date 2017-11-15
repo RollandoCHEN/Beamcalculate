@@ -71,10 +71,7 @@ public class MomentPageController {
     @FXML Label abscissaLimit;
     @FXML HBox abscissaFieldHBox;
 //    @FXML Button momentCalculateButton;
-    @FXML Label maxCaseMomentLabel;
-    @FXML Label maxCaseMomentValue;
-    @FXML Label minCaseMomentLabel;
-    @FXML Label minCaseMomentValue;
+
     @FXML JFXSlider mySlider;
 
     private Inputs mInputs;
@@ -110,15 +107,7 @@ public class MomentPageController {
             );
             mySlider.disableProperty().bind(spanChoiceBox.disableProperty());
 
-            //initialize moment calculating label and value
-            maxCaseMomentLabel.setText(
-                    getBundleText("label.maxMoment") +
-                            " (" + getBundleText("unit.moment") + ") : "
-            );
-            minCaseMomentLabel.setText(
-                    getBundleText("label.minMoment") +
-                            " (" + getBundleText("unit.moment") + ") : "
-            );
+
 
             //define axes
             mXAxis = defineAxis(spanMomentFunction).get(0);
@@ -221,12 +210,24 @@ public class MomentPageController {
         private void addMethodsChoicesForCalculating(SpanMomentFunction spanMomentFunction) {
             //Method choice
             methodsChoiceBox.setItems(FXCollections.observableArrayList(spanMomentFunction));
+
+            XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(mySlider.getMax()/2, 0);
             methodsChoiceBox.valueProperty().addListener((observable -> {
                 spanChoiceBox.getSelectionModel().clearSelection();
                 abscissaLimit.setText("(0 ~ 0)");
 
                 if (!methodsChoiceBox.getSelectionModel().isEmpty()){
                     AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
+                    Label maxCaseMomentLabel = new Label(
+                            getBundleText("label.maxMoment") +
+                            " (" + getBundleText("unit.moment") + ") : "
+                    );
+                    Label maxCaseMomentValue = new Label();
+                    Label minCaseMomentLabel = new Label(
+                            getBundleText("label.minMoment") +
+                                    " (" + getBundleText("unit.moment") + ") : "
+                    );
+                    Label minCaseMomentValue = new Label();
 
                     if (TROIS_MOMENT_R.getMethodName().equals(chosenMethod.getMethod())) {
                         SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) chosenMethod;
@@ -281,8 +282,13 @@ public class MomentPageController {
                         );
                     }
 
-                    XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(mySlider.getValue(), 0);
-                    mLineChart.addVerticalValueMarker(verticalMarker);
+                    HBox topHBox = new HBox(minCaseMomentLabel, minCaseMomentValue);
+                    topHBox.getStyleClass().add("max_value_hbox");
+                    HBox bottomHBox = new HBox(maxCaseMomentLabel, maxCaseMomentValue);
+                    bottomHBox.getStyleClass().add("max_value_hbox");
+
+                    mLineChart.removeVerticalValueMarker(verticalMarker);
+                    mLineChart.addVerticalValueMarker(verticalMarker, topHBox, bottomHBox);
                     mySlider.valueProperty().bindBidirectional(verticalMarker.XValueProperty());
 
                     mySlider.valueProperty().addListener(new ChangeListener<Number>() {

@@ -23,7 +23,7 @@
 .label.moment_value{
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
 }
 
 .slider .thumb {
@@ -145,4 +145,17 @@
 }
 .axis-minor-tick-mark {
     -fx-stroke: silver;
+}
+
+.max_value_hbox {
+    -fx-background-color: rgb(0, 150, 136, 0.5);
+    -fx-background-radius: 5px;
+    -fx-alignment: center;
+    -fx-padding: 7.0;
+}
+
+.max_value_hbox .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: silver;
+    -fx-font-size: 13px;
 }

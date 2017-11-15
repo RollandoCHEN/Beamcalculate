@@ -99,16 +99,6 @@
                      <HBox alignment="CENTER_LEFT" spacing="10.0">
                         <!--<JFXButton fx:id="momentCalculateButton"-->
                                    <!--text="%button.calculateMoment"/>-->
-                        <VBox alignment="CENTER_LEFT">
-                           <HBox prefHeight="100.0" prefWidth="220.0">
-                              <Label fx:id="minCaseMomentLabel"/>
-                              <Label fx:id="minCaseMomentValue" styleClass="moment_value"/>
-                           </HBox>
-                           <HBox prefHeight="100.0" prefWidth="220.0">
-                              <Label fx:id="maxCaseMomentLabel"/>
-                              <Label fx:id="maxCaseMomentValue" styleClass="moment_value"/>
-                           </HBox>
-                        </VBox>
                      </HBox>
                   </VBox>
                </GridPane>

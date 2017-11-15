@@ -4,8 +4,15 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 
@@ -46,13 +53,20 @@ public class LineChartWithMarkers<X,Y> extends LineChart {
         horizontalMarkers.remove(marker);
     }
 
-    public void addVerticalValueMarker(Data<X, Y> marker) {
+    public void addVerticalValueMarker(Data<X, Y> marker, Node topNode, Node bottomNode) {
         Objects.requireNonNull(marker, "the marker must not be null");
         if (verticalMarkers.contains(marker)) return;
         Line line = new Line();
+
+        AnchorPane anchorPane = new AnchorPane(topNode, bottomNode);
+        anchorPane.setMouseTransparent(true);
+
+        StackPane stackPane = new StackPane(line, anchorPane);
+        stackPane.setMouseTransparent(true);
+
         line.getStyleClass().add("line");
-        marker.setNode(line );
-        getPlotChildren().add(line);
+        marker.setNode(stackPane);
+        getPlotChildren().add(stackPane);
         verticalMarkers.add(marker);
     }
 
@@ -78,12 +92,20 @@ public class LineChartWithMarkers<X,Y> extends LineChart {
             line.toFront();
         }
         for (Data<X, Y> verticalMarker : verticalMarkers) {
-            Line line = (Line) verticalMarker.getNode();
-            line.setStartX(getXAxis().getDisplayPosition(verticalMarker.getXValue()) + 0.5);  // 0.5 for crispness
-            line.setEndX(line.getStartX());
-            line.setStartY(0d);
-            line.setEndY(getBoundsInLocal().getHeight());
-            line.toFront();
+            StackPane stackPane = (StackPane) verticalMarker.getNode();
+            stackPane.setLayoutX(getXAxis().getDisplayPosition(verticalMarker.getXValue()) + 0.5);      // 0.5 for crispness
+            stackPane.setLayoutY(getYAxis().getDisplayPosition(verticalMarker.getYValue()));
+
+            Line line = (Line)stackPane.getChildren().get(0);
+            line.setStartY(0);
+            line.setStartY(getBoundsInLocal().getHeight());
+
+            AnchorPane anchorPane = (AnchorPane)stackPane.getChildren().get(1);
+            anchorPane.setMinHeight(getBoundsInLocal().getHeight());
+            AnchorPane.setTopAnchor(anchorPane.getChildren().get(0), 0.11 * getBoundsInLocal().getHeight());
+            AnchorPane.setBottomAnchor(anchorPane.getChildren().get(1), 0.13 * getBoundsInLocal().getHeight());
+
+            stackPane.toFront();
         }
     }
 
