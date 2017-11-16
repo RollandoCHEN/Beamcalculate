@@ -12,6 +12,7 @@ import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
 import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
+import com.beamcalculate.model.page_manager.LanguageManager;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
@@ -43,7 +44,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
@@ -81,6 +87,8 @@ public class MomentPageController {
     private MainAccessController mMainAccessController;
 
     private BooleanProperty mShowRebarPage = new SimpleBooleanProperty(false);
+    private final static String THREE_MOMENT_RDS_MAX_SERIES_ID = TROIS_MOMENT.getMethodName() + "_ReducedMAX";
+    private final static String THREE_MOMENT_RDS_MIN_SERIES_ID = TROIS_MOMENT.getMethodName() + "_ReducedMIN";
 
     public class MomentPageCreator {
         private LineChartWithMarkers<Number, Number> mLineChart;
@@ -159,6 +167,7 @@ public class MomentPageController {
                 mMainAccessController.getRebarCasesPageButton().setSelected(true);
             });
 
+            redistributionCheck.setSelected(false);
             redistributionCheck.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
             configurationButton.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
             //if the methodName of calculate is "3 moment", add redistribution for the methodName
@@ -168,6 +177,11 @@ public class MomentPageController {
                     ) {
                 addRedistributionOption(spanMomentFunction);
             }
+
+            XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
+            XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
+            mStringSeriesMap.put(THREE_MOMENT_RDS_MAX_SERIES_ID, maxELUSeries);
+            mStringSeriesMap.put(THREE_MOMENT_RDS_MIN_SERIES_ID, minELUSeries);
         }
 
         public MomentPageCreator(SpanMomentFunction... spanMomentFunctions) {
@@ -208,7 +222,6 @@ public class MomentPageController {
                     }
 
                     if (TROIS_MOMENT_R.getMethodName().equals(newValue.getMethod())) {
-                        redistributionCheck.setSelected(true);
                         SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) newValue;
                         mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
@@ -235,7 +248,6 @@ public class MomentPageController {
                                 )
                         );
                     } else {
-                        redistributionCheck.setSelected(false);
                         ELUCombination eluCombination = new ELUCombination(newValue);
                         mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
@@ -327,10 +339,10 @@ public class MomentPageController {
                             if (abscissaField.getText().isEmpty()){
                                 mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
                             }else {
-                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
-                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
-                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
-                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
+                                double maxValue = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
+                                if (Double.parseDouble(abscissaField.getText()) > maxValue) {       //entered value > max limit
+                                    abscissaField.setText(String.valueOf(maxValue));                                          //remove the value
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxValue, chosenMethod));
                                 } else {
                                     mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
                                 }
@@ -438,8 +450,6 @@ public class MomentPageController {
         }
 
         private void addRedistributionOption(SpanMomentFunction spanMomentFunction) {
-            String maxSeriesId = TROIS_MOMENT.getMethodName() + "_ReducedMAX";
-            String minSeriesId = TROIS_MOMENT.getMethodName() + "_ReducedMIN";
 
             mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(redistributionCheck.selectedProperty()));
             totalNumOnSpanSpinner.disableProperty().bind(mDisableSpinnerBoolean);
@@ -454,45 +464,69 @@ public class MomentPageController {
 
             methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart));
 
-            redistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
-                XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
-                if (newValue) {
-                    SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+            mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
+            mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
+            addDataToRedistributionMomentSeries(
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+            );
 
-                    addDataToRedistributionMomentSeries(
-                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
-                    );
+            addDataToRedistributionMomentSeries(
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+            );
 
-                    addDataToRedistributionMomentSeries(
-                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
-                    );
-
-                    totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
-                        maxELUSeries.getData().clear();
-                        minELUSeries.getData().clear();
-                        addDataToRedistributionMomentSeries(
-                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
-                        );
-                        addDataToRedistributionMomentSeries(
-                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
-                        );
-                    });
-
-                    mStringSeriesMap.put(maxSeriesId, maxELUSeries);
-                    mStringSeriesMap.put(minSeriesId, minELUSeries);
-
+            redistributionCheck.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+                if(newValue){
                     mLineChart.getData().addAll(
-                            mStringSeriesMap.get(maxSeriesId),
-                            mStringSeriesMap.get(minSeriesId)
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID),
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
                     );
                 } else {
                     mLineChart.getData().removeAll(
-                            mStringSeriesMap.get(maxSeriesId),
-                            mStringSeriesMap.get(minSeriesId)
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID),
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
                     );
                 }
-            });
+            }));
+
+//            redistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+//                XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
+//                XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
+//                if (newValue) {
+//                    SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+//                    addDataToRedistributionMomentSeries(
+//                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+//                    );
+//
+//                    addDataToRedistributionMomentSeries(
+//                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+//                    );
+//
+//                    totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
+//                        maxELUSeries.getData().clear();
+//                        minELUSeries.getData().clear();
+//                        addDataToRedistributionMomentSeries(
+//                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+//                        );
+//                        addDataToRedistributionMomentSeries(
+//                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+//                        );
+//                    });
+//
+//                    mStringSeriesMap.put(maxSeriesId, maxELUSeries);
+//                    mStringSeriesMap.put(minSeriesId, minELUSeries);
+//
+//                    mLineChart.getData().addAll(
+//                            mStringSeriesMap.get(maxSeriesId),
+//                            mStringSeriesMap.get(minSeriesId)
+//                    );
+//                } else {
+//                    mLineChart.getData().removeAll(
+//                            mStringSeriesMap.get(maxSeriesId),
+//                            mStringSeriesMap.get(minSeriesId)
+//                    );
+//                }
+//            });
 
             HBox centerHBox = new HBox();
             centerHBox.setSpacing(20);
@@ -562,9 +596,6 @@ public class MomentPageController {
             bottomHBox.getChildren().addAll(applyButton, confirmButton);
             applyButton.setOnAction(event -> {
                 updateRedistributionCoef(spanMomentFunction);
-
-                redistributionCheck.setSelected(false);
-                redistributionCheck.setSelected(true);
             });
 
             BorderPane container = new BorderPane();
@@ -588,14 +619,12 @@ public class MomentPageController {
 
             confirmButton.setOnAction(event -> {
                 updateRedistributionCoef(spanMomentFunction);
-
-                redistributionCheck.setSelected(false);
-                redistributionCheck.setSelected(true);
                 configStage.close();
             });
         }
 
         private void updateRedistributionCoef(SpanMomentFunction spanMomentFunction) {
+
             for (int i = 1; i < mGeometry.getNumSupport(); i++) {
                 try {
                     mRedCoefMapForChart.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
@@ -607,14 +636,42 @@ public class MomentPageController {
             boolean threeMomentRdtrSelected = !methodsChoiceBox.getSelectionModel().isEmpty()
                     && TROIS_MOMENT_R.getMethodName().equals(methodsChoiceBox.getValue().getMethod());
 
+            SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+
             // update method choice box item
-            methodsChoiceBox.getItems().remove(methodsChoiceBox.getItems().size()-1);
-            AbstractSpanMoment spanMoment = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
-            methodsChoiceBox.getItems().add(spanMoment);
+            for (AbstractSpanMoment spanMoment : methodsChoiceBox.getItems()) {
+                if(spanMoment.getMethod().equals(TROIS_MOMENT_R.getMethodName())){
+                   spanMoment = newSpanMomentFunction;
+                }
+            }
+
+//            methodsChoiceBox.getItems().remove(methodsChoiceBox.getItems().size()-1);
+//            methodsChoiceBox.getItems().add(newSpanMomentFunction);
+
+            mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
+            mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
+            addDataToRedistributionMomentSeries(
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+            );
+
+            addDataToRedistributionMomentSeries(
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+            );
+
+            totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
+                mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
+                mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
+                addDataToRedistributionMomentSeries(
+                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                );
+                addDataToRedistributionMomentSeries(
+                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                );
+            });
 
             // update moment value label
             if (threeMomentRdtrSelected) {
-                methodsChoiceBox.getSelectionModel().select(spanMoment);
+//                methodsChoiceBox.getSelectionModel().select(newSpanMomentFunction);
                 SpanMomentFunction_SpecialLoadCase newSpanMoment = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
                 mMaxCaseMomentValue.textProperty().bind(
                         Bindings.createStringBinding(

@@ -22,7 +22,7 @@ public class BeamCalculatorApp extends Application {
 //        Font.loadFont(BeamCalculatorApp.class.getResource("/fonts/Roboto-Regular.ttf").toExternalForm(), 10);
 //        Font.loadFont(BeamCalculatorApp.class.getResource("/fonts/Roboto-Bold.ttf").toExternalForm(), 10);
         mLanguageManager.setAppLanguage(AppSettings.getCurrentLocal());
-        mPrimaryStage.setTitle("BeamCalculator 1.1.0-SNAPSHOT");
+        mPrimaryStage.setTitle("BeamCalculator");
         mPrimaryStage.getIcons().add(new Image("image/icon.png"));
 
         mPrimaryStage.setOnCloseRequest(we -> {
