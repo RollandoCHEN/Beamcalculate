@@ -29,6 +29,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.LineChart;
@@ -70,8 +71,6 @@ public class MomentPageController {
     @FXML JFXComboBox<Integer> spanChoiceBox;
     @FXML Label abscissaLimit;
     @FXML HBox abscissaFieldHBox;
-//    @FXML Button momentCalculateButton;
-
     @FXML JFXSlider mySlider;
 
     private Inputs mInputs;
@@ -89,7 +88,13 @@ public class MomentPageController {
         private NumberAxis mXAxis = new NumberAxis();
         private NumberAxis mYAxis = new NumberAxis();
         private Map<String, XYChart.Series<Number, Number>> mStringSeriesMap = new HashMap<>();
+
         private Map<Integer, StringProperty> mEnteredRdsCoef = new HashMap<>();
+        private Map<Integer, Double> mRedCoefMapForChart = new HashMap<>();
+        private Map<Integer, Double> mCalculatedFinalRedCoefMap;
+        private Map<Integer, Double> mCalculatedRedCoefMap;
+        private Label mMaxCaseMomentValue;
+        private Label mMinCaseMomentValue;
 
         public MomentPageCreator(SpanMomentFunction spanMomentFunction) {
             final String methodName = spanMomentFunction.getMethod();
@@ -106,8 +111,6 @@ public class MomentPageController {
                     )
             );
             mySlider.disableProperty().bind(spanChoiceBox.disableProperty());
-
-
 
             //define axes
             mXAxis = defineAxis(spanMomentFunction).get(0);
@@ -142,39 +145,6 @@ public class MomentPageController {
             textField.setDisable(true);
             textField.setPromptText(getBundleText("label.xOnSpan"));
             abscissaFieldHBox.getChildren().add(textField);
-
-//            momentCalculateButton.disableProperty().bind(
-//                    Bindings.isNull(methodsChoiceBox.valueProperty())
-//                            .or(Bindings.isNull(spanChoiceBox.valueProperty()))
-//                            .or(Bindings.isEmpty(textField.textProperty()))
-//            );
-
-//            momentCalculateButton.setOnAction(e -> {
-//                double maxY, minY;
-//                AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
-//                int chosenSpan = getSpanId(mySlider.getValue(), chosenMethod);
-//                double enteredXValue = getSpanLocalX(mySlider.getValue(), chosenMethod);
-//
-//                if (chosenMethod.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
-//                    SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) chosenMethod;
-//                    maxY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-//                            enteredXValue, chosenSpan, MAX
-//                    );
-//                    minY = newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-//                            enteredXValue, chosenSpan, MIN
-//                    );
-//                } else {
-//                    ELUCombination eluCombination = new ELUCombination(chosenMethod);
-//                    maxY = eluCombination.getCombinedUltimateMomentAtXOfSpan(
-//                            enteredXValue, chosenSpan, MAX
-//                    );
-//                    minY = eluCombination.getCombinedUltimateMomentAtXOfSpan(
-//                            enteredXValue, chosenSpan, MIN
-//                    );
-//                }
-//                maxCaseMomentValue.setText(FOUR_DECIMALS.format(maxY));
-//                minCaseMomentValue.setText(FOUR_DECIMALS.format(minY));
-//            });
 
             //Rebar Calculating Button setting : disable value and on action
             rebarCalculateButton.disableProperty().bind(Bindings.isNull(methodsChoiceBox.valueProperty()));
@@ -212,42 +182,52 @@ public class MomentPageController {
             methodsChoiceBox.setItems(FXCollections.observableArrayList(spanMomentFunction));
 
             XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(mySlider.getMax()/2, 0);
-            methodsChoiceBox.valueProperty().addListener((observable -> {
+            methodsChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
                 spanChoiceBox.getSelectionModel().clearSelection();
                 abscissaLimit.setText("(0 ~ 0)");
 
                 if (!methodsChoiceBox.getSelectionModel().isEmpty()){
-                    AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
                     Label maxCaseMomentLabel = new Label(
                             getBundleText("label.maxMoment") +
                             " (" + getBundleText("unit.moment") + ") : "
                     );
-                    Label maxCaseMomentValue = new Label();
+                    mMaxCaseMomentValue = new Label();
                     Label minCaseMomentLabel = new Label(
                             getBundleText("label.minMoment") +
                                     " (" + getBundleText("unit.moment") + ") : "
                     );
-                    Label minCaseMomentValue = new Label();
+                    mMinCaseMomentValue = new Label();
 
-                    if (TROIS_MOMENT_R.getMethodName().equals(chosenMethod.getMethod())) {
-                        SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) chosenMethod;
-                        maxCaseMomentValue.textProperty().bind(
+                    for (Node node : methodsCheckHBox.getChildren()) {
+                        CheckBox checkBox = (CheckBox) node;
+                        if (!checkBox.getText().equals(newValue.getMethod())){
+                            checkBox.setSelected(false);
+                        } else {
+                            checkBox.setSelected(true);
+                        }
+                    }
+
+                    if (TROIS_MOMENT_R.getMethodName().equals(newValue.getMethod())) {
+                        redistributionCheck.setSelected(true);
+                        SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) newValue;
+                        mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), chosenMethod),
-                                                        getSpanId(mySlider.valueProperty().get(), chosenMethod),
-                                                        MAX)
+                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
+                                                        getSpanId(mySlider.valueProperty().get(), newValue),
+                                                        MAX
+                                                )
                                         ) + "",
                                         mySlider.valueProperty()
                                 )
                         );
-                        minCaseMomentValue.textProperty().bind(
+                        mMinCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), chosenMethod),
-                                                        getSpanId(mySlider.valueProperty().get(), chosenMethod),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
+                                                        getSpanId(mySlider.valueProperty().get(), newValue),
                                                         MIN
                                                 )
                                         ) + "",
@@ -255,25 +235,26 @@ public class MomentPageController {
                                 )
                         );
                     } else {
-                        ELUCombination eluCombination = new ELUCombination(chosenMethod);
-                        maxCaseMomentValue.textProperty().bind(
+                        redistributionCheck.setSelected(false);
+                        ELUCombination eluCombination = new ELUCombination(newValue);
+                        mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), chosenMethod),
-                                                        getSpanId(mySlider.valueProperty().get(), chosenMethod),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
+                                                        getSpanId(mySlider.valueProperty().get(), newValue),
                                                         MAX
                                                 )
                                         ) + "",
                                         mySlider.valueProperty()
                                 )
                         );
-                        minCaseMomentValue.textProperty().bind(
+                        mMinCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), chosenMethod),
-                                                        getSpanId(mySlider.valueProperty().get(), chosenMethod),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
+                                                        getSpanId(mySlider.valueProperty().get(), newValue),
                                                         MIN
                                                 )
                                         ) + "",
@@ -282,10 +263,10 @@ public class MomentPageController {
                         );
                     }
 
-                    HBox topHBox = new HBox(minCaseMomentLabel, minCaseMomentValue);
-                    topHBox.getStyleClass().add("max_value_hbox");
-                    HBox bottomHBox = new HBox(maxCaseMomentLabel, maxCaseMomentValue);
-                    bottomHBox.getStyleClass().add("max_value_hbox");
+                    HBox topHBox = new HBox(minCaseMomentLabel, mMinCaseMomentValue);
+                    topHBox.getStyleClass().add("value_mark");
+                    HBox bottomHBox = new HBox(maxCaseMomentLabel, mMaxCaseMomentValue);
+                    bottomHBox.getStyleClass().add("value_mark");
 
                     mLineChart.removeVerticalValueMarker(verticalMarker);
                     mLineChart.addVerticalValueMarker(verticalMarker, topHBox, bottomHBox);
@@ -374,11 +355,6 @@ public class MomentPageController {
 //                        }
 //                    });
 
-//                    momentCalculateButton.disableProperty().bind(
-//                            Bindings.isNull(methodsChoiceBox.valueProperty())
-//                                    .or(Bindings.isNull(spanChoiceBox.valueProperty()))
-//                                    .or(Bindings.isEmpty(abscissaField.textProperty()))
-//                    );
                     abscissaLimit.setText("(0 ~ "
                             + TWO_DECIMALS.format(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId))
                             + ")");
@@ -437,8 +413,6 @@ public class MomentPageController {
                 mDisableSpinnerBoolean = mDisableSpinnerBoolean.and(Bindings.not(methodCheck.selectedProperty()));
             }
             totalNumOnSpanSpinner.disableProperty().bind(mDisableSpinnerBoolean);
-
-
         }
 
         private void addNewMomentChart(SpanMomentFunction spanMomentFunction) {
@@ -472,29 +446,19 @@ public class MomentPageController {
 
             MomentRedistribution momentRedistribution = new MomentRedistribution(spanMomentFunction);
 
-            Map<Integer, Double> calculatedFinalRedCoefMap = momentRedistribution.getFinalRedistributionCoefMap();
-            Map<Integer, Double> calculatedRedCoefMap = momentRedistribution.getRedistributionCoefMap();
+            mCalculatedFinalRedCoefMap = momentRedistribution.getFinalRedistributionCoefMap();
+            mCalculatedRedCoefMap = momentRedistribution.getRedistributionCoefMap();
 
-            Map<Integer, Double> usedRedCoefMap = new HashMap<>();
-            calculatedFinalRedCoefMap.forEach(usedRedCoefMap::put);
+            // initialize the redistribution coef to be used for line chart
+            mCalculatedFinalRedCoefMap.forEach(mRedCoefMapForChart::put);
 
-            calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
-
-            methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap));
+            methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart));
 
             redistributionCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 XYChart.Series<Number, Number> maxELUSeries = new XYChart.Series<>();
                 XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
                 if (newValue) {
-                    for (int i = 1; i < mGeometry.getNumSupport(); i++) {
-                        try {
-                            usedRedCoefMap.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
-                        } catch (Exception exp) {
-                            usedRedCoefMap.put(i, calculatedFinalRedCoefMap.get(i));
-                        }
-                    }
-
-                    SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, usedRedCoefMap);
+                    SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
 
                     addDataToRedistributionMomentSeries(
                             totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
@@ -515,7 +479,6 @@ public class MomentPageController {
                         );
                     });
 
-
                     mStringSeriesMap.put(maxSeriesId, maxELUSeries);
                     mStringSeriesMap.put(minSeriesId, minELUSeries);
 
@@ -528,7 +491,6 @@ public class MomentPageController {
                             mStringSeriesMap.get(maxSeriesId),
                             mStringSeriesMap.get(minSeriesId)
                     );
-
                 }
             });
 
@@ -547,37 +509,37 @@ public class MomentPageController {
             paramNameVBox.getChildren().addAll(blank, rdsCoef, minRdsCoef, finalRdsCoef);
             centerHBox.getChildren().add(paramNameVBox);
 
-            calculatedRedCoefMap.forEach((supportId, coef) -> {
+            mCalculatedRedCoefMap.forEach((supportId, coef) -> {
                 VBox supportParamValueVBox = new VBox();
                 supportParamValueVBox.setSpacing(15);
                 supportParamValueVBox.setAlignment(Pos.CENTER);
                 Label sectionLabel = new Label(getBundleText("label.support") + " " + supportId.toString());
                 sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
-                Label rdsCoefValue = new Label(
+                Label calculateCoefValueLabel = new Label(
                         THREE_DECIMALS.format(coef)
                 );
-                Label finalCoefValue = new Label(
-                        THREE_DECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
+                Label finalCoefValueLabel = new Label(
+                        THREE_DECIMALS.format(mCalculatedFinalRedCoefMap.get(supportId))
                 );
 
-                TextField coefValue = new TextField();
-                coefValue.setPrefWidth(65);
-                coefValue.textProperty().setValue(
-                        THREE_DECIMALS.format(calculatedFinalRedCoefMap.get(supportId))
+                TextField coefValueField = new TextField();
+                coefValueField.setPrefWidth(65);
+                coefValueField.textProperty().setValue(
+                        THREE_DECIMALS.format(mCalculatedFinalRedCoefMap.get(supportId))
                 );
-                if (calculatedFinalRedCoefMap.get(supportId) == 1) {
-                    coefValue.setDisable(true);
+                if (mCalculatedFinalRedCoefMap.get(supportId) == 1) {
+                    coefValueField.setDisable(true);
                 }
-                inputControllerAdder.addRealNumberControllerTo(coefValue);
-                coefValue.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+                inputControllerAdder.addRealNumberControllerTo(coefValueField);
+                coefValueField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
                     if (!newValue) { //when focus lost
                         try {
-                            if (Double.parseDouble(coefValue.getText()) <
-                                    calculatedFinalRedCoefMap.get(supportId) - 0.001
-                                    || Double.parseDouble(coefValue.getText()) > 1.0
+                            if (Double.parseDouble(coefValueField.getText()) <
+                                    mCalculatedFinalRedCoefMap.get(supportId) - 0.001
+                                    || Double.parseDouble(coefValueField.getText()) > 1.0
                                     ) {
                                 //set the textField empty
-                                coefValue.setText("");
+                                coefValueField.setText("");
                             }
                         } catch (Exception exp) {
                             System.out.println(getBundleText("message.enterCoef"));
@@ -585,10 +547,10 @@ public class MomentPageController {
                     }
                 });
                 StringProperty stringProperty = new SimpleStringProperty();
-                stringProperty.bind(coefValue.textProperty());
+                stringProperty.bind(coefValueField.textProperty());
                 mEnteredRdsCoef.put(supportId, stringProperty);
 
-                supportParamValueVBox.getChildren().addAll(sectionLabel, rdsCoefValue, finalCoefValue, coefValue);
+                supportParamValueVBox.getChildren().addAll(sectionLabel, calculateCoefValueLabel, finalCoefValueLabel, coefValueField);
                 centerHBox.getChildren().add(supportParamValueVBox);
             });
 
@@ -599,6 +561,8 @@ public class MomentPageController {
             Button applyButton = new Button(getBundleText("button.apply"));
             bottomHBox.getChildren().addAll(applyButton, confirmButton);
             applyButton.setOnAction(event -> {
+                updateRedistributionCoef(spanMomentFunction);
+
                 redistributionCheck.setSelected(false);
                 redistributionCheck.setSelected(true);
             });
@@ -623,10 +587,60 @@ public class MomentPageController {
             configurationButton.setOnAction(event -> configStage.show());
 
             confirmButton.setOnAction(event -> {
+                updateRedistributionCoef(spanMomentFunction);
+
                 redistributionCheck.setSelected(false);
                 redistributionCheck.setSelected(true);
                 configStage.close();
             });
+        }
+
+        private void updateRedistributionCoef(SpanMomentFunction spanMomentFunction) {
+            for (int i = 1; i < mGeometry.getNumSupport(); i++) {
+                try {
+                    mRedCoefMapForChart.put(i, Double.parseDouble(mEnteredRdsCoef.get(i).get()));
+                } catch (Exception exp) {
+                    mRedCoefMapForChart.put(i, mCalculatedFinalRedCoefMap.get(i));
+                }
+            }
+
+            boolean threeMomentRdtrSelected = !methodsChoiceBox.getSelectionModel().isEmpty()
+                    && TROIS_MOMENT_R.getMethodName().equals(methodsChoiceBox.getValue().getMethod());
+
+            // update method choice box item
+            methodsChoiceBox.getItems().remove(methodsChoiceBox.getItems().size()-1);
+            AbstractSpanMoment spanMoment = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+            methodsChoiceBox.getItems().add(spanMoment);
+
+            // update moment value label
+            if (threeMomentRdtrSelected) {
+                methodsChoiceBox.getSelectionModel().select(spanMoment);
+                SpanMomentFunction_SpecialLoadCase newSpanMoment = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+                mMaxCaseMomentValue.textProperty().bind(
+                        Bindings.createStringBinding(
+                                () -> FOUR_DECIMALS.format(
+                                        newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                                                getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
+                                                getSpanId(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
+                                                MAX
+                                        )
+                                ) + "",
+                                mySlider.valueProperty()
+                        )
+                );
+                mMinCaseMomentValue.textProperty().bind(
+                        Bindings.createStringBinding(
+                                () -> FOUR_DECIMALS.format(
+                                        newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                                                getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
+                                                getSpanId(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
+                                                MIN
+                                        )
+                                ) + "",
+                                mySlider.valueProperty()
+                        )
+                );
+            }
         }
 
         private SpanMomentFunction_SpecialLoadCase calculateRedistributionMoment(
@@ -653,8 +667,6 @@ public class MomentPageController {
                 }
                 supportMomentMap_AD.put(supportId, newLoadCaseMap);
             }
-
-            // match the calculate method name to the related spanMomentFunction
             return new SpanMomentFunction_SpecialLoadCase(supportMomentMap_AD, mInputs);
         }
     }

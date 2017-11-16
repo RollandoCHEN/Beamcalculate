@@ -38,14 +38,14 @@
     -fx-text-fill: #3d4956;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-background-color: #eda678;
+    -fx-background-color: linear-gradient(to bottom, #ffb88c, #eda678);
     -jfx-button-type: RAISED;
 }
 
 .button-cases{
     -fx-pref-width: 140;
     -fx-text-fill: silver;
-    -fx-background-color: #515d6d;
+    -fx-background-color: linear-gradient(to bottom, #637184, #515d6d);
 }
 
 .jfx-button .jfx-rippler{

@@ -94,16 +94,17 @@ public class LineChartWithMarkers<X,Y> extends LineChart {
         for (Data<X, Y> verticalMarker : verticalMarkers) {
             StackPane stackPane = (StackPane) verticalMarker.getNode();
             stackPane.setLayoutX(getXAxis().getDisplayPosition(verticalMarker.getXValue()) + 0.5);      // 0.5 for crispness
-            stackPane.setLayoutY(getYAxis().getDisplayPosition(verticalMarker.getYValue()));
+            Node chartArea = lookup(".chart-plot-background");
+            stackPane.setLayoutY(chartArea.getBoundsInLocal().getHeight()/2);
 
             Line line = (Line)stackPane.getChildren().get(0);
             line.setStartY(0);
             line.setStartY(getBoundsInLocal().getHeight());
 
             AnchorPane anchorPane = (AnchorPane)stackPane.getChildren().get(1);
-            anchorPane.setMinHeight(getBoundsInLocal().getHeight());
-            AnchorPane.setTopAnchor(anchorPane.getChildren().get(0), 0.11 * getBoundsInLocal().getHeight());
-            AnchorPane.setBottomAnchor(anchorPane.getChildren().get(1), 0.13 * getBoundsInLocal().getHeight());
+            anchorPane.setMinHeight(chartArea.getBoundsInLocal().getHeight());
+            AnchorPane.setTopAnchor(anchorPane.getChildren().get(0), 0.01 * chartArea.getBoundsInLocal().getHeight());
+            AnchorPane.setBottomAnchor(anchorPane.getChildren().get(1), 0.01 * chartArea.getBoundsInLocal().getHeight());
 
             stackPane.toFront();
         }

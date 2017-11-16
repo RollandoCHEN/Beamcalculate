@@ -43,26 +43,20 @@ public class HoveredThresholdNode extends StackPane {
         );
 
         VBox vbox = new VBox(labelX, labelY);
-        vbox.getStyleClass().addAll("hovered-threshold", "chart-line-symbol");
+        vbox.getStyleClass().addAll("value_mark", "no_transparent");
         vbox.setStyle("-fx-alignment: center");
 
         labelX.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
         labelY.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
 
-        setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                getChildren().setAll(vbox);
-                setCursor(Cursor.NONE);
-                toFront();
-            }
+        setOnMouseEntered(event -> {
+            getChildren().setAll(vbox);
+            setCursor(Cursor.NONE);
+            toFront();
         });
-        setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                getChildren().clear();
-                setCursor(Cursor.CROSSHAIR);
-            }
+        setOnMouseExited(event -> {
+            getChildren().clear();
+            setCursor(Cursor.CROSSHAIR);
         });
     }
 

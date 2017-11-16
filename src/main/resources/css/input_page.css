@@ -61,7 +61,7 @@
     -fx-text-fill: #3d4956;
     -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-background-color: #eda678;
+    -fx-background-color: linear-gradient(to bottom, #ffb88c, #eda678);
     -jfx-button-type: RAISED;
 }
 

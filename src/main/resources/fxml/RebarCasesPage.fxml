@@ -84,7 +84,7 @@
                                                         </StackPane.margin>
                                                     </Rectangle>
 
-                                                    <Rectangle fill="dimgrey"
+                                                    <Rectangle fill="#009688"
                                                                height="${controller.displayedFlangeCompHeight}" width="${controller.displayedFlangeCompWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                         <StackPane.margin>
@@ -92,7 +92,7 @@
                                                         </StackPane.margin>
                                                     </Rectangle>
 
-                                                    <Rectangle fill="dimgrey"
+                                                    <Rectangle fill="#009688"
                                                                height="${controller.displayedWebCompHeight}" width="${controller.displayedWebCompWidth}"
                                                                BorderPane.alignment="TOP_CENTER">
                                                         <StackPane.margin>
@@ -151,9 +151,9 @@
                                                 <Insets bottom="20" right="20" />
                                             </padding>
 
-                                            <Rectangle fill="dimgrey"
+                                            <Rectangle fill="#009688"
                                                        height="15.0" width="20.0"
-                                                       stroke="BLACK" strokeType="INSIDE" strokeWidth="1.5"/>
+                                                       stroke="BLACK" strokeType="INSIDE"/>
                                             <Label styleClass="prompt" text="%label.compressionRegion" />
                                         </HBox>
                                     </VBox>

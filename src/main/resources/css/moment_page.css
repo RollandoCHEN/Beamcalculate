@@ -111,6 +111,18 @@
 
 .spinner .text-field{
     -fx-background-color: #3D4956;
+    -fx-border-color: #0f9d58;
+    -fx-border-radius: 5 0 0 5;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: #0f9d58;
+}
+
+.spinner .increment-arrow-button .increment-arrow,
+.spinner .decrement-arrow-button .decrement-arrow{
+    -fx-background-color: white;
 }
 
 .button{
@@ -119,13 +131,13 @@
     -fx-text-fill: #3d4956;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-background-color: #eda678;
+    -fx-background-color: linear-gradient(to bottom, #ffb88c, #eda678);
     -jfx-button-type: RAISED;
 }
 
 .button-config{
     -fx-text-fill: silver;
-    -fx-background-color: #515d6d;
+    -fx-background-color: linear-gradient(to bottom, #637184, #515d6d);
 }
 
 .jfx-button .jfx-rippler{
@@ -147,15 +159,19 @@
     -fx-stroke: silver;
 }
 
-.max_value_hbox {
+.value_mark {
     -fx-background-color: rgb(0, 150, 136, 0.5);
     -fx-background-radius: 5px;
     -fx-alignment: center;
     -fx-padding: 7.0;
 }
 
-.max_value_hbox .label {
+.value_mark.no_transparent{
+    -fx-background-color: rgb(0, 150, 136);
+}
+
+.value_mark .label {
     -fx-font-weight: bold;
-    -fx-text-fill: silver;
+    -fx-text-fill: white;
     -fx-font-size: 13px;
 }
