@@ -93,7 +93,7 @@ public class LineChartWithMarkers<X,Y> extends LineChart {
         }
         for (Data<X, Y> verticalMarker : verticalMarkers) {
             StackPane stackPane = (StackPane) verticalMarker.getNode();
-            stackPane.setLayoutX(getXAxis().getDisplayPosition(verticalMarker.getXValue()) + 0.5);      // 0.5 for crispness
+            stackPane.setLayoutX(getXAxis().getDisplayPosition(verticalMarker.getXValue()));      // 0.5 for crispness
             Node chartArea = lookup(".chart-plot-background");
             stackPane.setLayoutY(chartArea.getBoundsInLocal().getHeight()/2);
 

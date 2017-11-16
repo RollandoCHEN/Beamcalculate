@@ -56,7 +56,7 @@
                             <Image url="@../image/input_32x32.png"/>
                         </ImageView>
                         <Label fx:id="inputPageLabel"
-                               style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
+                               styleClass="button-label"
                                text="%label.pageButton.dimensions"/>
                     </HBox>
                 </StackPane>
@@ -70,7 +70,7 @@
                             <Image url="@../image/chart_32x32.png"/>
                         </ImageView>
                         <Label fx:id="momentPageLabel"
-                               style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
+                               styleClass="button-label"
                                text="%label.pageButton.momentChart"/>
                     </HBox>
                 </StackPane>
@@ -84,7 +84,7 @@
                             <Image url="@../image/section_32x32.png"/>
                         </ImageView>
                         <Label fx:id="rebarCasesPageLabel"
-                               style="-fx-padding: 10; -fx-font-size: 14; -fx-font-weight: bold;"
+                               styleClass="button-label"
                                text="%label.pageButton.rebar"/>
                     </HBox>
                 </StackPane>

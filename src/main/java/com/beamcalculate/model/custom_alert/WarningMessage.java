@@ -1,5 +1,6 @@
 package com.beamcalculate.model.custom_alert;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -49,6 +50,8 @@ public class WarningMessage {
             mAlert.setGraphic(warningGraphic);
             Stage stage = (Stage) mAlert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(warningIcon);
+            Scene scene = mAlert.getDialogPane().getScene();
+            scene.getStylesheets().add("/css/alert_window.css");
 
             StringBuilder infoMessage = new StringBuilder(getBundleText(messageBodyKey) + messageFromSet);
 

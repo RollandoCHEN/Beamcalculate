@@ -1,6 +1,7 @@
 package com.beamcalculate.model.custom_alert;
 
 import com.beamcalculate.model.page_manager.LanguageManager;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +23,8 @@ public class InfoMessage {
         alert.setGraphic(infoGraphic);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(infoIcon);
+        Scene scene = alert.getDialogPane().getScene();
+        scene.getStylesheets().add("/css/alert_window.css");
         alert.showAndWait();
     }
 }

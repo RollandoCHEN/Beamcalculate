@@ -15,8 +15,8 @@
 .toggle-button-menu {
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border,
         -fx-inner-border, -fx-body-color;
-    -fx-font-weight: bold;
 }
+
 
 .toggle-button-menu:selected {
     -fx-background-color:
@@ -29,3 +29,8 @@
 
 }
 
+.button-label{
+    -fx-padding: 10;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}

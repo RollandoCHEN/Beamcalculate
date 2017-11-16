@@ -1,0 +1,24 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+    -fx-background: #3D4956;
+}
+
+.label{
+    -fx-font-size: 17px;
+    -fx-text-fill: silver;
+}
+
+.button{
+    -fx-pref-width: 100;
+    -fx-min-height: 30;
+    -fx-text-fill: #3d4956;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(to bottom, #ffb88c, #eda678);
+    -jfx-button-type: RAISED;
+}
+
+.jfx-button .jfx-rippler{
+    -jfx-rippler-fill: white;
+}
+

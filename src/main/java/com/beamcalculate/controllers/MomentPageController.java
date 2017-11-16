@@ -13,10 +13,8 @@ import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_Specia
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.page_manager.LanguageManager;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -72,7 +70,7 @@ public class MomentPageController {
     @FXML Label conditionInfoLabel;
     @FXML JFXCheckBox redistributionCheck;
     @FXML Button configurationButton;
-    @FXML JFXComboBox<AbstractSpanMoment> methodsChoiceBox;
+    @FXML JFXComboBox<String> methodsChoiceBox;
     @FXML Button rebarCalculateButton;
     @FXML JFXComboBox<Integer> spanChoiceBox;
     @FXML Label abscissaLimit;
@@ -101,6 +99,7 @@ public class MomentPageController {
         private Map<Integer, Double> mRedCoefMapForChart = new HashMap<>();
         private Map<Integer, Double> mCalculatedFinalRedCoefMap;
         private Map<Integer, Double> mCalculatedRedCoefMap;
+        private Map<String, AbstractSpanMoment> mMethodsChoiceMap = new HashMap<>();
         private Label mMaxCaseMomentValue;
         private Label mMinCaseMomentValue;
 
@@ -158,7 +157,7 @@ public class MomentPageController {
             rebarCalculateButton.disableProperty().bind(Bindings.isNull(methodsChoiceBox.valueProperty()));
             rebarCalculateButton.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
             rebarCalculateButton.setOnAction(event -> {
-                AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
+                AbstractSpanMoment chosenMethod = mMethodsChoiceMap.get(methodsChoiceBox.getValue());
                 Reinforcement reinforcement = new Reinforcement(chosenMethod);
                 Rebar rebar = new Rebar(reinforcement);
                 mMainAccessController.generateRebarSelectionCasesTable(rebar);
@@ -193,7 +192,8 @@ public class MomentPageController {
 
         private void addMethodsChoicesForCalculating(SpanMomentFunction spanMomentFunction) {
             //Method choice
-            methodsChoiceBox.setItems(FXCollections.observableArrayList(spanMomentFunction));
+            methodsChoiceBox.setItems(FXCollections.observableArrayList(spanMomentFunction.getMethod()));
+            mMethodsChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
             XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(mySlider.getMax()/2, 0);
             methodsChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
@@ -214,21 +214,22 @@ public class MomentPageController {
 
                     for (Node node : methodsCheckHBox.getChildren()) {
                         CheckBox checkBox = (CheckBox) node;
-                        if (!checkBox.getText().equals(newValue.getMethod())){
+                        if (!checkBox.getText().equals(newValue)){
                             checkBox.setSelected(false);
                         } else {
                             checkBox.setSelected(true);
                         }
                     }
 
-                    if (TROIS_MOMENT_R.getMethodName().equals(newValue.getMethod())) {
-                        SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) newValue;
+                    if (TROIS_MOMENT_R.getMethodName().equals(newValue)) {
+                        redistributionCheck.setSelected(true);
+                        SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) mMethodsChoiceMap.get(newValue);
                         mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
-                                                        getSpanId(mySlider.valueProperty().get(), newValue),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), newSpanMoment),
+                                                        getSpanId(mySlider.valueProperty().get(), newSpanMoment),
                                                         MAX
                                                 )
                                         ) + "",
@@ -239,8 +240,8 @@ public class MomentPageController {
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
-                                                        getSpanId(mySlider.valueProperty().get(), newValue),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), newSpanMoment),
+                                                        getSpanId(mySlider.valueProperty().get(), newSpanMoment),
                                                         MIN
                                                 )
                                         ) + "",
@@ -248,13 +249,14 @@ public class MomentPageController {
                                 )
                         );
                     } else {
-                        ELUCombination eluCombination = new ELUCombination(newValue);
+                        redistributionCheck.setSelected(false);
+                        ELUCombination eluCombination = new ELUCombination(mMethodsChoiceMap.get(newValue));
                         mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
-                                                        getSpanId(mySlider.valueProperty().get(), newValue),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
+                                                        getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
                                                         MAX
                                                 )
                                         ) + "",
@@ -265,8 +267,8 @@ public class MomentPageController {
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
                                                 eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), newValue),
-                                                        getSpanId(mySlider.valueProperty().get(), newValue),
+                                                        getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
+                                                        getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
                                                         MIN
                                                 )
                                         ) + "",
@@ -292,7 +294,7 @@ public class MomentPageController {
                             if (!changing) {
                                 try {
                                     changing = true;
-                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), methodsChoiceBox.getValue()));
+                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())));
                                 } finally {
                                     changing = false;
                                 }
@@ -307,7 +309,7 @@ public class MomentPageController {
             spanChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
                 if (newValue != null && newValue != 0) {
                     int selectedSpanId = spanChoiceBox.getValue();
-                    AbstractSpanMoment chosenMethod = methodsChoiceBox.getValue();
+                    AbstractSpanMoment chosenMethod = mMethodsChoiceMap.get(methodsChoiceBox.getValue());
                     JFXTextField abscissaField = new JFXTextField();
                     abscissaField.setPromptText(getBundleText("label.xOnSpan"));
                     abscissaFieldHBox.getChildren().clear();
@@ -322,7 +324,7 @@ public class MomentPageController {
                             if( !changing ) {
                                 try {
                                     changing = true;
-                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), methodsChoiceBox.getValue()));
+                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())));
                                     TextField textField = (TextField) abscissaFieldHBox.getChildren().get(0);
                                     textField.setText(TWO_DECIMALS.format(getSpanLocalX(newValue.doubleValue(), chosenMethod)));
                                 }
@@ -438,7 +440,8 @@ public class MomentPageController {
             mYAxis.lowerBoundProperty().set(maxSpanMomentValue);
             mYAxis.upperBoundProperty().set(maxSupportMomentValue);
 
-            methodsChoiceBox.getItems().add(spanMomentFunction);
+            methodsChoiceBox.getItems().add(spanMomentFunction.getMethod());
+            mMethodsChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
             //if the method of calculate is "3 moment", add redistribution for the method
             if (spanMomentFunction.getInputs().getGeometry().getNumSpan() > 1
@@ -462,9 +465,11 @@ public class MomentPageController {
             // initialize the redistribution coef to be used for line chart
             mCalculatedFinalRedCoefMap.forEach(mRedCoefMapForChart::put);
 
-            methodsChoiceBox.getItems().add(calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart));
-
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
+
+            methodsChoiceBox.getItems().add(newSpanMomentFunction.getMethod());
+            mMethodsChoiceMap.put(newSpanMomentFunction.getMethod(), newSpanMomentFunction);
+
             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
             addDataToRedistributionMomentSeries(
@@ -486,6 +491,17 @@ public class MomentPageController {
                             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID),
                             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
                     );
+                    // disable the check box for a very short time, to allow removing the data completely
+                    // and to avoid duplicate adding
+                    new Thread(() -> {
+                        Platform.runLater(() -> redistributionCheck.setDisable(true));
+                        try {
+                            Thread.sleep(800); //0.8 seconds, obviously replace with your chosen time
+                        }
+                        catch(InterruptedException ex) {
+                        }
+                        Platform.runLater(() -> redistributionCheck.setDisable(false));
+                    }).start();
                 }
             }));
 
@@ -556,8 +572,7 @@ public class MomentPageController {
                         THREE_DECIMALS.format(mCalculatedFinalRedCoefMap.get(supportId))
                 );
 
-                TextField coefValueField = new TextField();
-                coefValueField.setPrefWidth(65);
+                JFXTextField coefValueField = new JFXTextField();
                 coefValueField.textProperty().setValue(
                         THREE_DECIMALS.format(mCalculatedFinalRedCoefMap.get(supportId))
                 );
@@ -591,11 +606,12 @@ public class MomentPageController {
             HBox bottomHBox = new HBox();
             bottomHBox.setSpacing(10);
             bottomHBox.setAlignment(Pos.CENTER_RIGHT);
-            Button confirmButton = new Button(getBundleText("button.ok"));
-            Button applyButton = new Button(getBundleText("button.apply"));
+            JFXButton confirmButton = new JFXButton(getBundleText("button.ok"));
+            JFXButton applyButton = new JFXButton(getBundleText("button.apply"));
             bottomHBox.getChildren().addAll(applyButton, confirmButton);
             applyButton.setOnAction(event -> {
                 updateRedistributionCoef(spanMomentFunction);
+                redistributionCheck.setSelected(true);
             });
 
             BorderPane container = new BorderPane();
@@ -612,7 +628,8 @@ public class MomentPageController {
             configStage.initOwner(configurationButton.getScene().getWindow());
 
             int numOfSupport = mGeometry.getNumSupport();
-            Scene scene = new Scene(container, numOfSupport * 90 + 320, 280);
+            Scene scene = new Scene(container, numOfSupport * 90 + 350, 280);
+            scene.getStylesheets().add("/css/config_window.css");
             configStage.setScene(scene);
 
             configurationButton.setOnAction(event -> configStage.show());
@@ -620,6 +637,7 @@ public class MomentPageController {
             confirmButton.setOnAction(event -> {
                 updateRedistributionCoef(spanMomentFunction);
                 configStage.close();
+                redistributionCheck.setSelected(true);
             });
         }
 
@@ -633,21 +651,13 @@ public class MomentPageController {
                 }
             }
 
-            boolean threeMomentRdtrSelected = !methodsChoiceBox.getSelectionModel().isEmpty()
-                    && TROIS_MOMENT_R.getMethodName().equals(methodsChoiceBox.getValue().getMethod());
-
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
 
             // update method choice box item
-            for (AbstractSpanMoment spanMoment : methodsChoiceBox.getItems()) {
-                if(spanMoment.getMethod().equals(TROIS_MOMENT_R.getMethodName())){
-                   spanMoment = newSpanMomentFunction;
-                }
-            }
+            // Don't find the way to update item in choice box, so use a map to stock the function name and function itself
+            mMethodsChoiceMap.put(newSpanMomentFunction.getMethod(), newSpanMomentFunction);
 
-//            methodsChoiceBox.getItems().remove(methodsChoiceBox.getItems().size()-1);
-//            methodsChoiceBox.getItems().add(newSpanMomentFunction);
-
+            // update the line chart data
             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
             addDataToRedistributionMomentSeries(
@@ -670,15 +680,15 @@ public class MomentPageController {
             });
 
             // update moment value label
-            if (threeMomentRdtrSelected) {
-//                methodsChoiceBox.getSelectionModel().select(newSpanMomentFunction);
+            if (!methodsChoiceBox.getSelectionModel().isEmpty()
+                    && TROIS_MOMENT_R.getMethodName().equals(methodsChoiceBox.getValue())) {
                 SpanMomentFunction_SpecialLoadCase newSpanMoment = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
                 mMaxCaseMomentValue.textProperty().bind(
                         Bindings.createStringBinding(
                                 () -> FOUR_DECIMALS.format(
                                         newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
-                                                getSpanId(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
+                                                getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
+                                                getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
                                                 MAX
                                         )
                                 ) + "",
@@ -689,8 +699,8 @@ public class MomentPageController {
                         Bindings.createStringBinding(
                                 () -> FOUR_DECIMALS.format(
                                         newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                getSpanLocalX(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
-                                                getSpanId(mySlider.valueProperty().get(), methodsChoiceBox.getValue()),
+                                                getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
+                                                getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
                                                 MIN
                                         )
                                 ) + "",

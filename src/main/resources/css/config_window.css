@@ -1,0 +1,39 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+    -fx-background: #3D4956;
+}
+
+.label{
+    -fx-font-size: 14px;
+    -fx-text-fill: silver;
+}
+
+.text-field{
+    -fx-alignment: center;
+    -fx-pref-width: 65;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: silver;
+    -jfx-focus-color: #00d0bb;
+    -jfx-unfocus-color: silver;
+    -jfx-label-float: true;
+}
+
+.text-field:focused{
+    -fx-text-fill: #00d0bb;
+}
+
+.button_type{
+    -fx-pref-width: 100;
+    -fx-min-height: 35;
+    -fx-text-fill: #3d4956;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(to bottom, #ffb88c, #eda678);
+    -jfx-button-type: RAISED;
+}
+
+.jfx-button .jfx-rippler{
+    -jfx-rippler-fill: white;
+}
+

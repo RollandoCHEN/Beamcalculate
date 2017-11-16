@@ -1,5 +1,6 @@
 package com.beamcalculate.model.custom_alert;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -30,6 +31,8 @@ public class ConfirmationMessage {
         alert.setGraphic(questionGraphic);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(questionIcon);
+        Scene scene = alert.getDialogPane().getScene();
+        scene.getStylesheets().add("/css/alert_window.css");
 
         mButtonTypeOk = new ButtonType(getBundleText("button.continue"), ButtonBar.ButtonData.OK_DONE);
         mButtonTypeCancel = new ButtonType(getBundleText("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
