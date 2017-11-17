@@ -67,7 +67,7 @@ public class InputValueGetter {
     public boolean continueAfterShowingWarning(){
         if(!mMissingParamWarningSet.isEmpty()) {
             WarningMessage warningMessage = new WarningMessage(
-                    mMissingParamWarningSet, "warning.content.inputWarning", WITH_CONFIRM
+                    mMissingParamWarningSet, "warning.content.inputWarning","", WITH_CONFIRM
             );
             return warningMessage.okChosen();
         } else {

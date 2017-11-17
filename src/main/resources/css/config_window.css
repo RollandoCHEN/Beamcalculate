@@ -8,6 +8,11 @@
     -fx-text-fill: silver;
 }
 
+.label.header{
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
 .text-field{
     -fx-alignment: center;
     -fx-pref-width: 65;

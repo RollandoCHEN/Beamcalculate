@@ -555,7 +555,7 @@ public class MomentPageController {
             Label rdsCoef = new Label(getBundleText("label.theoRdsCoef"));
             Label minRdsCoef = new Label(getBundleText("label.minRdsCoef"));
             Label finalRdsCoef = new Label(getBundleText("label.finalRdsCoef"));
-            blank.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
+            blank.getStyleClass().add("header");
             paramNameVBox.getChildren().addAll(blank, rdsCoef, minRdsCoef, finalRdsCoef);
             centerHBox.getChildren().add(paramNameVBox);
 
@@ -564,7 +564,7 @@ public class MomentPageController {
                 supportParamValueVBox.setSpacing(15);
                 supportParamValueVBox.setAlignment(Pos.CENTER);
                 Label sectionLabel = new Label(getBundleText("label.support") + " " + supportId.toString());
-                sectionLabel.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
+                sectionLabel.getStyleClass().add("header");
                 Label calculateCoefValueLabel = new Label(
                         THREE_DECIMALS.format(coef)
                 );

@@ -36,7 +36,7 @@ public class WarningMessage {
         }
     }
 
-    public WarningMessage(Set<String> messageInputSet, String messageBodyKey, WarningMessageOption option){
+    public WarningMessage(Set<String> messageInputSet, String headKey, String messageBodyKey, WarningMessageOption option){
         if(!messageInputSet.isEmpty()) {
             ImageView warningGraphic = new ImageView("image/warning-icon_64x64.png");
             Image warningIcon = new Image("image/warning-icon_64x64.png");
@@ -52,8 +52,13 @@ public class WarningMessage {
             stage.getIcons().add(warningIcon);
             Scene scene = mAlert.getDialogPane().getScene();
             scene.getStylesheets().add("/css/alert_window.css");
+            StringBuilder infoMessage;
 
-            StringBuilder infoMessage = new StringBuilder(getBundleText(messageBodyKey) + messageFromSet);
+            if (messageBodyKey.isEmpty()){
+                infoMessage = new StringBuilder(messageFromSet);
+            } else {
+                infoMessage = new StringBuilder(messageFromSet + "\n\n" + getBundleText(messageBodyKey));
+            }
 
             mButtonTypeOk = new ButtonType(getBundleText("button.continue"), ButtonBar.ButtonData.OK_DONE);
             if (option.withConfirmation()) {
@@ -64,6 +69,7 @@ public class WarningMessage {
                 mAlert.getButtonTypes().setAll(mButtonTypeOk);
             }
 
+            mAlert.setHeaderText(getBundleText(headKey));
             mAlert.setContentText(infoMessage.toString());
             mResult = mAlert.showAndWait();
             messageInputSet.clear();

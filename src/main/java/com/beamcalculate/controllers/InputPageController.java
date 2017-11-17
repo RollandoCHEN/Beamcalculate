@@ -19,14 +19,20 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
 import java.util.*;
@@ -35,6 +41,7 @@ import static com.beamcalculate.model.custom_alert.WarningMessage.WarningMessage
 
 
 public class InputPageController implements Initializable {
+    @FXML private ScrollPane scrollContainer;
     @FXML private AnchorPane inputPageAnchorPane;
     @FXML private JFXToggleButton onTSection_tgglbttn;
     @FXML private CheckBox sampleInputs_chkb;
@@ -84,6 +91,8 @@ public class InputPageController implements Initializable {
 
     private MainAccessController mMainAccessController;
     private BooleanProperty mNewInput = new SimpleBooleanProperty(true);
+
+    private final double SCALE_DELTA = 1.1;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -183,6 +192,44 @@ public class InputPageController implements Initializable {
                 mInputTextFieldsTreater.unbindTextProperty(supportsWidth_gp);
             }
         });
+
+        scrollContainer.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.isControlDown()) {
+                if (event.getDeltaY() == 0) {
+                    return;
+                }
+
+                double scaleFactor =
+                        (event.getDeltaY() > 0)
+                                ? SCALE_DELTA
+                                : 1 / SCALE_DELTA;
+
+                inputPageAnchorPane.setScaleX(inputPageAnchorPane.getScaleX() * scaleFactor);
+                inputPageAnchorPane.setScaleY(inputPageAnchorPane.getScaleY() * scaleFactor);
+                inputPageAnchorPane.setMinHeight(inputPageAnchorPane.getHeight() * scaleFactor);
+                inputPageAnchorPane.setMinWidth(inputPageAnchorPane.getWidth() * scaleFactor);
+                event.consume();
+            }
+        });
+
+        scrollContainer.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    inputPageAnchorPane.setScaleX(1.0);
+                    inputPageAnchorPane.setScaleY(1.0);
+                    inputPageAnchorPane.setMinHeight(970);
+                    inputPageAnchorPane.setMinWidth(1040);
+                }
+            }
+        });
+
+        scrollContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+            @Override public void changed(ObservableValue<? extends Bounds> observable, Bounds oldBounds, Bounds bounds) {
+                scrollContainer.setClip(new Rectangle(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight()));
+            }
+        });
+
     }
 
     private void addChangingStatusListenerTo(ToggleButton toggleButton ,CheckBox...checkBoxes){
@@ -326,7 +373,7 @@ public class InputPageController implements Initializable {
                         mSpanMomentFunction3Moment
                 );
                 Set<String> messageInputSet = mConditionVerifier.getInvalidatedConditions();
-                new WarningMessage(messageInputSet, "warning.content.conditionWarning", WITHOUT_CONFIRM);
+                new WarningMessage(messageInputSet, "warning.header.condition_warning","warning.content.condition_warning", WITHOUT_CONFIRM);
             }
 
             mNewInput.setValue(false);
