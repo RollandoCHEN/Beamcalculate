@@ -17,8 +17,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -29,7 +27,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.control.PopOver;
 
 import java.util.Collections;
 import java.util.List;
@@ -244,7 +241,7 @@ public class RebarCasesPageController {
             }
 
             leftGridPaneWidth.set(maxSchemaWidth + 220);
-            rightGridPaneWidth.set(mGeometry.getNumSpan() * 140 + 130);
+            rightGridPaneWidth.set(mGeometry.getNumSpan() * 140 + 150);
 
             totalLength.set(0.9 * (leftGridPaneWidth.get() + rightGridPaneWidth.get()));
 

@@ -235,10 +235,10 @@ public class RebarCutChart {
 
         Label titleSpanLabel = new Label(getBundleText("label.span") + " " + spanId + " :");
         Label titleRebarCaseLabel = new Label();
-        titleSpanLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        titleSpanLabel.getStyleClass().add("title");
         List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
         titleRebarCaseLabel.setText(getRebarCaseString(rebarCasesList, caseNum));
-        titleRebarCaseLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: red;");
+        titleRebarCaseLabel.getStyleClass().add("rebar");
 
         HBox titleHBox = new HBox(titleSpanLabel, titleRebarCaseLabel);
         titleHBox.setSpacing(10);
@@ -250,6 +250,7 @@ public class RebarCutChart {
         borderPane.setPadding(new Insets(20, 20, 20, 20));
 
         mScene = new Scene(borderPane, 800, 800);
+        mScene.getStylesheets().add("/css/rebar_cut_chart.css");
     }
 
     private String getRebarCaseString(List<Map<Integer, RebarType_Number>> rebarCasesList, int caseNum) {

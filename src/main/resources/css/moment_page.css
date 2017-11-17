@@ -53,17 +53,6 @@
     -fx-text-fill: silver;
 }
 
-.hovered-threshold{
-    -fx-background-color: #0f9d58;
-    -fx-border-radius: 5px;
-}
-
-.hovered-threshold .label{
-    -fx-font-size: 12px;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-}
-
 .text-field{
     -fx-pref-width: 150;
     -fx-font-size: 14px;
@@ -148,13 +137,12 @@
     -fx-stroke: #009688;
     -fx-stroke-width: 3px
 }
+
 .axis {
     -fx-stroke: silver;
 }
 
-.axis-tick-mark {
-    -fx-stroke: silver;
-}
+.axis-tick-mark,
 .axis-minor-tick-mark {
     -fx-stroke: silver;
 }

@@ -1,0 +1,27 @@
+.root{
+    -fx-font-family: "Microsoft YaHei";
+    -fx-background: #3D4956;
+}
+
+.label{
+    -fx-font-size: 15px;
+    -fx-text-fill: silver;
+}
+
+.label.value{
+    -fx-text-fill: white;
+}
+
+.label.title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.vbox{
+    -fx-spacing: 15px;
+}
+
+.hbox{
+    -fx-spacing: 30px;
+}
+

@@ -63,10 +63,10 @@ public class LanguageManager {
             if (previousScreenStatus == 2){
                 BeamCalculatorApp.getPrimaryStage().setFullScreen(true);
             } else if (previousScreenStatus == 1) {
-                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
-                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
+//                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
+//                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
             } else {
-                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
+//                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
             }
         } catch (IOException e) {
             e.printStackTrace();

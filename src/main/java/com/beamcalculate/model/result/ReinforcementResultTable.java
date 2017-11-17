@@ -30,14 +30,14 @@ public class ReinforcementResultTable {
         mGeometry = reinforcement.getSpanMomentFunction().getInputs().getGeometry();
 
         HBox spanParamHBox = new HBox();
-        spanParamHBox.setSpacing(20);
+        spanParamHBox.getStyleClass().add("hbox");
         spanParamHBox.setAlignment(Pos.CENTER);
 
         spanParamHBox.getChildren().add(getParamNameVBox(reinforcement, "span_function"));
         spanParamHBox.getChildren().add(getParamValuesHBox(reinforcement, "span_function"));
 
         HBox supportParamHBox = new HBox();
-        supportParamHBox.setSpacing(20);
+        supportParamHBox.getStyleClass().add("hbox");
         supportParamHBox.setAlignment(Pos.CENTER);
 
         supportParamHBox.getChildren().add(getParamNameVBox(reinforcement, "support_moment"));
@@ -53,7 +53,7 @@ public class ReinforcementResultTable {
                     append(")");
         }
         Label methodTitle = new Label(tableTitle.toString());
-        methodTitle.setStyle("-fx-font-size:16px; -fx-font-weight: bold;");
+        methodTitle.getStyleClass().add("title");
 
         // Show the cross section diagram
         VBox container = new VBox();
@@ -70,15 +70,15 @@ public class ReinforcementResultTable {
 
         double sceneWidth = mGeometry.getNumSpan() * 180 + 430;
         Scene scene = new Scene(container, sceneWidth, 880);
+        scene.getStylesheets().add("/css/rebar_calculate_table.css");
         mResultTableStage.setScene(scene);
     }
 
     // TODO It's better to transfer these VBox, HBox to a GridPane
     private VBox getParamNameVBox(Reinforcement reinforcement, String string){
         VBox paramNameVBox = new VBox();
-        paramNameVBox.setSpacing(15);
+        paramNameVBox.getStyleClass().add("vbox");
         Label blank = new Label("");
-        blank.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
         paramNameVBox.getChildren().add(blank);
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
@@ -118,7 +118,7 @@ public class ReinforcementResultTable {
 
     private HBox getParamValuesHBox(Reinforcement reinforcement, String spanOrSupport){
         HBox paramValuesHBox = new HBox();
-        paramValuesHBox.setSpacing(30);
+        paramValuesHBox.getStyleClass().add("hbox");
         String sectionLabelString;
 
         Map<Integer, Map<ReinforcementParam, Double>> reinforceParamMap;
@@ -137,23 +137,25 @@ public class ReinforcementResultTable {
             VBox paramValueVBox = new VBox();
             if (spanOrSupport.equals("support_moment") && sectionId != 1 && sectionId != mGeometry.getNumSupport()
                     || spanOrSupport.equals("span_function")){
-                paramValueVBox.setSpacing(15);
+                paramValueVBox.getStyleClass().add("vbox");
                 Label crossSectionLabel = new Label(sectionLabelString + " " + sectionId);
-                crossSectionLabel.setStyle("-fx-font-size:14px; -fx-font-weight: bold;");
                 paramValueVBox.getChildren().add(crossSectionLabel);
                 paramValueMap.forEach((param, value)->{
                     if (param == b_MU){
                         Label paramValue = new Label(
                                 param.getSymbol() + " = " + FOUR_DECIMALS.format(value)
                         );
+                        paramValue.getStyleClass().add("value");
                         Label pivotValue = new Label(
                                 pivotMap.get(sectionId).getContent()
                         );
+                        pivotValue.getStyleClass().add("value");
                         paramValueVBox.getChildren().addAll(paramValue, pivotValue);
                     } else {
                         Label paramValue = new Label(
                                 param.getSymbol() + " = " + FOUR_DECIMALS.format(value)
                         );
+                        paramValue.getStyleClass().add("value");
                         paramValueVBox.getChildren().add(paramValue);
                     }
                 });
