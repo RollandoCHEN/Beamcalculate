@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.support_moment;
+package com.beamcalculate.model.calculator.support_moment;
 
 import Jama.Matrix;
 import com.beamcalculate.model.entites.Inputs;
@@ -45,7 +45,7 @@ public class SupportMoment3Moment extends SupportMoment {
 
             Matrix lhs = new Matrix(lhsArray);
             Matrix rhs = new Matrix(rhsArray, mGeometry.getNumSupport());
-            //calculate Solved Matrix
+            //calculator Solved Matrix
             Matrix answer = lhs.solve(rhs);
 
             mSupportMomentMap.forEach((supportId, loadCaseMomentMap) -> {

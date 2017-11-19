@@ -1,6 +1,6 @@
-package com.beamcalculate.model.calculate;
+package com.beamcalculate.model.calculator;
 
-import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Material;
 
@@ -58,7 +58,7 @@ public class MomentRedistribution {
             mMinRedistributionCoef = 0.7;
         }
 
-//        calculate redistribution coefficient according to the support_moment Mu value before redistribution
+//        calculator redistribution coefficient according to the support_moment Mu value before redistribution
         mSupportMuMap_BR.forEach((supportId, supportMuValue)->{
             if (supportMuValue == 0 || supportMuValue > mMuUpperBound){
                 mRedistributionCoefMap.put(supportId, 1.0);
@@ -74,10 +74,10 @@ public class MomentRedistribution {
 
         mRedistributionCoefMap.forEach((supportId, redistributionCoef)->{
 
-//        calculate support_moment moment after redistribution
+//        calculator support_moment moment after redistribution
             mSupportMomentMap_AR.put(supportId, redistributionCoef * mSupportMomentMap_BR.get(supportId));
 
-//        calculate support_moment Mu after redistribution
+//        calculator support_moment Mu after redistribution
             mSupportMuMap_AR.put(supportId, redistributionCoef * mSupportMuMap_BR.get(supportId));
         });
 

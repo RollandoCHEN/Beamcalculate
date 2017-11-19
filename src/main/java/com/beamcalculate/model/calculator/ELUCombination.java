@@ -1,8 +1,8 @@
-package com.beamcalculate.model.calculate;
+package com.beamcalculate.model.calculator;
 
 import com.beamcalculate.enums.SpecialLoadCase;
 import com.beamcalculate.enums.UltimateCase;
-import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.entites.Geometry;
 
 import java.util.HashMap;

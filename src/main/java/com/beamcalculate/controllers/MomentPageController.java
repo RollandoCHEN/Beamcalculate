@@ -1,18 +1,15 @@
 package com.beamcalculate.controllers;
 
+import com.beamcalculate.model.calculator.*;
 import com.beamcalculate.model.custom_alert.InfoMessage;
 import com.beamcalculate.model.custom_node.LineChartWithMarkers;
 import com.beamcalculate.model.page_manager.InputControllerAdder;
-import com.beamcalculate.model.calculate.ELUCombination;
-import com.beamcalculate.model.calculate.MomentRedistribution;
-import com.beamcalculate.model.calculate.Rebar;
-import com.beamcalculate.model.calculate.Reinforcement;
-import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
+import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculator.span_function.SpanMomentFunction;
+import com.beamcalculate.model.calculator.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
-import com.beamcalculate.model.page_manager.LanguageManager;
+import com.beamcalculate.model.page_manager.PageScaleHandler;
 import com.jfoenix.controls.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -42,12 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
-import java.util.Formatter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
@@ -63,6 +55,7 @@ import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
  * Created by Ruolin on 01/11/2017 for Beamcalculate.
  */
 public class MomentPageController {
+    @FXML ScrollPane scrollContainer;
     @FXML AnchorPane momentPageAnchorPane;
     @FXML BorderPane borderPaneContainer;
     @FXML Spinner<Integer> totalNumOnSpanSpinner;
@@ -87,6 +80,9 @@ public class MomentPageController {
     private BooleanProperty mShowRebarPage = new SimpleBooleanProperty(false);
     private final static String THREE_MOMENT_RDS_MAX_SERIES_ID = TROIS_MOMENT.getMethodName() + "_ReducedMAX";
     private final static String THREE_MOMENT_RDS_MIN_SERIES_ID = TROIS_MOMENT.getMethodName() + "_ReducedMIN";
+
+    private final double PAGE_MIN_HEIGHT = 900;
+    private final double PAGE_MIN_WIDTH = 1600;
 
     public class MomentPageCreator {
         private LineChartWithMarkers<Number, Number> mLineChart;
@@ -164,12 +160,14 @@ public class MomentPageController {
 
                 mShowRebarPage.setValue(true);
                 mMainAccessController.getRebarCasesPageButton().setSelected(true);
+
+                Deflection deflection = new Deflection(rebar);
             });
 
             redistributionCheck.setSelected(false);
             redistributionCheck.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
             configurationButton.visibleProperty().bind(Bindings.not(InputPageController.isDisabledRebarCalculateProperty()));
-            //if the methodName of calculate is "3 moment", add redistribution for the methodName
+            //if the methodName of calculator is "3 moment", add redistribution for the methodName
             if (spanMomentFunction.getInputs().getGeometry().getNumSpan() > 1
                     && methodName.equals(TROIS_MOMENT.getMethodName())
                     && !InputPageController.isDisabledRebarCalculate()
@@ -181,6 +179,12 @@ public class MomentPageController {
             XYChart.Series<Number, Number> minELUSeries = new XYChart.Series<>();
             mStringSeriesMap.put(THREE_MOMENT_RDS_MAX_SERIES_ID, maxELUSeries);
             mStringSeriesMap.put(THREE_MOMENT_RDS_MIN_SERIES_ID, minELUSeries);
+
+            momentPageAnchorPane.setMinHeight(PAGE_MIN_HEIGHT);
+            momentPageAnchorPane.setMinWidth(PAGE_MIN_WIDTH);
+
+            PageScaleHandler scaleHandler = new PageScaleHandler();
+            scaleHandler.AddScaleListener(scrollContainer, momentPageAnchorPane, PAGE_MIN_HEIGHT, PAGE_MIN_WIDTH);
         }
 
         public MomentPageCreator(SpanMomentFunction... spanMomentFunctions) {
@@ -304,7 +308,7 @@ public class MomentPageController {
                 }
             }));
 
-            // match the calculate methodName name to the related spanMomentFunction
+            // match the calculator methodName name to the related spanMomentFunction
             spanChoiceBox.setItems(FXCollections.observableArrayList(mGeometry.spansLengthMap().keySet()));
             spanChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
                 if (newValue != null && newValue != 0) {
@@ -443,7 +447,7 @@ public class MomentPageController {
             methodsChoiceBox.getItems().add(spanMomentFunction.getMethod());
             mMethodsChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
-            //if the method of calculate is "3 moment", add redistribution for the method
+            //if the method of calculator is "3 moment", add redistribution for the method
             if (spanMomentFunction.getInputs().getGeometry().getNumSpan() > 1
                     && spanMomentFunction.getMethod().equals(TROIS_MOMENT.getMethodName())
                     && !InputPageController.isDisabledRebarCalculate()

@@ -24,7 +24,7 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:id="scrollContainer"
             fx:controller="com.beamcalculate.controllers.InputPageController">
-        <AnchorPane fx:id="inputPageAnchorPane" minHeight="970" minWidth="1040">
+        <AnchorPane fx:id="inputPageAnchorPane">
             <HBox alignment="CENTER"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

@@ -6,15 +6,16 @@ import com.beamcalculate.model.page_manager.InputTextFieldsTreater;
 import com.beamcalculate.model.page_manager.InputValueGetter;
 import com.beamcalculate.model.custom_node.NamedComboBox;
 import com.beamcalculate.model.custom_node.NamedTextField;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction;
-import com.beamcalculate.model.calculate.support_moment.ForfaitaireConditionVerifier;
-import com.beamcalculate.model.calculate.support_moment.SupportMomentCaquot;
-import com.beamcalculate.model.calculate.support_moment.SupportMoment3Moment;
+import com.beamcalculate.model.calculator.span_function.SpanMomentFunction;
+import com.beamcalculate.model.calculator.support_moment.ForfaitaireConditionVerifier;
+import com.beamcalculate.model.calculator.support_moment.SupportMomentCaquot;
+import com.beamcalculate.model.calculator.support_moment.SupportMoment3Moment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
 import com.beamcalculate.model.entites.Material;
-import com.beamcalculate.model.calculate.support_moment.SupportMomentForfaitaire;
+import com.beamcalculate.model.calculator.support_moment.SupportMomentForfaitaire;
+import com.beamcalculate.model.page_manager.PageScaleHandler;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 import javafx.beans.binding.Bindings;
@@ -64,6 +65,8 @@ public class InputPageController implements Initializable {
     @FXML private NamedComboBox<String> ductibilityClass_chcb;
     @FXML private Button envelopCurveGenerate_button;
 
+    private final double PAGE_MIN_HEIGHT = 960;
+    private final double PAGE_MIN_WIDTH = 1040;
 
     private Inputs mInputs;
     private Geometry mGeometry = new Geometry();
@@ -91,8 +94,6 @@ public class InputPageController implements Initializable {
 
     private MainAccessController mMainAccessController;
     private BooleanProperty mNewInput = new SimpleBooleanProperty(true);
-
-    private final double SCALE_DELTA = 1.1;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -193,43 +194,11 @@ public class InputPageController implements Initializable {
             }
         });
 
-        scrollContainer.addEventFilter(ScrollEvent.SCROLL, event -> {
-            if (event.isControlDown()) {
-                if (event.getDeltaY() == 0) {
-                    return;
-                }
+        inputPageAnchorPane.setPrefHeight(PAGE_MIN_HEIGHT);
+        inputPageAnchorPane.setPrefWidth(PAGE_MIN_WIDTH);
 
-                double scaleFactor =
-                        (event.getDeltaY() > 0)
-                                ? SCALE_DELTA
-                                : 1 / SCALE_DELTA;
-
-                inputPageAnchorPane.setScaleX(inputPageAnchorPane.getScaleX() * scaleFactor);
-                inputPageAnchorPane.setScaleY(inputPageAnchorPane.getScaleY() * scaleFactor);
-                inputPageAnchorPane.setMinHeight(inputPageAnchorPane.getHeight() * scaleFactor);
-                inputPageAnchorPane.setMinWidth(inputPageAnchorPane.getWidth() * scaleFactor);
-                event.consume();
-            }
-        });
-
-        scrollContainer.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getClickCount() == 2) {
-                    inputPageAnchorPane.setScaleX(1.0);
-                    inputPageAnchorPane.setScaleY(1.0);
-                    inputPageAnchorPane.setMinHeight(970);
-                    inputPageAnchorPane.setMinWidth(1040);
-                }
-            }
-        });
-
-        scrollContainer.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
-            @Override public void changed(ObservableValue<? extends Bounds> observable, Bounds oldBounds, Bounds bounds) {
-                scrollContainer.setClip(new Rectangle(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight()));
-            }
-        });
-
+        PageScaleHandler scaleHandler = new PageScaleHandler();
+        scaleHandler.AddScaleListener(scrollContainer, inputPageAnchorPane, PAGE_MIN_HEIGHT, PAGE_MIN_WIDTH);
     }
 
     private void addChangingStatusListenerTo(ToggleButton toggleButton ,CheckBox...checkBoxes){
@@ -347,7 +316,7 @@ public class InputPageController implements Initializable {
                             .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(spansLength_gp))
                             .or(mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(supportsWidth_gp))
             );
-//        bind rebar calculate button to the text fields
+//        bind rebar calculator button to the text fields
             isDisabledRebarCalculate.bind(
                     mInputTextFieldsTreater.bindIsEmptyPropertyWithOr(sectionWidth_tf, sectionHeight_tf, fck_tf, fyk_tf)
                             .or(Bindings.isNull(ductibilityClass_chcb.valueProperty()))

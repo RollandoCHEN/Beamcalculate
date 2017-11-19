@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.support_moment;
+package com.beamcalculate.model.calculator.support_moment;
 
 import com.beamcalculate.model.entites.Load;
 

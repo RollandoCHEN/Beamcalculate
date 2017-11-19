@@ -3,9 +3,10 @@ package com.beamcalculate.controllers;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import com.beamcalculate.model.MyMethods;
 import com.beamcalculate.model.RebarType_Number;
-import com.beamcalculate.model.calculate.Rebar;
-import com.beamcalculate.model.calculate.Reinforcement;
+import com.beamcalculate.model.calculator.Rebar;
+import com.beamcalculate.model.calculator.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.page_manager.PageScaleHandler;
 import com.beamcalculate.model.result.RebarCutChart;
 import com.beamcalculate.model.result.ReinforcementResultTable;
 import com.jfoenix.controls.JFXButton;
@@ -17,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -37,7 +39,8 @@ import static com.beamcalculate.enums.NumericalFormat.ZERO_DECIMAL;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 
 public class RebarCasesPageController {
-    @FXML private AnchorPane anchorPane;
+    @FXML private ScrollPane scrollContainer;
+    @FXML private AnchorPane rebarPageAnchorPane;
     @FXML private Label currentSectionNameLabel;
     @FXML private Label currentSpanNameLabel;
     @FXML private Label currentRebarCase;
@@ -118,6 +121,9 @@ public class RebarCasesPageController {
 
     private double mCoverThickness_cm;
 
+    private final double PAGE_MIN_HEIGHT = 900;
+    private final double PAGE_MIN_WIDTH = 1040;
+
     public class RebarCasesPageCreator {
         private final Geometry mGeometry;
 
@@ -130,6 +136,12 @@ public class RebarCasesPageController {
             setSceneSize();
             initializeElevationView();
             generateRebarSelectionCasesTable();
+
+            rebarPageAnchorPane.setMinHeight(PAGE_MIN_HEIGHT);
+            rebarPageAnchorPane.setMinWidth(PAGE_MIN_WIDTH);
+
+            PageScaleHandler scaleHandler = new PageScaleHandler();
+            scaleHandler.AddScaleListener(scrollContainer, rebarPageAnchorPane, PAGE_MIN_HEIGHT, PAGE_MIN_WIDTH);
         }
 
         private void initializeElevationView() {
@@ -240,19 +252,19 @@ public class RebarCasesPageController {
                 maxSchemaWidth = displayedWebWidth.get();
             }
 
-            leftGridPaneWidth.set(maxSchemaWidth + 220);
+            leftGridPaneWidth.set(maxSchemaWidth + 230);
             rightGridPaneWidth.set(mGeometry.getNumSpan() * 140 + 150);
 
             totalLength.set(0.9 * (leftGridPaneWidth.get() + rightGridPaneWidth.get()));
 
             // 80 is the padding in the grid pane, around the left and right grid pane
-            anchorPane.setMinWidth(getLeftGridPaneWidth() + getRightGridPaneWidth() + 80);
+            rebarPageAnchorPane.setMinWidth(getLeftGridPaneWidth() + getRightGridPaneWidth() + 80);
             int maxNumOfCases = 1;
             for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
                 int rebarCases = mRebar.getRebarCasesListOfSpan(spanId).size();
                 maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
             }
-            anchorPane.setMinHeight(Math.max(maxNumOfCases * 110 + 100, 950));
+            rebarPageAnchorPane.setMinHeight(Math.max(maxNumOfCases * 110 + 100, 950));
         }
 
         private void generateRebarSelectionCasesTable() {
@@ -317,7 +329,7 @@ public class RebarCasesPageController {
                         clearRebarDisplaying();
                     });
                 } else {
-                    double minRebarArea = Collections.min(mRebar .getTotalRebarAreaListOfSpan(spanId));
+                    double minRebarArea = Collections.min(mRebar .getTotalRebarAreaListOfSpan_cm2(spanId));
 
                     for (caseVariable = 0; caseVariable < rebarCasesList.size(); caseVariable++){
                         int caseNum = caseVariable;
@@ -329,7 +341,7 @@ public class RebarCasesPageController {
                         rebarCaseButton.setText(getRebarCaseString(rebarCasesList, caseNum));
 
                         //create label to show rebar area for each rebar selection case
-                        double rebarArea = mRebar.getTotalRebarAreaListOfSpan(spanId).get(caseNum);
+                        double rebarArea = mRebar.getTotalRebarAreaListOfSpan_cm2(spanId).get(caseNum);
                         Label rebarAreaLabel = new Label(
                                 j_A_S.getSymbol() + " = "
                                         + TWO_DECIMALS.format(rebarArea)
@@ -835,7 +847,7 @@ public class RebarCasesPageController {
     }
 
     public AnchorPane getAnchorPane() {
-        return anchorPane;
+        return rebarPageAnchorPane;
     }
 
     public void createRebarCasesPage(Rebar rebar){

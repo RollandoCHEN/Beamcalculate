@@ -4,9 +4,9 @@ import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText
 import com.beamcalculate.model.custom_node.HoveredThresholdNode;
 import com.beamcalculate.model.MyMethods;
 import com.beamcalculate.model.RebarType_Number;
-import com.beamcalculate.model.calculate.Rebar;
-import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
+import com.beamcalculate.model.calculator.Rebar;
+import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculator.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -101,7 +101,7 @@ public class RebarCutChart {
                 - rebar.getReinforcement().getSpanReinforceParam().get(spanId).get(a_M) /
                         rebar.getReinforcement().getSpanReinforceParam().get(spanId).get(j_A_S);
 
-        Map<Integer, Double> layer_rebarArea_map = rebar.getRebarAreaListForEachLayerOfSpan(spanId).get(caseNum);
+        Map<Integer, Double> layer_rebarArea_map = rebar.getRebarAreaListForEachLayerOfSpan_cm2(spanId).get(caseNum);
 
         // TODO this switch statement should be finished, the number of layers could be more than 2
         switch (layer_rebarArea_map.size()){

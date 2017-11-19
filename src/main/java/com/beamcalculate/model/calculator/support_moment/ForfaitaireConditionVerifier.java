@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.support_moment;
+package com.beamcalculate.model.calculator.support_moment;
 
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import com.beamcalculate.model.entites.Geometry;

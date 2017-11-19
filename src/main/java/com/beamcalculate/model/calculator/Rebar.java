@@ -1,10 +1,11 @@
-package com.beamcalculate.model.calculate;
+package com.beamcalculate.model.calculator;
 
 import static com.beamcalculate.enums.RebarType.*;
 
 import com.beamcalculate.enums.RebarType;
 import com.beamcalculate.model.RebarType_Number;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +21,13 @@ public class Rebar {
     private Reinforcement mReinforcement;
     private int mMaxNumOfRebarPerLayer;
     private int mMaxNumLayers;
+    private Inputs mInputs;
     private Geometry mGeometry;
 
     public Rebar(Reinforcement reinforcement) {
-        setReinforcement(reinforcement);
-        mGeometry = reinforcement.getSpanMomentFunction().getInputs().getGeometry();
+        mReinforcement = reinforcement;
+        mInputs = mReinforcement.getInputs();
+        mGeometry = mInputs.getGeometry();
 
         double sectionWidth_cm = mGeometry.getSectionWidth() * 100;
         // TODO the estimation method of maxRebarPerLayer is not confirmed
@@ -108,7 +111,7 @@ public class Rebar {
         return getReinforcement().getSupportReinforceParam().get(supportId).get(j_A_S);
     }
 
-    public List<Map<Integer, Double>> getRebarAreaListForEachLayerOfSpan(int spanId){
+    public List<Map<Integer, Double>> getRebarAreaListForEachLayerOfSpan_cm2(int spanId){
         List<Map<Integer, Double>> rebarAreaList = new ArrayList<>();
 
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
@@ -127,13 +130,13 @@ public class Rebar {
         return rebarAreaList;
     }
 
-    public List<Double> getTotalRebarAreaListOfSpan(int spanId){
+    public List<Double> getTotalRebarAreaListOfSpan_cm2(int spanId){
         List<Double> totalRebarAreaList = new ArrayList<>();
 
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
             double totalRebarArea = 0;
-            for (int layerNum = 1; layerNum < getRebarAreaListForEachLayerOfSpan(spanId).get(caseNum).size()+1; layerNum++) {
-                totalRebarArea += getRebarAreaListForEachLayerOfSpan(spanId).get(caseNum).get(layerNum);
+            for (int layerNum = 1; layerNum < getRebarAreaListForEachLayerOfSpan_cm2(spanId).get(caseNum).size()+1; layerNum++) {
+                totalRebarArea += getRebarAreaListForEachLayerOfSpan_cm2(spanId).get(caseNum).get(layerNum);
             }
             totalRebarAreaList.add(totalRebarArea);
         }
@@ -152,12 +155,12 @@ public class Rebar {
         }
     }
 
-    private void setReinforcement(Reinforcement reinforcement) {
-        mReinforcement = reinforcement;
-    }
-
     public Reinforcement getReinforcement() {
         return mReinforcement;
+    }
+
+    public Inputs getInputs() {
+        return mInputs;
     }
 
     // RebarList is a List of LayerNumber_(RebarType_NumberOfRebar_Map) Map

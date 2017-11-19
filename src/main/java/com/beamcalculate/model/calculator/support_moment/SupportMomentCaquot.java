@@ -1,4 +1,4 @@
-package com.beamcalculate.model.calculate.support_moment;
+package com.beamcalculate.model.calculator.support_moment;
 
 import com.beamcalculate.model.entites.Inputs;
 
@@ -37,7 +37,7 @@ public class SupportMomentCaquot extends SupportMoment {
             mSupportMomentMap.put(i+1, mLoadCaseMomentMap);
         }
 
-        // calculate reduced length for each span_function
+        // calculator reduced length for each span_function
 
         mGeometry.spansLengthMap().forEach((k, v)->{
             if (k ==1 || k ==mGeometry.getNumSpan()) {
@@ -47,7 +47,7 @@ public class SupportMomentCaquot extends SupportMoment {
             }
         });
 
-        // calculate moment of support_moment
+        // calculator moment of support_moment
 
         mSupportMomentMap.forEach((supportId, mLoadCaseMomentMap)->{
             if (supportId==1||supportId== mSupportMomentMap.size()){

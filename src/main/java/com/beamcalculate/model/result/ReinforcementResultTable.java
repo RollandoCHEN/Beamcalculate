@@ -3,7 +3,7 @@ package com.beamcalculate.model.result;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
-import com.beamcalculate.model.calculate.Reinforcement;
+import com.beamcalculate.model.calculator.Reinforcement;
 import com.beamcalculate.model.entites.Geometry;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

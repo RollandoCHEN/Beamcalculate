@@ -1,10 +1,11 @@
-package com.beamcalculate.model.calculate;
+package com.beamcalculate.model.calculator;
 
 import com.beamcalculate.enums.Pivots;
 import com.beamcalculate.enums.ReinforcementParam;
-import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
+import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculator.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
+import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Material;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -47,13 +48,15 @@ public class Reinforcement {
     private Map<Integer, Pivots> mSpanPivotMap = new HashMap<>();
     private Map<Integer, Pivots> mSupportPivotMap = new HashMap<>();
 
+    private Inputs mInputs;
     private Geometry mGeometry;
     private Material mMaterial;
 
     public Reinforcement(AbstractSpanMoment spanMomentFunction) {
         mSpanMomentFunction = spanMomentFunction;
-        mGeometry = spanMomentFunction.getInputs().getGeometry();
-        mMaterial = spanMomentFunction.getInputs().getMaterial();
+        mInputs = spanMomentFunction.getInputs();
+        mGeometry = mInputs.getGeometry();
+        mMaterial = mInputs.getMaterial();
         prepare();
 
         for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++){
@@ -234,6 +237,10 @@ public class Reinforcement {
             maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX);
         }
         return maxMoment;
+    }
+
+    public Inputs getInputs() {
+        return mInputs;
     }
 
     public Map<Integer, Map<ReinforcementParam, Double>> getSpanReinforceParam() {

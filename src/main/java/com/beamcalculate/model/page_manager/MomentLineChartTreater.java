@@ -3,9 +3,9 @@ package com.beamcalculate.model.page_manager;
 import static com.beamcalculate.model.MyMethods.round;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 
-import com.beamcalculate.model.calculate.ELUCombination;
-import com.beamcalculate.model.calculate.span_function.AbstractSpanMoment;
-import com.beamcalculate.model.calculate.span_function.SpanMomentFunction_SpecialLoadCase;
+import com.beamcalculate.model.calculator.ELUCombination;
+import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
+import com.beamcalculate.model.calculator.span_function.SpanMomentFunction_SpecialLoadCase;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.enums.UltimateCase;
 import com.beamcalculate.model.custom_node.HoveredThresholdNode;

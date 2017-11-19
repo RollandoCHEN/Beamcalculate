@@ -19,8 +19,9 @@
 <ScrollPane stylesheets="@../css/moment_page.css"
             xmlns="http://javafx.com/javafx/8.0.141"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="scrollContainer"
             fx:controller="com.beamcalculate.controllers.MomentPageController">
-   <AnchorPane fx:id="momentPageAnchorPane" minHeight="900" minWidth="1600" prefHeight="900.0" prefWidth="1600.0">
+   <AnchorPane fx:id="momentPageAnchorPane">
       <BorderPane fx:id="borderPaneContainer"
                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

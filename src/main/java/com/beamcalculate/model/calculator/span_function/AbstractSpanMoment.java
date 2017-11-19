@@ -1,6 +1,6 @@
-package com.beamcalculate.model.calculate.span_function;
+package com.beamcalculate.model.calculator.span_function;
 
-import com.beamcalculate.model.calculate.support_moment.SupportMoment;
+import com.beamcalculate.model.calculator.support_moment.SupportMoment;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
 import com.beamcalculate.model.entites.Load;
