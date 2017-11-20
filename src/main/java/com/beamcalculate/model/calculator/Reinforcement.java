@@ -206,7 +206,7 @@ public class Reinforcement {
         }
         paramValueMap.put(g_EPSILON_S, mStrainEpsilonS);
 
-        mStressSigmaS = mFyd *(1 + 0.08 * (mStrainEpsilonS - 0.217) / (mSteelUltimateStrain * 100 - 0.217));
+        mStressSigmaS = mFyd *(1 + 0.08 * (mStrainEpsilonS - 2.17) / (mSteelUltimateStrain * 1000 - 2.17));
         paramValueMap.put(i_SIGMA_S, mStressSigmaS);
 
         mRebarAreaAs = maxMoment/(mLeverArmZ * mStressSigmaS) * 10000;

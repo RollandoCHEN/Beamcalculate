@@ -1,0 +1,30 @@
+.root{
+    -fx-background-color: #3D4956;
+}
+
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: silver;
+}
+
+.label.header {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+}
+
+.label.pass {
+    -fx-font-size: 16px;
+    -fx-text-fill: #0ccc85;
+    -fx-font-weight: bold;
+}
+
+.label.fail {
+    -fx-font-size: 16px;
+    -fx-text-fill: #eda678;
+    -fx-font-weight: bold;
+}
+.grid {
+    -fx-stroke: red;
+    -fx-background-color: white;
+}

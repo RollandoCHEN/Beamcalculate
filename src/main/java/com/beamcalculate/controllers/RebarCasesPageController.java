@@ -121,8 +121,8 @@ public class RebarCasesPageController {
 
     private double mCoverThickness_cm;
 
-    private final double PAGE_MIN_HEIGHT = 900;
-    private final double PAGE_MIN_WIDTH = 1040;
+    private double mMinHeight;
+    private double mMinWidth;
 
     public class RebarCasesPageCreator {
         private final Geometry mGeometry;
@@ -133,15 +133,12 @@ public class RebarCasesPageController {
             mGeometry = mReinforcement.getSpanMomentFunction().getInputs().getGeometry();
 
             initializeCrossSectionView();
-            setSceneSize();
+            setPageMinSize();
             initializeElevationView();
             generateRebarSelectionCasesTable();
 
-            rebarPageAnchorPane.setMinHeight(PAGE_MIN_HEIGHT);
-            rebarPageAnchorPane.setMinWidth(PAGE_MIN_WIDTH);
-
             PageScaleHandler scaleHandler = new PageScaleHandler();
-            scaleHandler.AddScaleListener(scrollContainer, rebarPageAnchorPane, PAGE_MIN_HEIGHT, PAGE_MIN_WIDTH);
+            scaleHandler.AddScaleListener(scrollContainer, rebarPageAnchorPane, mMinHeight, mMinWidth);
         }
 
         private void initializeElevationView() {
@@ -237,7 +234,7 @@ public class RebarCasesPageController {
             totalHeightString.bind(ZERO_DECIMAL.format(totalHeight));
         }
 
-        private void setSceneSize() {
+        private void setPageMinSize() {
             double maxSchemaWidth;
             if(mGeometry.isOnTSection()){
                 // scene size depends on the max flange width
@@ -258,13 +255,16 @@ public class RebarCasesPageController {
             totalLength.set(0.9 * (leftGridPaneWidth.get() + rightGridPaneWidth.get()));
 
             // 80 is the padding in the grid pane, around the left and right grid pane
-            rebarPageAnchorPane.setMinWidth(getLeftGridPaneWidth() + getRightGridPaneWidth() + 80);
+            mMinWidth = getLeftGridPaneWidth() + getRightGridPaneWidth() + 80;
+
+            rebarPageAnchorPane.setMinWidth(mMinWidth);
             int maxNumOfCases = 1;
             for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
                 int rebarCases = mRebar.getRebarCasesListOfSpan(spanId).size();
                 maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
             }
-            rebarPageAnchorPane.setMinHeight(Math.max(maxNumOfCases * 110 + 100, 950));
+            mMinHeight = Math.max(maxNumOfCases * 110 + 100, 950);
+            rebarPageAnchorPane.setMinHeight(mMinHeight);
         }
 
         private void generateRebarSelectionCasesTable() {
