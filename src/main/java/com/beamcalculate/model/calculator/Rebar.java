@@ -3,7 +3,8 @@ package com.beamcalculate.model.calculator;
 import static com.beamcalculate.enums.RebarType.*;
 
 import com.beamcalculate.enums.RebarType;
-import com.beamcalculate.model.RebarType_Number;
+import com.beamcalculate.model.RebarCase;
+import com.beamcalculate.model.RebarType_Amount;
 import com.beamcalculate.model.entites.Geometry;
 import com.beamcalculate.model.entites.Inputs;
 
@@ -17,7 +18,7 @@ import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
 public class Rebar {
     // TODO mMaxDiameter should not be fixed
     private double mMaxDiameter = HA25.getDiameter_mm();
-    private Map<Integer, List<Map<Integer, RebarType_Number>>> mRebarCasesMap = new HashMap<>();
+    private Map<Integer, List<RebarCase>> mRebarCasesMap = new HashMap<>();
     private Reinforcement mReinforcement;
     private int mMaxNumOfRebarPerLayer;
     private int mMaxNumLayers;
@@ -44,19 +45,19 @@ public class Rebar {
 
     private void calculateRebarCasesOfSpan(int spanId) {
         double rebarAreaAs = getRebarAreaOfSpan(spanId);
-        List<Map<Integer, RebarType_Number>> rebarCasesList = new ArrayList<>();
+        List<RebarCase> rebarCasesList = new ArrayList<>();
 
         // put steel bars with different diameters for different layers, but on one layer, put same bars
         for (int numOfLayers = 1; numOfLayers < mMaxNumLayers + 1; numOfLayers++) {
             switch (numOfLayers){
                 case 1: {
                     for (RebarType rebarType : RebarType.values()) {
-                        Map<Integer, RebarType_Number> layer_rebarMap = new HashMap<>();
+                        RebarCase layer_rebarMap = new RebarCase();
 
                         if (rebarType.getSectionalArea_cm2(mMaxNumOfRebarPerLayer) > rebarAreaAs
                                 && rebarType.getDiameter_mm() <= mMaxDiameter) {
 
-                            RebarType_Number type_numberMap = new RebarType_Number(rebarType, mMaxNumOfRebarPerLayer);
+                            RebarType_Amount type_numberMap = new RebarType_Amount(rebarType, mMaxNumOfRebarPerLayer);
 
                             layer_rebarMap.put(1, type_numberMap);
 
@@ -83,10 +84,10 @@ public class Rebar {
                                         firstLayerRebarType.getInnerNumber() - secondLayerRebarType.getInnerNumber() <= 2)
                                 {
                                     secondLayerMinRebarDiameter = secondLayerRebarType.getDiameter_mm();
-                                    RebarType_Number first_type_numberMap = new RebarType_Number(firstLayerRebarType, mMaxNumOfRebarPerLayer);
-                                    RebarType_Number second_type_numberMap = new RebarType_Number(secondLayerRebarType, mMaxNumOfRebarPerLayer);
+                                    RebarType_Amount first_type_numberMap = new RebarType_Amount(firstLayerRebarType, mMaxNumOfRebarPerLayer);
+                                    RebarType_Amount second_type_numberMap = new RebarType_Amount(secondLayerRebarType, mMaxNumOfRebarPerLayer);
 
-                                    Map<Integer, RebarType_Number> layer_rebarMap = new HashMap<>();
+                                    RebarCase layer_rebarMap = new RebarCase();
                                     layer_rebarMap.put(1, first_type_numberMap);
                                     layer_rebarMap.put(2, second_type_numberMap);
 
@@ -117,10 +118,10 @@ public class Rebar {
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
             Map<Integer, Double> rebarAreaMap = new HashMap<>();
 
-            Map<Integer, RebarType_Number> layerRebarMap = getRebarCasesListOfSpan(spanId).get(caseNum);
-            layerRebarMap.forEach((layerNum, rebarType_number) -> {
-                RebarType rebarType = rebarType_number.getRebarType();
-                int numOfRebar = rebarType_number.getNumberOfRebar();
+            RebarCase layerRebarMap = getRebarCasesListOfSpan(spanId).get(caseNum);
+            layerRebarMap.forEach((layerNum, rebarType_amount) -> {
+                RebarType rebarType = rebarType_amount.getRebarType();
+                int numOfRebar = rebarType_amount.getNumberOfRebar();
                 double rebarArea = rebarType.getSectionalArea_cm2(numOfRebar);
                 rebarAreaMap.put(layerNum, rebarArea);
             });
@@ -146,10 +147,10 @@ public class Rebar {
     private void printRebarOfSpan(int spanId) {
         for (int i = 0; i< getRebarCasesListOfSpan(spanId).size(); i++) {
             System.out.printf("%nSpan %d : %n", spanId);
-            Map<Integer, RebarType_Number> layerRebarMap = getRebarCasesListOfSpan(spanId).get(i);
+            RebarCase layerRebarMap = getRebarCasesListOfSpan(spanId).get(i);
             System.out.printf("- Case %d : %n", i+1);
 
-            layerRebarMap.forEach((layerNum, rebarType_number) -> System.out.printf("Layer %d, %d%s%n", layerNum, rebarType_number.getNumberOfRebar(), rebarType_number.getRebarType().name())
+            layerRebarMap.forEach((layerNum, rebarType_amount) -> System.out.printf("Layer %d, %d%s%n", layerNum, rebarType_amount.getNumberOfRebar(), rebarType_amount.getRebarType().name())
             );
 
         }
@@ -165,7 +166,7 @@ public class Rebar {
 
     // RebarList is a List of LayerNumber_(RebarType_NumberOfRebar_Map) Map
     // The RebarList represent the rebar cases who match the needed steel rebar
-    public List<Map<Integer, RebarType_Number>> getRebarCasesListOfSpan(int spanId) {
+    public List<RebarCase> getRebarCasesListOfSpan(int spanId) {
         return mRebarCasesMap.get(spanId);
     }
 

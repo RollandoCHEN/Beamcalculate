@@ -12,8 +12,8 @@ import java.util.function.Function;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.CombinCoef.G_UNFAVORABLE_COEF;
 import static com.beamcalculate.enums.CombinCoef.Q_UNFAVORABLE_COEF;
-import static com.beamcalculate.enums.UltimateCase.MAX;
-import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.enums.UltimateCase.MAX_MOMENT_TAG;
+import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
 import static com.beamcalculate.model.MyMethods.round;
 
 public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
@@ -76,7 +76,7 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
             if (roundedX <= maxX) {
                 loadCaseMomentFunctionMap = mSpanMomentFunctionMap.get(spanId);
                 for (Map.Entry<Integer, Function<Double, Double>> entry : loadCaseMomentFunctionMap.entrySet()) {
-                    if (ultimateCase == MAX) {
+                    if (ultimateCase == MAX_MOMENT_TAG) {
                         finalMoment = Math.max(finalMoment, entry.getValue().apply(x));
                     } else {
                         finalMoment = Math.min(finalMoment, entry.getValue().apply(x));
@@ -97,10 +97,10 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
         for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
             double moment = getUltimateMomentValueOfSpan(spanId, ultimateCase);
             switch (ultimateCase) {
-                case MAX:
+                case MAX_MOMENT_TAG:
                     compareCondition = moment > ultimateMoment;
                     break;
-                case MIN:
+                case MIN_MOMENT_TAG:
                     compareCondition = moment < ultimateMoment;
                     break;
             }
@@ -126,10 +126,10 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
             double moment = this.getUltimateMomentForSpecialLoadCaseAtXOfSpan(spanLocalX, spanId, ultimateCase);
 
             switch (ultimateCase) {
-                case MAX:
+                case MAX_MOMENT_TAG:
                     compareCondition = moment > ultimateMoment;
                     break;
-                case MIN:
+                case MIN_MOMENT_TAG:
                     compareCondition = moment < ultimateMoment;
                     break;
             }
@@ -155,7 +155,7 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
             spanId = supportId;
             xOfSupport = 0;
         }
-        return this.getUltimateMomentForSpecialLoadCaseAtXOfSpan(xOfSupport, spanId, MIN);
+        return this.getUltimateMomentForSpecialLoadCaseAtXOfSpan(xOfSupport, spanId, MIN_MOMENT_TAG);
     }
 
     @Override

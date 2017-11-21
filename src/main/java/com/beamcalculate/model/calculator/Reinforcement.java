@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.UltimateCase.MAX;
+import static com.beamcalculate.enums.UltimateCase.MAX_MOMENT_TAG;
 import static com.beamcalculate.enums.Pivots.PIVOT_A;
 import static com.beamcalculate.enums.Pivots.PIVOT_B;
 import static com.beamcalculate.enums.Pivots.PIVOT_C;
@@ -231,10 +231,10 @@ public class Reinforcement {
         double maxMoment;
         if(mSpanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) mSpanMomentFunction;
-            maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX);
+            maxMoment = newSpanMomentFunction.getUltimateMomentValueOfSpan(spanId, MAX_MOMENT_TAG);
         }else {
             ELUCombination combination = new ELUCombination(mSpanMomentFunction);
-            maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX);
+            maxMoment = combination.getUltimateMomentValueOfSpan(spanId, MAX_MOMENT_TAG);
         }
         return maxMoment;
     }

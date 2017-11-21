@@ -38,7 +38,7 @@ public class MomentRedistribution {
         mMaterial = spanMomentFunction.getInputs().getMaterial();
         for (int supportId = 1; supportId < mGeometry.getNumSupport()+1; supportId++) {
 
-//        getRebarTypeNum support_moment moment values before redistribution
+//        getRebarOfLayer support_moment moment values before redistribution
             mSupportMomentMap_BR.put(supportId, combination.getMinMomentValueOfSupport(supportId));
 
 //        get support_moment Mu values before redistribution

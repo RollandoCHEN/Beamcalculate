@@ -70,7 +70,7 @@
                <HBox alignment="CENTER" spacing="30.0" GridPane.rowIndex="0">
                   <JFXComboBox fx:id="methodsChoiceBox" prefWidth="280.0" promptText="%label.momentCalculateMethod"/>
                   <JFXButton fx:id="rebarCalculateButton"
-                             disable="true" text="%button.calculateRebar"/>
+                             disable="true" text="%button.calculate_rebar"/>
                </HBox>
 
                <HBox alignment="CENTER_LEFT" spacing="50" prefWidth="1450" GridPane.rowIndex="1">

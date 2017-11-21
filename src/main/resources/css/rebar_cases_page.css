@@ -22,12 +22,13 @@
     -fx-font-size: 13px;
 }
 
-.label-red-bold{
-    -fx-text-fill: #eda678;
+.label.highlight{
+    -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-underline: true;
 }
 
-.label-black-bold{
+.label.header{
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
@@ -54,4 +55,39 @@
 
 .line {
     -fx-stroke: silver;
+}
+
+.combo-box {
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: silver;
+    -jfx-focus-color: #00d0bb;
+    -jfx-unfocus-color: silver;
+    -jfx-label-float: true;
+}
+
+.combo-box-base{
+    -fx-color: #3D4956;
+    -fx-padding: 2 2 2 2;
+}
+
+.combo-box .cell{
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+    -fx-padding: 8 3 8 3;
+}
+
+.combo-box .list-cell{
+    -fx-background-color: grey;
+}
+
+
+.combo-box .list-cell:hover{
+    -fx-background-color: #eda678;
+}
+
+
+.combo-box .list-cell:selected{
+    -fx-text-fill: #eda678;
+    -fx-font-weight: bold;
+    -fx-background-color: #3D4956;
 }

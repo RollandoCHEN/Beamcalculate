@@ -1,9 +1,11 @@
 package com.beamcalculate.model.result;
 
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
+
+import com.beamcalculate.model.RebarCase;
 import com.beamcalculate.model.custom_node.HoveredThresholdNode;
 import com.beamcalculate.model.MyMethods;
-import com.beamcalculate.model.RebarType_Number;
+import com.beamcalculate.model.RebarType_Amount;
 import com.beamcalculate.model.calculator.Rebar;
 import com.beamcalculate.model.calculator.span_function.AbstractSpanMoment;
 import com.beamcalculate.model.calculator.span_function.SpanMomentFunction_SpecialLoadCase;
@@ -29,8 +31,8 @@ import java.util.Map;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.ReinforcementParam.a_M;
 import static com.beamcalculate.enums.ReinforcementParam.j_A_S;
-import static com.beamcalculate.enums.UltimateCase.MAX;
-import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.enums.UltimateCase.MAX_MOMENT_TAG;
+import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
 import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
 
 public class RebarCutChart {
@@ -61,12 +63,12 @@ public class RebarCutChart {
         XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
         if (calculateMethod.equals(TROIS_MOMENT_R.getMethodName())) {
-            addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX, maxSeries);
-            addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN, minSeries);
+            addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX_MOMENT_TAG, maxSeries);
+            addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN_MOMENT_TAG, minSeries);
 
         } else {
-            addDataToMomentSeries(300, mSpanMoment, MAX, maxSeries);
-            addDataToMomentSeries(300, mSpanMoment, MIN, minSeries);
+            addDataToMomentSeries(300, mSpanMoment, MAX_MOMENT_TAG, maxSeries);
+            addDataToMomentSeries(300, mSpanMoment, MIN_MOMENT_TAG, minSeries);
         }
 
         //for all series, take date, each data has custom_node (symbol) for representing point
@@ -122,7 +124,7 @@ public class RebarCutChart {
             case 2 : {
                 List<Double> secondLayerRebarCutPointsList = new ArrayList<>();
 
-                double secondLayerRebarDiameter = rebar.getRebarCasesListOfSpan(spanId).get(caseNum).get(2).getRebarType().getDiameter_mm();
+                double secondLayerRebarDiameter = rebar.getRebarCasesListOfSpan(spanId).get(caseNum).getRebarDiamOfLayer_mm(2);
                 setAnchorageLength_mm(40 * secondLayerRebarDiameter);
 
                 setFirstLayerMoment(layer_rebarArea_map.get(1) * rebarAreaMomentRatio);
@@ -236,8 +238,8 @@ public class RebarCutChart {
         Label titleSpanLabel = new Label(getBundleText("label.span") + " " + spanId + " :");
         Label titleRebarCaseLabel = new Label();
         titleSpanLabel.getStyleClass().add("title");
-        List<Map<Integer, RebarType_Number>> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
-        titleRebarCaseLabel.setText(getRebarCaseString(rebarCasesList, caseNum));
+        List<RebarCase> rebarCasesList = rebar.getRebarCasesListOfSpan(spanId);
+        titleRebarCaseLabel.setText(rebarCasesList.get(caseNum).toString());
         titleRebarCaseLabel.getStyleClass().add("rebar");
 
         HBox titleHBox = new HBox(titleSpanLabel, titleRebarCaseLabel);
@@ -253,17 +255,17 @@ public class RebarCutChart {
         mScene.getStylesheets().add("/css/rebar_cut_chart.css");
     }
 
-    private String getRebarCaseString(List<Map<Integer, RebarType_Number>> rebarCasesList, int caseNum) {
+    private String getRebarCaseString(List<Map<Integer, RebarType_Amount>> rebarCasesList, int caseNum) {
         StringBuilder buttonString = new StringBuilder();
         int lastLayer = rebarCasesList.get(caseNum).size();
         for (int layerNum = lastLayer; layerNum > 0; layerNum--){
-            RebarType_Number rebarType_number = rebarCasesList.get(caseNum).get(layerNum);
+            RebarType_Amount rebarType_amount = rebarCasesList.get(caseNum).get(layerNum);
 
             if (layerNum != lastLayer){
                 buttonString.append("\n");
             }
-            String rebarTypeName = rebarType_number.getRebarType().name();
-            int numberOfRebar = rebarType_number.getNumberOfRebar();
+            String rebarTypeName = rebarType_amount.getRebarType().name();
+            int numberOfRebar = rebarType_amount.getNumberOfRebar();
             buttonString.append(MyMethods.getOrdinalNumber(layerNum))
                     .append(getBundleText("label.steelRebarLayer"))
                     .append(" : ").append(numberOfRebar).append(rebarTypeName);

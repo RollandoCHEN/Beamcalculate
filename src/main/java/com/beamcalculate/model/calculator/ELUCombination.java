@@ -12,7 +12,7 @@ import java.util.function.Function;
 import static com.beamcalculate.enums.CombinCoef.*;
 import static com.beamcalculate.enums.SpecialLoadCase.SPAN_MAX;
 import static com.beamcalculate.enums.SpecialLoadCase.SUPPORT_MIN;
-import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
 import static com.beamcalculate.model.MyMethods.round;
 
 
@@ -43,10 +43,10 @@ public class ELUCombination {
             loadCaseMomentFunctionMap.forEach((loadCase, momentFunction) -> {
                 mMomentBeforeCombination = momentFunction.apply(finalX);
                 switch (ultimateCase) {
-                    case MAX:
+                    case MAX_MOMENT_TAG:
                         mUnfavorableCondition = mMomentBeforeCombination > 0;
                         break;
-                    case MIN:
+                    case MIN_MOMENT_TAG:
                         mUnfavorableCondition = mMomentBeforeCombination < 0;
                         break;
                 }
@@ -137,10 +137,10 @@ public class ELUCombination {
         for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
             double moment = getUltimateMomentValueOfSpan(spanId, ultimateCase);
             switch (ultimateCase) {
-                case MAX:
+                case MAX_MOMENT_TAG:
                     compareCondition = moment > ultimateMoment;
                     break;
-                case MIN:
+                case MIN_MOMENT_TAG:
                     compareCondition = moment < ultimateMoment;
                     break;
             }
@@ -166,10 +166,10 @@ public class ELUCombination {
             double moment = this.getCombinedUltimateMomentAtXOfSpan(spanLocalX, spanId, ultimateCase);
 
             switch (ultimateCase) {
-                case MAX:
+                case MAX_MOMENT_TAG:
                     compareCondition = moment > ultimateMoment;
                     break;
-                case MIN:
+                case MIN_MOMENT_TAG:
                     compareCondition = moment < ultimateMoment;
                     break;
             }
@@ -195,7 +195,7 @@ public class ELUCombination {
             spanId = supportId;
             xOfSupport = 0;
         }
-        return this.getCombinedUltimateMomentAtXOfSpan(xOfSupport, spanId, MIN);
+        return this.getCombinedUltimateMomentAtXOfSpan(xOfSupport, spanId, MIN_MOMENT_TAG);
     }
 
     public double getSupportMomentWhenSpanMomentMax(

@@ -17,8 +17,8 @@ import java.util.List;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.UltimateCase.MAX;
-import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.enums.UltimateCase.MAX_MOMENT_TAG;
+import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
 
 public class MomentLineChartTreater {
 
@@ -28,12 +28,12 @@ public class MomentLineChartTreater {
 
         if (spanMomentFunction.getMethod().equals(TROIS_MOMENT_R.getMethodName())) {
             SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = (SpanMomentFunction_SpecialLoadCase) spanMomentFunction;
-            maxSupportMomentValue = newSpanMomentFunction.getUltimateMomentValue(MIN);
-            maxSpanMomentValue = newSpanMomentFunction.getUltimateMomentValue(MAX);
+            maxSupportMomentValue = newSpanMomentFunction.getUltimateMomentValue(MIN_MOMENT_TAG);
+            maxSpanMomentValue = newSpanMomentFunction.getUltimateMomentValue(MAX_MOMENT_TAG);
         } else {
             ELUCombination combination = new ELUCombination(spanMomentFunction);
-            maxSupportMomentValue = combination.getUltimateMomentValue(MIN);
-            maxSpanMomentValue = combination.getUltimateMomentValue(MAX);
+            maxSupportMomentValue = combination.getUltimateMomentValue(MIN_MOMENT_TAG);
+            maxSpanMomentValue = combination.getUltimateMomentValue(MAX_MOMENT_TAG);
         }
 
         NumberAxis xAxis = new NumberAxis(

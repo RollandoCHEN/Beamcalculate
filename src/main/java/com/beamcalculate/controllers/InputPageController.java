@@ -27,6 +27,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,6 +35,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
@@ -403,6 +407,16 @@ public class InputPageController implements Initializable {
     //Get main controller
     public void injectMainController(MainAccessController mainAccessController) {
         mMainAccessController = mainAccessController;
+    }
+
+    public void DEBUG(ActionEvent actionEvent) {
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+        webEngine.loadContent(
+                "<h1>G<sub>&mu;&nu;</sub>=8πT<sub>&mu;&nu;</sub>; E=mc<sup>2</sup>");
+        Stage stage = new Stage();
+        stage.setScene(new Scene(webView));
+        stage.show();
     }
 
     //Get nodes from moment page controller through the main controller

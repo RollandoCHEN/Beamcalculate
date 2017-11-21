@@ -45,8 +45,8 @@ import java.util.Map;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT;
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
 import static com.beamcalculate.enums.NumericalFormat.*;
-import static com.beamcalculate.enums.UltimateCase.MAX;
-import static com.beamcalculate.enums.UltimateCase.MIN;
+import static com.beamcalculate.enums.UltimateCase.MAX_MOMENT_TAG;
+import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
 import static com.beamcalculate.model.MyMethods.round;
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
 import static com.beamcalculate.model.page_manager.MomentLineChartTreater.*;
@@ -160,8 +160,6 @@ public class MomentPageController {
 
                 mShowRebarPage.setValue(true);
                 mMainAccessController.getRebarCasesPageButton().setSelected(true);
-
-                Deflection deflection = new Deflection(rebar);
             });
 
             redistributionCheck.setSelected(false);
@@ -206,12 +204,12 @@ public class MomentPageController {
 
                 if (!methodsChoiceBox.getSelectionModel().isEmpty()){
                     Label maxCaseMomentLabel = new Label(
-                            getBundleText("label.maxMoment") +
+                            getBundleText("label.max_moment_value") +
                             " (" + getBundleText("unit.moment") + ") : "
                     );
                     mMaxCaseMomentValue = new Label();
                     Label minCaseMomentLabel = new Label(
-                            getBundleText("label.minMoment") +
+                            getBundleText("label.min_moment_value") +
                                     " (" + getBundleText("unit.moment") + ") : "
                     );
                     mMinCaseMomentValue = new Label();
@@ -234,7 +232,7 @@ public class MomentPageController {
                                                 newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                                                         getSpanLocalX(mySlider.valueProperty().get(), newSpanMoment),
                                                         getSpanId(mySlider.valueProperty().get(), newSpanMoment),
-                                                        MAX
+                                                        MAX_MOMENT_TAG
                                                 )
                                         ) + "",
                                         mySlider.valueProperty()
@@ -246,7 +244,7 @@ public class MomentPageController {
                                                 newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                                                         getSpanLocalX(mySlider.valueProperty().get(), newSpanMoment),
                                                         getSpanId(mySlider.valueProperty().get(), newSpanMoment),
-                                                        MIN
+                                                        MIN_MOMENT_TAG
                                                 )
                                         ) + "",
                                         mySlider.valueProperty()
@@ -261,7 +259,7 @@ public class MomentPageController {
                                                 eluCombination.getCombinedUltimateMomentAtXOfSpan(
                                                         getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
                                                         getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
-                                                        MAX
+                                                        MAX_MOMENT_TAG
                                                 )
                                         ) + "",
                                         mySlider.valueProperty()
@@ -273,7 +271,7 @@ public class MomentPageController {
                                                 eluCombination.getCombinedUltimateMomentAtXOfSpan(
                                                         getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
                                                         getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
-                                                        MIN
+                                                        MIN_MOMENT_TAG
                                                 )
                                         ) + "",
                                         mySlider.valueProperty()
@@ -317,7 +315,7 @@ public class MomentPageController {
                     JFXTextField abscissaField = new JFXTextField();
                     abscissaField.setPromptText(getBundleText("label.xOnSpan"));
                     abscissaFieldHBox.getChildren().clear();
-//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().getRebarTypeNum(selectedSpanId),2), true);
+//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2), true);
                     abscissaFieldHBox.getChildren().add(abscissaField);
                     abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
 
@@ -362,7 +360,7 @@ public class MomentPageController {
 //                            if (abscissaField.getText().isEmpty()){
 //                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
 //                            }else {
-//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().getRebarTypeNum(selectedSpanId),2);
+//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2);
 //                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
 //                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
 //                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
@@ -384,18 +382,18 @@ public class MomentPageController {
 
         private void prepareMomentSeriesAndAddToLineChart(SpanMomentFunction spanMomentFunction) {
             String methodName = spanMomentFunction.getMethod();
-            String maxSeriesId = methodName + " - " + getBundleText("label.max");
-            String minSeriesId = methodName + " - " + getBundleText("label.min");
+            String maxSeriesId = methodName + " - " + getBundleText("label.max_moment_tag");
+            String minSeriesId = methodName + " - " + getBundleText("label.min_moment_tag");
             //Set checkbox to show or hide line chart
             JFXCheckBox methodCheck = new JFXCheckBox(methodName);
             methodCheck.selectedProperty().addListener((arg0, oldValue, newValue) -> {
                 if (newValue) {
                     //Define series
                     LineChart.Series<Number, Number> maxELUSeries = new LineChart.Series<>();
-                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, maxELUSeries);
+                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX_MOMENT_TAG, maxELUSeries);
 
                     LineChart.Series<Number, Number> minELUSeries = new LineChart.Series<>();
-                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, minELUSeries);
+                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN_MOMENT_TAG, minELUSeries);
 
                     //through this mStringSeriesMap to store all the series
                     //when add series to the line chart, use also mStringSeriesMap, so when remove series, we can identify the series ??
@@ -419,8 +417,8 @@ public class MomentPageController {
             totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
                 mStringSeriesMap.get(maxSeriesId).getData().clear();
                 mStringSeriesMap.get(minSeriesId).getData().clear();
-                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX, mStringSeriesMap.get(maxSeriesId));
-                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN, mStringSeriesMap.get(minSeriesId));
+                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(maxSeriesId));
+                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(minSeriesId));
             });
 
             methodsCheckHBox.getChildren().add(methodCheck);
@@ -438,8 +436,8 @@ public class MomentPageController {
 
             //add margin to the y axis
             ELUCombination combination = new ELUCombination(spanMomentFunction);
-            double maxSpanMomentValue = -Math.max(-mYAxis.getLowerBound(), 1.2 * combination.getUltimateMomentValue(MAX));
-            double maxSupportMomentValue = -Math.min(-mYAxis.getUpperBound(), 1.2 * combination.getUltimateMomentValue(MIN));
+            double maxSpanMomentValue = -Math.max(-mYAxis.getLowerBound(), 1.2 * combination.getUltimateMomentValue(MAX_MOMENT_TAG));
+            double maxSupportMomentValue = -Math.min(-mYAxis.getUpperBound(), 1.2 * combination.getUltimateMomentValue(MIN_MOMENT_TAG));
 
             mYAxis.lowerBoundProperty().set(maxSpanMomentValue);
             mYAxis.upperBoundProperty().set(maxSupportMomentValue);
@@ -477,11 +475,11 @@ public class MomentPageController {
             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
             );
 
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
             );
 
             redistributionCheck.selectedProperty().addListener(((observable, oldValue, newValue) -> {
@@ -515,21 +513,21 @@ public class MomentPageController {
 //                if (newValue) {
 //                    SpanMomentFunction_SpecialLoadCase newSpanMomentFunction = calculateRedistributionMoment(spanMomentFunction, mRedCoefMapForChart);
 //                    addDataToRedistributionMomentSeries(
-//                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+//                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, maxELUSeries
 //                    );
 //
 //                    addDataToRedistributionMomentSeries(
-//                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+//                            totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, minELUSeries
 //                    );
 //
 //                    totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
 //                        maxELUSeries.getData().clear();
 //                        minELUSeries.getData().clear();
 //                        addDataToRedistributionMomentSeries(
-//                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, maxELUSeries
+//                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, maxELUSeries
 //                        );
 //                        addDataToRedistributionMomentSeries(
-//                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, minELUSeries
+//                                totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, minELUSeries
 //                        );
 //                    });
 //
@@ -537,13 +535,13 @@ public class MomentPageController {
 //                    mStringSeriesMap.put(minSeriesId, minELUSeries);
 //
 //                    mLineChart.getData().addAll(
-//                            mStringSeriesMap.getRebarTypeNum(maxSeriesId),
-//                            mStringSeriesMap.getRebarTypeNum(minSeriesId)
+//                            mStringSeriesMap.getRebarOfLayer(maxSeriesId),
+//                            mStringSeriesMap.getRebarOfLayer(minSeriesId)
 //                    );
 //                } else {
 //                    mLineChart.getData().removeAll(
-//                            mStringSeriesMap.getRebarTypeNum(maxSeriesId),
-//                            mStringSeriesMap.getRebarTypeNum(minSeriesId)
+//                            mStringSeriesMap.getRebarOfLayer(maxSeriesId),
+//                            mStringSeriesMap.getRebarOfLayer(minSeriesId)
 //                    );
 //                }
 //            });
@@ -665,21 +663,21 @@ public class MomentPageController {
             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
             );
 
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
             );
 
             totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
                 mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
                 mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
                 addDataToRedistributionMomentSeries(
-                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
                 );
                 addDataToRedistributionMomentSeries(
-                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
                 );
             });
 
@@ -693,7 +691,7 @@ public class MomentPageController {
                                         newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                                                 getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
                                                 getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
-                                                MAX
+                                                MAX_MOMENT_TAG
                                         )
                                 ) + "",
                                 mySlider.valueProperty()
@@ -705,7 +703,7 @@ public class MomentPageController {
                                         newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
                                                 getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
                                                 getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())),
-                                                MIN
+                                                MIN_MOMENT_TAG
                                         )
                                 ) + "",
                                 mySlider.valueProperty()

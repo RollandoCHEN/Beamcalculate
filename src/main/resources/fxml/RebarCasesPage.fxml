@@ -39,7 +39,7 @@
             <center>
                 <VBox>
                     <GridPane alignment="TOP_CENTER">
-                        <padding><Insets left="30" right="30"/></padding>
+                        <padding><Insets left="20" right="20"/></padding>
 
                         <GridPane fx:id="leftSectionViewGridPane" alignment="CENTER" prefWidth="${controller.leftGridPaneWidth}"
                                   GridPane.columnIndex="0" GridPane.rowIndex="0">
@@ -170,10 +170,12 @@
 
                         <GridPane fx:id="rightRebarSelectionGridPane" alignment="TOP_CENTER" prefWidth="${controller.rightGridPaneWidth}"
                                   GridPane.columnIndex="1" GridPane.rowIndex="0">
-                            <VBox spacing="20" alignment="TOP_RIGHT">
+                            <VBox spacing="20" alignment="TOP_CENTER">
                                 <GridPane fx:id="spanRebarSelectionGridPane" alignment="CENTER" hgap="20" vgap="15">
 
                                 </GridPane>
+
+                                <JFXButton fx:id="deflectionButton" text="%button.verify_deflection"/>
                             </VBox>
                         </GridPane>
                     </GridPane>

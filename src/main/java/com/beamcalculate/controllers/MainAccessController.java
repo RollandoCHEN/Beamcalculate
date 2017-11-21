@@ -31,14 +31,17 @@ public class MainAccessController implements Initializable {
     @FXML ToggleButton inputPageButton;
     @FXML ToggleButton momentPageButton;
     @FXML ToggleButton rebarCasesPageButton;
+    @FXML ToggleButton deflectionPageButton;
     @FXML MenuItem fullScreenItem;
 
     @FXML private Parent inputPage;
     @FXML private Parent momentPage;
     @FXML private Parent rebarCasesPage;
+    @FXML private Parent deflectionPage;
     @FXML private InputPageController inputPageController;
     @FXML private MomentPageController momentPageController;
     @FXML private RebarCasesPageController rebarCasesPageController;
+    @FXML private DeflectionPageController deflectionPageController;
 
     private List<BooleanProperty> mBttPressedIndicPropertiesList = new ArrayList<>();
 
@@ -53,7 +56,9 @@ public class MainAccessController implements Initializable {
                 momentPageButton.mouseTransparentProperty(),
                 momentPageButton.selectedProperty(),
                 rebarCasesPageButton.mouseTransparentProperty(),
-                rebarCasesPageButton.selectedProperty()
+                rebarCasesPageButton.selectedProperty(),
+                deflectionPageButton.mouseTransparentProperty(),
+                deflectionPageButton.selectedProperty()
         ));
 
         languageMenu.getItems().addAll(getMenuItemList());
@@ -61,6 +66,12 @@ public class MainAccessController implements Initializable {
 
         momentPageButton.disableProperty().bind(inputPageController.newInputProperty());
         rebarCasesPageButton.disableProperty().bind(
+                Bindings.or(
+                        inputPageController.newInputProperty(),
+                        Bindings.not(momentPageController.showRebarPageProperty())
+                )
+        );
+        deflectionPageButton.disableProperty().bind(
                 Bindings.or(
                         inputPageController.newInputProperty(),
                         Bindings.not(momentPageController.showRebarPageProperty())
@@ -97,12 +108,25 @@ public class MainAccessController implements Initializable {
             }
         }));
 
+        deflectionPageButton.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!oldValue) {
+                setButtonPressed(
+                        deflectionPageButton.mouseTransparentProperty(),
+                        deflectionPageButton.selectedProperty()
+                );
+                mainPageTabPane.getSelectionModel().select(3);
+            }
+        }));
+
+
 
         inputPageButton.setSelected(true);
         //When the main fxml is loaded, inject the main controller to the input page controller
         inputPageController.injectMainController(this);
 
         momentPageController.injectMainController(this);
+
+        rebarCasesPageController.injectMainController(this);
 
         double leftMenuWidth = leftPartOfSplitPane.getMinWidth();
         getInputPageAnchorPane().prefHeightProperty().bind(
@@ -182,6 +206,10 @@ public class MainAccessController implements Initializable {
 
     public ToggleButton getRebarCasesPageButton() {
         return rebarCasesPageButton;
+    }
+
+    public ToggleButton getDeflectionPageButton() {
+        return deflectionPageButton;
     }
 
     //Get anchor pane from input page controller

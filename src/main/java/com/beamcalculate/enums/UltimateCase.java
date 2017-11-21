@@ -1,6 +1,6 @@
 package com.beamcalculate.enums;
 
 public enum UltimateCase {
-    MAX,
-    MIN
+    MAX_MOMENT_TAG,
+    MIN_MOMENT_TAG
 }

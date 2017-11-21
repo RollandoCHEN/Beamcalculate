@@ -57,7 +57,7 @@
                         </ImageView>
                         <Label fx:id="inputPageLabel"
                                styleClass="button-label"
-                               text="%label.pageButton.dimensions"/>
+                               text="%label.page_button.dimensions"/>
                     </HBox>
                 </StackPane>
                 <StackPane>
@@ -71,7 +71,7 @@
                         </ImageView>
                         <Label fx:id="momentPageLabel"
                                styleClass="button-label"
-                               text="%label.pageButton.momentChart"/>
+                               text="%label.page_button.momentChart"/>
                     </HBox>
                 </StackPane>
                 <StackPane>
@@ -85,7 +85,21 @@
                         </ImageView>
                         <Label fx:id="rebarCasesPageLabel"
                                styleClass="button-label"
-                               text="%label.pageButton.rebar"/>
+                               text="%label.page_button.rebar"/>
+                    </HBox>
+                </StackPane>
+                <StackPane>
+                    <ToggleButton fx:id="deflectionPageButton" disable="true" mnemonicParsing="false"
+                                  styleClass="toggle-button-menu"
+                                  prefHeight="70.0" prefWidth="${leftPartOfSplitPane.minWidth}"/>
+                    <HBox alignment="CENTER" mouseTransparent="true"
+                          disable="${deflectionPageButton.disabled}">
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../image/deflection_32x32.png"/>
+                        </ImageView>
+                        <Label fx:id="deflectionPageLabel"
+                               styleClass="button-label"
+                               text="%label.page_button.deflection"/>
                     </HBox>
                 </StackPane>
             </VBox>
@@ -103,6 +117,9 @@
                 </Tab>
                 <Tab text="${rebarCasesPageLabel.text}" disable="${rebarCasesPageButton.disabled}">
                     <fx:include fx:id="rebarCasesPage" source="RebarCasesPage.fxml"/>
+                </Tab>
+                <Tab text="${deflectionPageLabel.text}" disable="${deflectionPageButton.disabled}">
+                    <fx:include fx:id="deflectionPage" source="DeflectionPage.fxml"/>
                 </Tab>
             </TabPane>
         </AnchorPane>

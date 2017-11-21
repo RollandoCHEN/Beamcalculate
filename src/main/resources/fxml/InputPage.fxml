@@ -73,26 +73,22 @@
                                 </HBox>
 
                                 <HBox styleClass="hbox" GridPane.rowIndex="1" GridPane.columnIndex="1">
-                                    <!--<Label text="%label.sectionWidth"/>-->
                                     <NamedTextField fx:id="sectionWidth_tf" promptText="%label.sectionWidth"/>
                                     <Label text="%unit.length.m"/>
                                 </HBox>
 
                                 <HBox styleClass="hbox" GridPane.rowIndex="2" GridPane.columnIndex="1">
-                                    <!--<Label text="%label.sectionHeight"/>-->
                                     <NamedTextField fx:id="sectionHeight_tf" promptText="%label.sectionHeight"/>
                                     <Label text="%unit.length.m"/>
                                 </HBox>
 
                                 <HBox styleClass="hbox" GridPane.rowIndex="1" GridPane.columnIndex="2">
-                                    <!--<Label text="%label.slabThickness"/>-->
                                     <NamedTextField fx:id="slabThickness_tf" promptText="%label.slabThickness"
                                                     disable="${controller.notOnTSection}"/>
                                     <Label text="%unit.length.m"/>
                                 </HBox>
 
                                 <HBox styleClass="hbox" GridPane.rowIndex="2" GridPane.columnIndex="2">
-                                    <!--<Label text="%label.perpendicularSpacing"/>-->
                                     <NamedTextField fx:id="perpendicularSpacing_tf" promptText="%label.perpendicularSpacing"
                                                     disable="${controller.notOnTSection}"/>
                                     <Label text="%unit.length.m"/>
@@ -118,12 +114,10 @@
                         <VBox styleClass="vbox">
                             <Label styleClass="title" text="%title.load"/>
                             <HBox styleClass="hbox">
-                                <!--<Label text="%label.deadLoad"/>-->
                                 <NamedTextField fx:id="permanentLoad_tf" promptText="%label.deadLoad"/>
                                 <Label text="%unit.load"/>
                             </HBox>
                             <HBox styleClass="hbox">
-                                <!--<Label text="%label.liveLoad"/>-->
                                 <NamedTextField fx:id="variableLoad_tf" promptText="%label.liveLoad"/>
                                 <Label text="%unit.load"/>
                             </HBox>
@@ -160,8 +154,8 @@
 
                     <HBox spacing="15.0" alignment="BOTTOM_RIGHT">
                         <JFXButton fx:id="envelopCurveGenerate_button" onAction="#getMomentChartPage"
-                                   text="%button.generateEnvelopCurve" disable="true"/>
-                        <!--<Button onAction="#DEBUG" text="DEBUG" />-->
+                                   text="%button.generate_envelop_curve" disable="true"/>
+                        <JFXButton onAction="#DEBUG" text="DEBUG" />
                     </HBox>
                 </VBox>
 

@@ -28,7 +28,7 @@ public class InputTextFieldsTreater {
     public BooleanBinding bindIsEmptyPropertyWithOr(GridPane gridPane){
 //      foreach lambda doesn't accept non-final parameter，orConjunction = orConjunction.or(...) could not be used
 //      so I used for (custom_node custom_node : gridPane.getChildren())
-        BooleanBinding orConjunction = Bindings.isEmpty(new TextField("0").textProperty());
+        BooleanBinding orConjunction = Bindings.isEmpty(new TextField("Not empty").textProperty());
 
         for (Node node : gridPane.getChildren()){
             TextInputControl textInputNode = (TextInputControl)node;
