@@ -37,7 +37,7 @@ public class SupportMoment3Moment extends SupportMoment {
 
             double[][] lhsArray = getLhsArray();
 
-//        get right hand side array for the equation
+//        getRebarTypeNum right hand side array for the equation
 
             double[] rhsArray = getRhsArray(mLoad, loadCase);
 

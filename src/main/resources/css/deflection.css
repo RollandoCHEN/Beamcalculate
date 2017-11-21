@@ -1,7 +1,11 @@
 .root{
-    -fx-background-color: #3D4956;
+    -fx-font-family: "Microsoft YaHei";
 }
 
+.scroll-pane {
+   -fx-background: #3D4956;
+   -fx-border-color: #3D4956;
+}
 
 .label {
     -fx-font-size: 14px;

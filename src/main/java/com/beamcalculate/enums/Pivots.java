@@ -22,7 +22,7 @@ public enum Pivots {
         if (mLeftLimit != mRightLimit) {
             content = mName + " (" +
                     (mLeftLimit!=0 ? THREE_DECIMALS.format(mLeftLimit)+ " < " : "")
-                    + "Mu" +
+                    + "M\u1D64" +
                     (mRightLimit!=0 ? " < " + THREE_DECIMALS.format(mRightLimit) : "") +
                     ")";
         } else {

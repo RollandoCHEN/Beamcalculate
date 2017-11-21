@@ -174,9 +174,6 @@
                                 <GridPane fx:id="spanRebarSelectionGridPane" alignment="CENTER" hgap="20" vgap="15">
 
                                 </GridPane>
-                                <GridPane fx:id="supportRebarSelectionGridPane" alignment="CENTER" hgap="20" vgap="15">
-
-                                </GridPane>
                             </VBox>
                         </GridPane>
                     </GridPane>

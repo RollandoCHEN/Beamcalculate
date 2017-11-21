@@ -3,16 +3,16 @@ package com.beamcalculate.enums;
 import com.beamcalculate.model.page_manager.LanguageManager;
 
 public enum ReinforcementParam {
-    a_M("result.moment.paraName.maxMoment", "M_max", "unit.moment"),
-    b_MU("result.moment.paraName.reducedMoment", "Mu", ""),
-    c_ALPHA("result.moment.paraName.relativeXPosition", "Alpha", ""),
+    a_M("result.moment.paraName.maxMoment", "M\u2098\u2090\u2093", "unit.moment"),
+    b_MU("result.moment.paraName.reducedMoment", "M\u1D64", ""),
+    c_ALPHA("result.moment.paraName.relativeXPosition", "\u03b1", ""),
     d_X("result.moment.paraName.xPosition", "x", "unit.length.m"),
-    e_BETA("result.moment.paraName.relativeLeverArm", "Beta", ""),
+    e_BETA("result.moment.paraName.relativeLeverArm", "\u03b2", ""),
     f_Z("result.moment.paraName.leverArm", "z", "unit.length.m"),
-    g_EPSILON_S("result.moment.paraName.steelStrain", "Epsilon_s", "unit.strain.perMille"),
-    h_EPSILON_UK("result.moment.paraName.steelUltimateStrain", "Epsilon_uk", "unit.strain.perMille"),
-    i_SIGMA_S("result.moment.paraName.steelStress", "Sigma_s", "unit.stress"),
-    j_A_S("result.moment.paraName.rebarSectionAea", "As", "unit.area.cm2"),
+    g_EPSILON_S("result.moment.paraName.steelStrain", "\u03b5\u209B", "unit.strain.perMille"),
+    h_EPSILON_UK("result.moment.paraName.steelUltimateStrain", "\u03b5\u1D64\u2096", "unit.strain.perMille"),
+    i_SIGMA_S("result.moment.paraName.steelStress", "\u03c3\u209B", "unit.stress"),
+    j_A_S("result.moment.paraName.rebarSectionAea", "A\u209B", "unit.area.cm2"),
     k_PIVOT("result.moment.paraName.pivot", "Pivot", "");
 
 

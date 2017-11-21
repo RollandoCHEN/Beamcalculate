@@ -10,6 +10,7 @@ import com.beamcalculate.model.page_manager.PageScaleHandler;
 import com.beamcalculate.model.result.RebarCutChart;
 import com.beamcalculate.model.result.ReinforcementResultTable;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -46,7 +47,6 @@ public class RebarCasesPageController {
     @FXML private Label currentRebarCase;
     @FXML private Label methodNameText;
     @FXML private GridPane spanRebarSelectionGridPane;
-    @FXML private GridPane supportRebarselectionGridPane;
     @FXML private VBox crossSectionRebarVBox;
     @FXML private VBox elevationRebarVBox;
     @FXML private HBox flangeWidthHBox;
@@ -284,17 +284,26 @@ public class RebarCasesPageController {
             methodNameText.setText(tableTitle.toString());
 
             int maxNumOfCases = 1;
-            for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++) {
+            for (int spanId = 1; spanId < mGeometry.getNumSpan() + 1; spanId++) {
                 int rebarCases = mRebar.getRebarCasesListOfSpan(spanId).size();
                 maxNumOfCases = Math.max(rebarCases, maxNumOfCases);
             }
 
-            for (int caseNum = 1; caseNum < maxNumOfCases+1; caseNum++){
+            for (int caseNum = 1; caseNum < maxNumOfCases + 1; caseNum++){
                 Label caseLabel = new Label(getBundleText("label.case") + " " + caseNum);
                 spanRebarSelectionGridPane.add(caseLabel, 0, caseNum);
             }
 
+            // add rebar cas selection combo box at the last row of the grid pane
+            spanRebarSelectionGridPane.add(
+                    new Label(getBundleText("label.selected_case")), 0, maxNumOfCases + 1
+            );
+
             for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++) {
+                // add combo box to the last row of the grid pane
+                JFXComboBox rebarSelectionBox = new JFXComboBox();
+                spanRebarSelectionGridPane.add(rebarSelectionBox, spanId, maxNumOfCases + 1);
+
                 Label spanIdLabel = new Label(getBundleText("label.span") + " " + spanId);
                 spanIdLabel.getStyleClass().add("label-black-bold");
 

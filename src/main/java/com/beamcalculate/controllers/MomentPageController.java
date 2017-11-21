@@ -317,7 +317,7 @@ public class MomentPageController {
                     JFXTextField abscissaField = new JFXTextField();
                     abscissaField.setPromptText(getBundleText("label.xOnSpan"));
                     abscissaFieldHBox.getChildren().clear();
-//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2), true);
+//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().getRebarTypeNum(selectedSpanId),2), true);
                     abscissaFieldHBox.getChildren().add(abscissaField);
                     abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
 
@@ -362,7 +362,7 @@ public class MomentPageController {
 //                            if (abscissaField.getText().isEmpty()){
 //                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
 //                            }else {
-//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
+//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().getRebarTypeNum(selectedSpanId),2);
 //                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
 //                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
 //                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
@@ -537,13 +537,13 @@ public class MomentPageController {
 //                    mStringSeriesMap.put(minSeriesId, minELUSeries);
 //
 //                    mLineChart.getData().addAll(
-//                            mStringSeriesMap.get(maxSeriesId),
-//                            mStringSeriesMap.get(minSeriesId)
+//                            mStringSeriesMap.getRebarTypeNum(maxSeriesId),
+//                            mStringSeriesMap.getRebarTypeNum(minSeriesId)
 //                    );
 //                } else {
 //                    mLineChart.getData().removeAll(
-//                            mStringSeriesMap.get(maxSeriesId),
-//                            mStringSeriesMap.get(minSeriesId)
+//                            mStringSeriesMap.getRebarTypeNum(maxSeriesId),
+//                            mStringSeriesMap.getRebarTypeNum(minSeriesId)
 //                    );
 //                }
 //            });
