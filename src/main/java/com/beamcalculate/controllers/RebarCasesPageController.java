@@ -1,7 +1,7 @@
 package com.beamcalculate.controllers;
 
 import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText;
-import com.beamcalculate.model.MyMethods;
+
 import com.beamcalculate.model.RebarCase;
 import com.beamcalculate.model.RebarType_Amount;
 import com.beamcalculate.model.calculator.Deflection;
@@ -24,7 +24,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -36,9 +35,9 @@ import javafx.scene.shape.Line;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.beamcalculate.enums.NumericalFormat.TWO_DECIMALS;
 import static com.beamcalculate.enums.NumericalFormat.ZERO_DECIMAL;
@@ -132,8 +131,9 @@ public class RebarCasesPageController {
     private double mMinHeight;
     private double mMinWidth;
 
-    private BooleanBinding orConjunction = Bindings.isNotNull(new JFXComboBox<String>().valueProperty());
+    private BooleanBinding mDisableDeflectionButton = Bindings.isNotNull(new JFXComboBox<String>().valueProperty());
     private BooleanProperty mShowDeflectionPage = new SimpleBooleanProperty(false);
+    private List<ObjectProperty<RebarCase>> mRebarSelectionList = new ArrayList<>();
 
     public class RebarCasesPageCreator {
         private final Geometry mGeometry;
@@ -151,9 +151,10 @@ public class RebarCasesPageController {
             PageScaleHandler scaleHandler = new PageScaleHandler();
             scaleHandler.AddScaleListener(scrollContainer, rebarPageAnchorPane, mMinHeight, mMinWidth);
 
-            deflectionButton.disableProperty().bind(orConjunction);
+            deflectionButton.disableProperty().bind(mDisableDeflectionButton);
             deflectionButton.setOnAction(event -> {
-                Deflection deflection = new Deflection(mRebar);
+                Deflection deflection = new Deflection(mRebar, mRebarSelectionList);
+                mMainAccessController.generateDeflectionVerification(deflection);
 
                 mShowDeflectionPage.setValue(true);
                 mMainAccessController.getDeflectionPageButton().setSelected(true);
@@ -320,10 +321,14 @@ public class RebarCasesPageController {
 
             for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++) {
                 // add combo box to the last row of the grid pane
-                JFXComboBox rebarSelectionBox = new JFXComboBox();
+                JFXComboBox<RebarCase> rebarSelectionBox = new JFXComboBox();
                 spanRebarSelectionGridPane.add(rebarSelectionBox, spanId, maxNumOfCases + 1);
                 rebarSelectionBox.getItems().addAll(FXCollections.observableArrayList(mRebar.getRebarCasesListOfSpan(spanId)));
-                orConjunction = orConjunction.or(Bindings.isNull(rebarSelectionBox.valueProperty()));
+                mDisableDeflectionButton = mDisableDeflectionButton.or(Bindings.isNull(rebarSelectionBox.valueProperty()));
+
+                ObjectProperty<RebarCase> rebarCaseObjectProperty = new SimpleObjectProperty<>();
+                rebarCaseObjectProperty.bind(rebarSelectionBox.valueProperty());
+                mRebarSelectionList.add(rebarCaseObjectProperty);
 
                 Label spanIdLabel = new Label(getBundleText("label.span") + " " + spanId);
                 spanIdLabel.getStyleClass().add("header");
@@ -870,5 +875,13 @@ public class RebarCasesPageController {
 
     public void injectMainController(MainAccessController mainAccessController) {
         mMainAccessController = mainAccessController;
+    }
+
+    public boolean isShowDeflectionPage() {
+        return mShowDeflectionPage.get();
+    }
+
+    public BooleanProperty showDeflectionPageProperty() {
+        return mShowDeflectionPage;
     }
 }

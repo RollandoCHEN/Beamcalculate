@@ -1,6 +1,7 @@
 package com.beamcalculate.controllers;
 
 import com.beamcalculate.BeamCalculatorApp;
+import com.beamcalculate.model.calculator.Deflection;
 import com.beamcalculate.model.custom_alert.ConfirmationMessage;
 import com.beamcalculate.model.page_manager.LanguageManager;
 import com.beamcalculate.model.calculator.Rebar;
@@ -75,7 +76,7 @@ public class MainAccessController implements Initializable {
                 Bindings.or(
                         inputPageController.newInputProperty(),
                         Bindings.not(momentPageController.showRebarPageProperty())
-                )
+                ).or(Bindings.not(rebarCasesPageController.showDeflectionPageProperty()))
         );
 
         inputPageButton.selectedProperty().addListener(((observable, oldValue, newValue) -> {
@@ -226,6 +227,11 @@ public class MainAccessController implements Initializable {
     public void createMomentLineChart(SpanMomentFunction... spanMomentFunctions) { momentPageController.createMomentPage(spanMomentFunctions);}
 
     public void generateRebarSelectionCasesTable(Rebar rebar) { rebarCasesPageController.createRebarCasesPage(rebar);}
+
+    public void generateDeflectionVerification(Deflection deflection) {
+        deflectionPageController.createDeflectionPage(deflection);
+    }
+
     @FXML
     public void handleFullScreen(ActionEvent actionEvent) {
         BeamCalculatorApp.getPrimaryStage().setFullScreen(true);

@@ -1,6 +1,8 @@
 package com.beamcalculate.model.calculator;
 
+import com.beamcalculate.model.RebarCase;
 import com.beamcalculate.model.entites.Inputs;
+import javafx.beans.property.ObjectProperty;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class Deflection {
     private double mNumOfSpans;
     private double mRefPercentage;
 
-    public Deflection(Rebar rebar) {
+    public Deflection(Rebar rebar, List<ObjectProperty<RebarCase>> rebarSelectionList) {
         mRebar = rebar;
         mInputs = rebar.getInputs();
         mFck = mInputs.getMaterial().getFck();
@@ -29,18 +31,16 @@ public class Deflection {
 
         for (int spanNo = 1; spanNo <= mNumOfSpans; spanNo++){
             double typeCoef = getStructuralTypeCoef(spanNo);
-            List<Double> totalRebarAreaListOfSpan_cm2 = mRebar.getTotalRebarAreaListOfSpan_cm2(spanNo);
+            double totalRebarAreaListOfSpan_cm2 = rebarSelectionList.get(spanNo-1).get().getTotalRebarArea_cm2();
             double spanLength = mInputs.getGeometry().getEffectiveSpansLengthMap().get(spanNo);
-            System.out.printf("Span %d :%n", spanNo);
-            for (int caseNo = 0; caseNo < totalRebarAreaListOfSpan_cm2.size(); caseNo++){
-                double lowerPercentage = totalRebarAreaListOfSpan_cm2.get(caseNo) / (mSectionWidth * mEffectiveHeight * 10000);
-                double spanHeightRatio = spanHeightRatioFormula(typeCoef, 0, lowerPercentage);
-                System.out.printf("case %d, rebar percentage = %.3f%%, L/d = %.3f, Min section height = %.2f%n", caseNo,
-                        lowerPercentage*100,
-                        spanHeightRatio,
-                        spanLength/spanHeightRatio/0.9
-                );
-            }
+            double lowerPercentage = totalRebarAreaListOfSpan_cm2 / (mSectionWidth * mEffectiveHeight * 10000);
+            double spanHeightRatio = spanHeightRatioFormula(typeCoef, 0, lowerPercentage);
+            System.out.printf("Span %d : rebar percentage = %.3f%%, L/d = %.3f, Min section height = %.2f%n",
+                    spanNo,
+                    lowerPercentage*100,
+                    spanHeightRatio,
+                    spanLength/spanHeightRatio/0.9
+            );
         }
     }
 

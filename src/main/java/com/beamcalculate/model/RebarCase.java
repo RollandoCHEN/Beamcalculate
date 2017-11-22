@@ -1,5 +1,7 @@
 package com.beamcalculate.model;
 
+import com.beamcalculate.enums.RebarType;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -49,6 +51,25 @@ public final class RebarCase{
 
     public void forEach(BiConsumer<Integer, RebarType_Amount> action) {
         layerMap.forEach(action);
+    }
+
+    public Map<Integer, Double> getRebarAreaForEachLayerOfSpan_cm2(){
+        Map<Integer, Double> rebarAreaMap = new HashMap<>();
+        layerMap.forEach((layerNum, rebarType_amount) -> {
+            RebarType rebarType = rebarType_amount.getRebarType();
+            int numOfRebar = rebarType_amount.getNumberOfRebar();
+            double rebarArea = rebarType.getSectionalArea_cm2(numOfRebar);
+            rebarAreaMap.put(layerNum, rebarArea);
+        });
+        return rebarAreaMap;
+    }
+
+    public double getTotalRebarArea_cm2(){
+        double totalRebarArea = 0;
+        for (int layerNum = 1; layerNum < layerMap.size()+1; layerNum++) {
+            totalRebarArea += getRebarAreaForEachLayerOfSpan_cm2().get(layerNum);
+        }
+        return totalRebarArea;
     }
 
 }

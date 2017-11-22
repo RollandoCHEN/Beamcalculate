@@ -1,5 +1,6 @@
 package com.beamcalculate.controllers;
 
+import com.beamcalculate.model.calculator.Deflection;
 import javafx.fxml.Initializable;
 
 import java.net.URL;
@@ -15,5 +16,7 @@ public class DeflectionPageController implements Initializable {
 
     }
 
+    public void createDeflectionPage(Deflection deflection) {
 
+    }
 }

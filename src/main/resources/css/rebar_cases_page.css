@@ -35,7 +35,7 @@
 
 .button{
     -fx-pref-width: 150;
-    -fx-min-height: 30;
+    -fx-min-height: 40;
     -fx-text-fill: #3d4956;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
