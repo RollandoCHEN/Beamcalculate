@@ -8,29 +8,34 @@
 }
 
 .label {
-    -fx-font-size: 14px;
-    -fx-text-fill: silver;
-}
-
-.label.header {
     -fx-font-size: 16px;
     -fx-text-fill: white;
 }
 
+.label.title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.label.header {
+    -fx-font-size: 17px;
+    -fx-text-fill: silver;
+}
+
 .label.pass {
-    -fx-font-size: 16px;
+    -fx-font-size: 17px;
     -fx-text-fill: #0ccc85;
     -fx-font-weight: bold;
 }
 
 .label.fail {
-    -fx-font-size: 16px;
+    -fx-font-size: 17px;
     -fx-text-fill: #eda678;
     -fx-font-weight: bold;
 }
 
 .grid {
-    -fx-stroke: red;
-    -fx-background-color: white;
-    -fx-halignment: center;
+    -fx-hgap: 30;
+    -fx-vgap: 20;
 }

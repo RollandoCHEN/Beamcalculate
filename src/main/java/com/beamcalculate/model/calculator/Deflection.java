@@ -6,10 +6,7 @@ import com.beamcalculate.model.RebarType_Amount;
 import com.beamcalculate.model.entites.Inputs;
 import javafx.beans.property.ObjectProperty;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static com.beamcalculate.enums.DeflectionParam.*;
 
@@ -17,6 +14,7 @@ import static com.beamcalculate.enums.DeflectionParam.*;
  * Created by Ruolin on 19/11/2017 for BeamCalculator.
  */
 public class Deflection {
+    private List<RebarCase> mRebarSelectionList = new ArrayList<>();
     private double mSectionWidth;
     private double mEffectiveHeight;
     private Rebar mRebar;
@@ -36,7 +34,7 @@ public class Deflection {
         mNumOfSpans = mInputs.getGeometry().getNumSpan();
         mSectionWidth = mInputs.getGeometry().getSectionWidth();
         mEffectiveHeight = mInputs.getGeometry().getEffectiveHeight();
-
+        rebarSelectionList.forEach(rebarCaseObjectProperty -> mRebarSelectionList.add(rebarCaseObjectProperty.get()));
 
         for (int spanNo = 1; spanNo <= mNumOfSpans; spanNo++){
             Map<DeflectionParam, Double> paramValueMap = new TreeMap<>();
@@ -45,7 +43,7 @@ public class Deflection {
             double totalRebarArea_cm2 = selectedRebarCase.totalRebarArea_cm2();
             paramValueMap.put(a_A_S, totalRebarArea_cm2);
             double bottomPercentage = totalRebarArea_cm2 / (mSectionWidth * mEffectiveHeight * 10000);
-            paramValueMap.put(b_RHO, bottomPercentage);
+            paramValueMap.put(b_RHO, bottomPercentage * 100);
             double limitSpanHeightRatio = spanHeightRatioFormula(typeCoef, 0, bottomPercentage);
             paramValueMap.put(c_LIMIT_L_D, limitSpanHeightRatio);
 
@@ -62,7 +60,7 @@ public class Deflection {
 
             mSpanDeflectionParam.put(spanNo, paramValueMap);
 
-            System.out.printf("Span %d : rebar percentage = %.2f%%, limit L/d = %.2fm, d = %.2f, actual L/d = %.2f%n",
+            System.out.printf("Span %d : rebar percentage = %.2f%%, limit L/d = %.2f, d = %.2fm, actual L/d = %.2f%n",
                     spanNo,
                     bottomPercentage*100,
                     limitSpanHeightRatio,
@@ -102,5 +100,9 @@ public class Deflection {
 
     public Map<Integer, Map<DeflectionParam, Double>> getSpanDeflectionParam() {
         return mSpanDeflectionParam;
+    }
+
+    public List<RebarCase> getRebarSelectionList() {
+        return mRebarSelectionList;
     }
 }

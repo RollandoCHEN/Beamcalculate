@@ -155,7 +155,7 @@
                     <HBox spacing="15.0" alignment="BOTTOM_RIGHT">
                         <JFXButton fx:id="envelopCurveGenerate_button" onAction="#getMomentChartPage"
                                    text="%button.generate_envelop_curve" disable="true"/>
-                        <JFXButton onAction="#DEBUG" text="DEBUG" />
+                        <!--<JFXButton onAction="#DEBUG" text="DEBUG" />-->
                     </HBox>
                 </VBox>
 

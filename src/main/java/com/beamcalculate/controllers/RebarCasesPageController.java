@@ -270,8 +270,8 @@ public class RebarCasesPageController {
                 maxSchemaWidth = displayedWebWidth.get();
             }
 
-            leftGridPaneWidth.set(maxSchemaWidth + 220);
-            rightGridPaneWidth.set(mGeometry.getNumSpan() * 175 + 130);
+            leftGridPaneWidth.set(maxSchemaWidth + 280);
+            rightGridPaneWidth.set(mGeometry.getNumSpan() * 175 + 120);
 
             totalLength.set(0.9 * (leftGridPaneWidth.get() + rightGridPaneWidth.get()));
 
@@ -291,15 +291,13 @@ public class RebarCasesPageController {
         private void generateRebarSelectionCasesTable() {
             spanRebarSelectionGridPane.getChildren().clear();
             StringBuilder tableTitle = new StringBuilder();
-            tableTitle.append(
-                    getBundleText("label.momentCalculateMethod") +
-                            " : " +
-                            mReinforcement.getSpanMomentFunction().getMethod()
-            );
+            tableTitle.append(getBundleText("label.momentCalculateMethod"))
+                    .append(" : ")
+                    .append(mReinforcement.getSpanMomentFunction().getMethod());
             if (mGeometry.isOnTSection()){
-                tableTitle.append(
-                        " (" + getBundleText("title.onTSection") + ")"
-                );
+                tableTitle.append(" (")
+                        .append(getBundleText("title.onTSection"))
+                        .append(")");
             }
 
             methodNameText.setText(tableTitle.toString());

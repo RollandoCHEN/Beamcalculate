@@ -149,6 +149,12 @@ public class MainAccessController implements Initializable {
         getRebarCasesPageAnchorPane().prefWidthProperty().bind(
                 Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
         );
+        getDeflectionPageAnchorPane().prefHeightProperty().bind(
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().heightProperty(),110)
+        );
+        getDeflectionPageAnchorPane().prefWidthProperty().bind(
+                Bindings.subtract(BeamCalculatorApp.getPrimaryStage().widthProperty(), leftMenuWidth + 50)
+        );
     }
 
     private void setButtonPressed(BooleanProperty... buttonProperties){
@@ -223,6 +229,10 @@ public class MainAccessController implements Initializable {
 
     //Get anchor pane from rebar cases page controller
     public AnchorPane getRebarCasesPageAnchorPane() { return rebarCasesPageController.getAnchorPane(); }
+
+    public AnchorPane getDeflectionPageAnchorPane() {
+        return deflectionPageController.getAnchorPane();
+    }
 
     public void createMomentLineChart(SpanMomentFunction... spanMomentFunctions) { momentPageController.createMomentPage(spanMomentFunctions);}
 

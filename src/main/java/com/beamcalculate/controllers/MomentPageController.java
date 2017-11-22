@@ -226,6 +226,8 @@ public class MomentPageController {
                     if (TROIS_MOMENT_R.getMethodName().equals(newValue)) {
                         redistributionCheck.setSelected(true);
                         SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) mMethodsChoiceMap.get(newValue);
+                        mMaxCaseMomentValue.textProperty().unbind();
+                        mMinCaseMomentValue.textProperty().unbind();
                         mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
@@ -253,6 +255,8 @@ public class MomentPageController {
                     } else {
                         redistributionCheck.setSelected(false);
                         ELUCombination eluCombination = new ELUCombination(mMethodsChoiceMap.get(newValue));
+                        mMaxCaseMomentValue.textProperty().unbind();
+                        mMinCaseMomentValue.textProperty().unbind();
                         mMaxCaseMomentValue.textProperty().bind(
                                 Bindings.createStringBinding(
                                         () -> FOUR_DECIMALS.format(
