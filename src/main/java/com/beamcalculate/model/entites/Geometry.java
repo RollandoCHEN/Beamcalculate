@@ -17,6 +17,7 @@ public class Geometry {
     private final BooleanProperty mOnTSection = new SimpleBooleanProperty();
     private final DoubleProperty mPerpendicularSpacing = new SimpleDoubleProperty();
     private final DoubleProperty mEffectiveHeight = new SimpleDoubleProperty();
+    private final DoubleProperty mCoverThickness_cm = new SimpleDoubleProperty(3);
     private double mTotalLength = 0.0;
 
     private Map<Integer, Double> mSpansLengthMap = new HashMap<>();        // Not be able to use MapProperty, cause not be able to set (k,v) to it
@@ -99,6 +100,14 @@ public class Geometry {
 
     public DoubleProperty perpendicularSpacingProperty() {
         return mPerpendicularSpacing;
+    }
+
+    public double getCoverThickness_cm() {
+        return mCoverThickness_cm.get();
+    }
+
+    public DoubleProperty coverThickness_cmProperty() {
+        return mCoverThickness_cm;
     }
 
     public double getTotalLength() {

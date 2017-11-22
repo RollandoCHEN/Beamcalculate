@@ -116,7 +116,7 @@ public class Rebar {
         List<Map<Integer, Double>> rebarAreaList = new ArrayList<>();
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
             RebarCase rebarCaseMap = getRebarCasesListOfSpan(spanId).get(caseNum);
-            rebarAreaList.add(rebarCaseMap.getRebarAreaForEachLayerOfSpan_cm2());
+            rebarAreaList.add(rebarCaseMap.getRebarAreaForEachLayer_cm2());
         }
         return rebarAreaList;
     }
@@ -125,7 +125,7 @@ public class Rebar {
         List<Double> totalRebarAreaList = new ArrayList<>();
         for (int caseNum = 0; caseNum < getRebarCasesListOfSpan(spanId).size(); caseNum++) {
             RebarCase rebarCaseMap = getRebarCasesListOfSpan(spanId).get(caseNum);
-            totalRebarAreaList.add(rebarCaseMap.getTotalRebarArea_cm2());
+            totalRebarAreaList.add(rebarCaseMap.totalRebarArea_cm2());
         }
         return totalRebarAreaList;
     }

@@ -28,7 +28,9 @@
     -fx-text-fill: #eda678;
     -fx-font-weight: bold;
 }
+
 .grid {
     -fx-stroke: red;
     -fx-background-color: white;
+    -fx-halignment: center;
 }

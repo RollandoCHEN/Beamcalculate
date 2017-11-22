@@ -2,25 +2,18 @@ package com.beamcalculate.enums;
 
 import com.beamcalculate.model.page_manager.LanguageManager;
 
-public enum ReinforcementParam {
-    a_M("result.moment.paraName.maxMoment", "M\u2098\u2090\u2093", "unit.moment"),
-    b_MU("result.moment.paraName.reducedMoment", "M\u1D64", ""),
-    c_ALPHA("result.moment.paraName.relativeXPosition", "\u03b1", ""),
-    d_X("result.moment.paraName.xPosition", "x", "unit.length.m"),
-    e_BETA("result.moment.paraName.relativeLeverArm", "\u03b2", ""),
-    f_Z("result.moment.paraName.leverArm", "z", "unit.length.m"),
-    g_EPSILON_S("result.moment.paraName.steelStrain", "\u03b5\u209B", "unit.strain.perMille"),
-    h_EPSILON_UK("result.moment.paraName.steelUltimateStrain", "\u03b5\u1D64\u2096", "unit.strain.perMille"),
-    i_SIGMA_S("result.moment.paraName.steelStress", "\u03c3\u209B", "unit.stress"),
-    j_A_S("result.moment.paraName.rebarSectionAea", "A\u209B", "unit.area.cm2"),
-    k_PIVOT("result.moment.paraName.pivot", "Pivot", "");
+public enum DeflectionParam {
+    a_A_S("result.deflection.paraName.rebar_area", "A\u209B", "unit.area.cm2"),
+    b_RHO("result.deflection.paraName.bottom_rebar_percentage", "\u03C1", "unit.ratio.percentage"),
+    c_LIMIT_L_D("result.deflection.paraName.limit_l_d_ratio", "L/D", ""),
+    d_L_D("result.deflection.paraName.l_d_ratio", "L/D", "");
 
 
     private String mParaNameBundleKey;
     private String mSymbol;
     private String mUnitBundleKey;
 
-    ReinforcementParam(String paraNameBundleKey, String symbol, String unitBundleKey) {
+    DeflectionParam(String paraNameBundleKey, String symbol, String unitBundleKey) {
         setParaNameBundleKey(paraNameBundleKey);
         setSymbol(symbol);
         setUnitBundleKey(unitBundleKey);

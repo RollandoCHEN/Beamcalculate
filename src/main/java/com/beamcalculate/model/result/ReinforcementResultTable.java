@@ -91,7 +91,7 @@ public class ReinforcementResultTable {
         reinforceParamMap.get(1).forEach((param, value)->{
             if (param == b_MU){
                 Label paramName = new Label(
-                        param.getParaName() + getBracketedUnit(param) + " : "
+                        param.getParaName() + param.getUnit(true) + " : "
                 );
                 Label pivotParam = new Label(
                         k_PIVOT.getParaName() + " : "
@@ -99,21 +99,13 @@ public class ReinforcementResultTable {
                 paramNameVBox.getChildren().addAll(paramName, pivotParam);
             } else {
                 Label paramName = new Label(
-                        param.getParaName() + getBracketedUnit(param) + " : "
+                        param.getParaName() + param.getUnit(true) + " : "
                 );
                 paramNameVBox.getChildren().add(paramName);
             }
 
         });
         return paramNameVBox;
-    }
-
-    private String getBracketedUnit(ReinforcementParam param) {
-        if (param.getUnit().equals("")){
-            return "";
-        }else {
-            return " (" + param.getUnit() + ")";
-        }
     }
 
     private HBox getParamValuesHBox(Reinforcement reinforcement, String spanOrSupport){

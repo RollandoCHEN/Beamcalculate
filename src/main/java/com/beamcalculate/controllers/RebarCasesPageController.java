@@ -127,6 +127,7 @@ public class RebarCasesPageController {
     private double mElevationViewHeightRatio;
 
     private double mCoverThickness_cm;
+    private double mRebarVSpacing_cm;
 
     private double mMinHeight;
     private double mMinWidth;
@@ -203,7 +204,7 @@ public class RebarCasesPageController {
 
         private void initializeCrossSectionView() {
             // height of cross section diagram is fixed at 300px
-            mCoverThickness_cm = 3;
+            mCoverThickness_cm = mGeometry.getCoverThickness_cm();
             double fixedDisplayedCrossSectionHeight = 250;
             double fixedDisplayedElevationHeight = 150;
             mSectionViewRatio = fixedDisplayedCrossSectionHeight / (mGeometry.getSectionHeight() * 100);
@@ -392,6 +393,7 @@ public class RebarCasesPageController {
 
                         //add click action to the rebar case button
                         rebarCaseButton.setOnAction(event -> {
+                            mRebarVSpacing_cm = rebarCasesList.get(caseNum).getMinSpacingBetweenRebar_mm() / 10;
                             //select the rebar case
                             rebarSelectionBox.getSelectionModel().select(caseNum);
 
@@ -410,7 +412,7 @@ public class RebarCasesPageController {
                             elevationRebarVBox.setPadding(
                                     new Insets(0,0,mCoverThickness_cm * mElevationViewHeightRatio, displayedLeftSupportWidth.get()/2)
                             );
-                            elevationRebarVBox.setSpacing(2 * mElevationViewHeightRatio);
+                            elevationRebarVBox.setSpacing(mRebarVSpacing_cm * mElevationViewHeightRatio);
 
                             if (rebarCasesList.get(caseNum).layerAmount() != 1){
                                 rebarLeftIndentHBox.setVisible(true);
@@ -476,11 +478,13 @@ public class RebarCasesPageController {
 
                             // add rebar to the cross section figure
                             crossSectionRebarVBox.getChildren().clear();
+
+                            crossSectionRebarVBox.setSpacing(mRebarVSpacing_cm * mSectionViewRatio);
                             for (int layerNum = rebarCasesList.get(caseNum).layerAmount(); layerNum > 0; layerNum--){
                                 RebarType_Amount rebarType_amount = rebarCasesList.get(caseNum).getRebarOfLayer(layerNum);
                                 int numberOfRebar = rebarType_amount.getNumberOfRebar();
                                 double rebarDiameter_cm = rebarType_amount.getRebarType().getDiameter_mm()/10;
-                                double rebarSpacing_cm = (webCompWidth.get() - mCoverThickness_cm * 2 - numberOfRebar * rebarDiameter_cm) / (numberOfRebar - 1);
+                                double rebarHSpacing_cm = (webCompWidth.get() - mCoverThickness_cm * 2 - numberOfRebar * rebarDiameter_cm) / (numberOfRebar - 1);
 
                                 HBox thisLayerRebarHBox = new HBox();
                                 if (layerNum == 1){
@@ -489,11 +493,11 @@ public class RebarCasesPageController {
                                     );
                                 } else {
                                     thisLayerRebarHBox.setPadding(
-                                            new Insets(1 * mSectionViewRatio,mCoverThickness_cm * mSectionViewRatio,1 * mSectionViewRatio,mCoverThickness_cm * mSectionViewRatio)
+                                            new Insets(0,mCoverThickness_cm * mSectionViewRatio,0,mCoverThickness_cm * mSectionViewRatio)
                                     );
                                 }
                                 thisLayerRebarHBox.setAlignment(Pos.BOTTOM_CENTER);
-                                thisLayerRebarHBox.setSpacing(rebarSpacing_cm * mSectionViewRatio);
+                                thisLayerRebarHBox.setSpacing(rebarHSpacing_cm * mSectionViewRatio);
                                 for (int i=0; i<numberOfRebar; i++){
                                     Circle rebarCircle = new Circle();
                                     rebarCircle.setFill(Paint.valueOf("red"));
