@@ -14,10 +14,7 @@ import com.jfoenix.controls.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -84,6 +81,14 @@ public class MomentPageController {
     private final double PAGE_MIN_HEIGHT = 900;
     private final double PAGE_MIN_WIDTH = 1600;
 
+    private ChangeListener<String> mMethodsChoiceBoxListener;
+    private ChangeListener<Integer> mSpanChoiceBoxListener;
+    private ChangeListener<Number> mSliderListener1;
+    private ChangeListener<Number> mSliderListener2;
+
+    private ObjectProperty<SpanMomentFunction_SpecialLoadCase> mNewSpecialSpanMomentProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<AbstractSpanMoment> mNewSpanMomentProperty = new SimpleObjectProperty<>();
+
     public class MomentPageCreator {
         private LineChartWithMarkers<Number, Number> mLineChart;
         private BooleanBinding mDisableSpinnerBoolean = null;
@@ -104,9 +109,11 @@ public class MomentPageController {
             mInputs = spanMomentFunction.getInputs();
             mGeometry = mInputs.getGeometry();
 
+
+            methodsChoiceBox.getSelectionModel().clearSelection();
             mySlider.setMin(0);
             mySlider.setMax(spanMomentFunction.getInputs().getGeometry().getTotalLength());
-            mySlider.setValue(mySlider.getMin());
+//            mySlider.setValue(mySlider.getMin());
             mySlider.setValueFactory(slider ->
                     Bindings.createStringBinding(
                             () -> (TWO_DECIMALS.format(slider.getValue())) + "",
@@ -114,6 +121,17 @@ public class MomentPageController {
                     )
             );
             mySlider.disableProperty().bind(spanChoiceBox.disableProperty());
+
+            try {
+                methodsChoiceBox.valueProperty().removeListener(mMethodsChoiceBoxListener);
+            } catch (NullPointerException exp) {
+                System.out.println("no listener added to method choice box");
+            }
+            try {
+                spanChoiceBox.valueProperty().removeListener(mSpanChoiceBoxListener);
+            } catch (NullPointerException exp) {
+                System.out.println("no listener added to span choice box");
+            }
 
             //define axes
             mXAxis = defineAxis(spanMomentFunction).get(0);
@@ -140,6 +158,230 @@ public class MomentPageController {
             //Calculating Module : moment calculating and rebar calculating
 
             addMethodsChoicesForCalculating(spanMomentFunction);
+
+            XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(mySlider.getMax()/2, 0);
+
+            mMethodsChoiceBoxListener = ((observable, oldValue, newValue) -> {
+                try {
+                    mySlider.valueProperty().removeListener(mSliderListener1);
+                }catch (NullPointerException exp) {
+                    System.out.println("The listener 1 is not added to slider");
+                }
+                if (newValue != null) {
+
+                    spanChoiceBox.getSelectionModel().clearSelection();
+                    abscissaLimit.setText("(0 ~ 0)");
+
+                    if (!methodsChoiceBox.getSelectionModel().isEmpty()) {
+                        Label maxCaseMomentLabel = new Label(
+                                getBundleText("label.max_moment_value") +
+                                        " (" + getBundleText("unit.moment") + ") : "
+                        );
+                        mMaxCaseMomentValue = new Label();
+                        Label minCaseMomentLabel = new Label(
+                                getBundleText("label.min_moment_value") +
+                                        " (" + getBundleText("unit.moment") + ") : "
+                        );
+                        mMinCaseMomentValue = new Label();
+
+                        for (Node node : methodsCheckHBox.getChildren()) {
+                            CheckBox checkBox = (CheckBox) node;
+                            if (!checkBox.getText().equals(newValue)) {
+                                checkBox.setSelected(false);
+                            } else {
+                                checkBox.setSelected(true);
+                            }
+                        }
+
+                        mMaxCaseMomentValue.textProperty().unbind();
+                        mMinCaseMomentValue.textProperty().unbind();
+                        if (TROIS_MOMENT_R.getMethodName().equals(newValue)) {
+                            redistributionCheck.setSelected(true);
+                            mNewSpecialSpanMomentProperty.set((SpanMomentFunction_SpecialLoadCase) mMethodsChoiceMap.get(newValue));
+                            mMaxCaseMomentValue.textProperty().bind(
+                                    Bindings.createStringBinding(
+                                            () -> FOUR_DECIMALS.format(
+                                                    mNewSpecialSpanMomentProperty.get().getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                                                            getSpanLocalX(mySlider.valueProperty().get(), mNewSpecialSpanMomentProperty.get()),
+                                                            getSpanId(mySlider.valueProperty().get(), mNewSpecialSpanMomentProperty.get()),
+                                                            MAX_MOMENT_TAG
+                                                    )
+                                            ),
+                                            mySlider.valueProperty(),
+                                            mNewSpecialSpanMomentProperty
+                                    )
+                            );
+                            mMinCaseMomentValue.textProperty().bind(
+                                    Bindings.createStringBinding(
+                                            () -> FOUR_DECIMALS.format(
+                                                    mNewSpecialSpanMomentProperty.get().getUltimateMomentForSpecialLoadCaseAtXOfSpan(
+                                                            getSpanLocalX(mySlider.valueProperty().get(), mNewSpecialSpanMomentProperty.get()),
+                                                            getSpanId(mySlider.valueProperty().get(), mNewSpecialSpanMomentProperty.get()),
+                                                            MIN_MOMENT_TAG
+                                                    )
+                                            ),
+                                            mySlider.valueProperty(),
+                                            mNewSpecialSpanMomentProperty
+                                    )
+                            );
+                        } else {
+                            redistributionCheck.setSelected(false);
+                            mNewSpanMomentProperty.set(mMethodsChoiceMap.get(newValue));
+                            mMaxCaseMomentValue.textProperty().bind(
+                                    Bindings.createStringBinding(
+                                            () -> FOUR_DECIMALS.format(
+                                                    new ELUCombination(mNewSpanMomentProperty.get()).getCombinedUltimateMomentAtXOfSpan(
+                                                            getSpanLocalX(mySlider.valueProperty().get(), mNewSpanMomentProperty.get()),
+                                                            getSpanId(mySlider.valueProperty().get(), mNewSpanMomentProperty.get()),
+                                                            MAX_MOMENT_TAG
+                                                    )
+                                            ),
+                                            mySlider.valueProperty(),
+                                            mNewSpanMomentProperty
+                                    )
+                            );
+                            mMinCaseMomentValue.textProperty().bind(
+                                    Bindings.createStringBinding(
+                                            () -> FOUR_DECIMALS.format(
+                                                    new ELUCombination(mNewSpanMomentProperty.get()).getCombinedUltimateMomentAtXOfSpan(
+                                                            getSpanLocalX(mySlider.valueProperty().get(), mNewSpanMomentProperty.get()),
+                                                            getSpanId(mySlider.valueProperty().get(), mNewSpanMomentProperty.get()),
+                                                            MIN_MOMENT_TAG
+                                                    )
+                                            ),
+                                            mySlider.valueProperty(),
+                                            mNewSpanMomentProperty
+                                    )
+                            );
+                        }
+
+                        HBox topHBox = new HBox(minCaseMomentLabel, mMinCaseMomentValue);
+                        topHBox.getStyleClass().add("value_mark");
+                        HBox bottomHBox = new HBox(maxCaseMomentLabel, mMaxCaseMomentValue);
+                        bottomHBox.getStyleClass().add("value_mark");
+
+                        mLineChart.removeVerticalValueMarker(verticalMarker);
+                        mLineChart.addVerticalValueMarker(verticalMarker, topHBox, bottomHBox);
+                        mySlider.valueProperty().bindBidirectional(verticalMarker.XValueProperty());
+
+                        mSliderListener1 = new ChangeListener<Number>() {
+                            private boolean changing;
+
+                            @Override
+                            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                if (!changing) {
+                                    try {
+                                        changing = true;
+                                        spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())));
+                                    } finally {
+                                        changing = false;
+                                    }
+                                }
+                            }
+                        };
+                        mySlider.valueProperty().addListener(mSliderListener1);
+                    }
+                }
+            });
+            methodsChoiceBox.valueProperty().addListener(mMethodsChoiceBoxListener);
+
+            //                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2), true);
+//entered value > max limit
+//remove the value
+//                    abscissaField.setOnKeyPressed(keyEvent -> {
+//                        if (keyEvent.getCode() == KeyCode.ENTER) {
+//                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
+//                            if (abscissaField.getText().isEmpty()){
+//                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
+//                            }else {
+//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2);
+//                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
+//                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
+//                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
+//                                } else {
+//                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
+//                                }
+//                            }
+//                        }
+//                    });
+            mSpanChoiceBoxListener = (observable, oldValue, newValue) -> {
+                try {
+                    mySlider.valueProperty().removeListener(mSliderListener2);
+                }catch (NullPointerException exp) {
+                    System.out.println("The listener 2 is not added to slider");
+                }
+                if (newValue != null && newValue != 0) {
+
+                    int selectedSpanId = spanChoiceBox.getValue();
+                    AbstractSpanMoment chosenMethod = mMethodsChoiceMap.get(methodsChoiceBox.getValue());
+                    JFXTextField abscissaField = new JFXTextField();
+                    abscissaField.setPromptText(getBundleText("label.xOnSpan"));
+                    abscissaFieldHBox.getChildren().clear();
+//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2), true);
+                    abscissaFieldHBox.getChildren().add(abscissaField);
+                    abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
+
+                    mSliderListener2 = new ChangeListener<Number>() {
+                        private boolean changing;
+                        @Override
+                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                            if( !changing ) {
+                                try {
+                                    changing = true;
+                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())));
+                                    TextField textField = (TextField) abscissaFieldHBox.getChildren().get(0);
+                                    textField.setText(TWO_DECIMALS.format(getSpanLocalX(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue()))));
+                                }
+                                finally {
+                                    changing = false;
+                                }
+                            }
+                        }
+                    };
+                    mySlider.valueProperty().addListener(mSliderListener2);
+
+                    abscissaField.focusedProperty().addListener((observable2, oldValue2, newValue2) -> {
+                        if(!newValue2) {
+                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
+                            if (abscissaField.getText().isEmpty()){
+                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
+                            }else {
+                                double maxValue = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
+                                if (Double.parseDouble(abscissaField.getText()) > maxValue) {       //entered value > max limit
+                                    abscissaField.setText(String.valueOf(maxValue));                                          //remove the value
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxValue, chosenMethod));
+                                } else {
+                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
+                                }
+                            }
+                        }
+                    });
+
+//                    abscissaField.setOnKeyPressed(keyEvent -> {
+//                        if (keyEvent.getCode() == KeyCode.ENTER) {
+//                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
+//                            if (abscissaField.getText().isEmpty()){
+//                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
+//                            }else {
+//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2);
+//                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
+//                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
+//                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
+//                                } else {
+//                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
+//                                }
+//                            }
+//                        }
+//                    });
+
+                    abscissaLimit.setText("(0 ~ "
+                            + TWO_DECIMALS.format(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId))
+                            + ")");
+                }
+            };
+            spanChoiceBox.valueProperty().addListener(mSpanChoiceBoxListener);
+
+            spanChoiceBox.disableProperty().bind(Bindings.isNull(methodsChoiceBox.valueProperty()));
 
             //Moment Calculating Button setting : disable value and on action
             abscissaLimit.setText("(0 ~ 0)");
@@ -197,191 +439,7 @@ public class MomentPageController {
             methodsChoiceBox.setItems(FXCollections.observableArrayList(spanMomentFunction.getMethod()));
             mMethodsChoiceMap.put(spanMomentFunction.getMethod(), spanMomentFunction);
 
-            XYChart.Data<Number, Number> verticalMarker = new XYChart.Data<>(mySlider.getMax()/2, 0);
-            methodsChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
-                spanChoiceBox.getSelectionModel().clearSelection();
-                abscissaLimit.setText("(0 ~ 0)");
-
-                if (!methodsChoiceBox.getSelectionModel().isEmpty()){
-                    Label maxCaseMomentLabel = new Label(
-                            getBundleText("label.max_moment_value") +
-                            " (" + getBundleText("unit.moment") + ") : "
-                    );
-                    mMaxCaseMomentValue = new Label();
-                    Label minCaseMomentLabel = new Label(
-                            getBundleText("label.min_moment_value") +
-                                    " (" + getBundleText("unit.moment") + ") : "
-                    );
-                    mMinCaseMomentValue = new Label();
-
-                    for (Node node : methodsCheckHBox.getChildren()) {
-                        CheckBox checkBox = (CheckBox) node;
-                        if (!checkBox.getText().equals(newValue)){
-                            checkBox.setSelected(false);
-                        } else {
-                            checkBox.setSelected(true);
-                        }
-                    }
-
-                    if (TROIS_MOMENT_R.getMethodName().equals(newValue)) {
-                        redistributionCheck.setSelected(true);
-                        SpanMomentFunction_SpecialLoadCase newSpanMoment = (SpanMomentFunction_SpecialLoadCase) mMethodsChoiceMap.get(newValue);
-                        mMaxCaseMomentValue.textProperty().unbind();
-                        mMinCaseMomentValue.textProperty().unbind();
-                        mMaxCaseMomentValue.textProperty().bind(
-                                Bindings.createStringBinding(
-                                        () -> FOUR_DECIMALS.format(
-                                                newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), newSpanMoment),
-                                                        getSpanId(mySlider.valueProperty().get(), newSpanMoment),
-                                                        MAX_MOMENT_TAG
-                                                )
-                                        ) + "",
-                                        mySlider.valueProperty()
-                                )
-                        );
-                        mMinCaseMomentValue.textProperty().bind(
-                                Bindings.createStringBinding(
-                                        () -> FOUR_DECIMALS.format(
-                                                newSpanMoment.getUltimateMomentForSpecialLoadCaseAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), newSpanMoment),
-                                                        getSpanId(mySlider.valueProperty().get(), newSpanMoment),
-                                                        MIN_MOMENT_TAG
-                                                )
-                                        ) + "",
-                                        mySlider.valueProperty()
-                                )
-                        );
-                    } else {
-                        redistributionCheck.setSelected(false);
-                        ELUCombination eluCombination = new ELUCombination(mMethodsChoiceMap.get(newValue));
-                        mMaxCaseMomentValue.textProperty().unbind();
-                        mMinCaseMomentValue.textProperty().unbind();
-                        mMaxCaseMomentValue.textProperty().bind(
-                                Bindings.createStringBinding(
-                                        () -> FOUR_DECIMALS.format(
-                                                eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
-                                                        getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
-                                                        MAX_MOMENT_TAG
-                                                )
-                                        ) + "",
-                                        mySlider.valueProperty()
-                                )
-                        );
-                        mMinCaseMomentValue.textProperty().bind(
-                                Bindings.createStringBinding(
-                                        () -> FOUR_DECIMALS.format(
-                                                eluCombination.getCombinedUltimateMomentAtXOfSpan(
-                                                        getSpanLocalX(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
-                                                        getSpanId(mySlider.valueProperty().get(), mMethodsChoiceMap.get(newValue)),
-                                                        MIN_MOMENT_TAG
-                                                )
-                                        ) + "",
-                                        mySlider.valueProperty()
-                                )
-                        );
-                    }
-
-                    HBox topHBox = new HBox(minCaseMomentLabel, mMinCaseMomentValue);
-                    topHBox.getStyleClass().add("value_mark");
-                    HBox bottomHBox = new HBox(maxCaseMomentLabel, mMaxCaseMomentValue);
-                    bottomHBox.getStyleClass().add("value_mark");
-
-                    mLineChart.removeVerticalValueMarker(verticalMarker);
-                    mLineChart.addVerticalValueMarker(verticalMarker, topHBox, bottomHBox);
-                    mySlider.valueProperty().bindBidirectional(verticalMarker.XValueProperty());
-
-                    mySlider.valueProperty().addListener(new ChangeListener<Number>() {
-                        private boolean changing;
-
-                        @Override
-                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                            if (!changing) {
-                                try {
-                                    changing = true;
-                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())));
-                                } finally {
-                                    changing = false;
-                                }
-                            }
-                        }
-                    });
-                }
-            }));
-
-            // match the calculator methodName name to the related spanMomentFunction
             spanChoiceBox.setItems(FXCollections.observableArrayList(mGeometry.spansLengthMap().keySet()));
-            spanChoiceBox.valueProperty().addListener(((observable, oldValue, newValue) -> {
-                if (newValue != null && newValue != 0) {
-                    int selectedSpanId = spanChoiceBox.getValue();
-                    AbstractSpanMoment chosenMethod = mMethodsChoiceMap.get(methodsChoiceBox.getValue());
-                    JFXTextField abscissaField = new JFXTextField();
-                    abscissaField.setPromptText(getBundleText("label.xOnSpan"));
-                    abscissaFieldHBox.getChildren().clear();
-//                    inputControllerAdder.addMaxValueValidation(abscissaField, round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2), true);
-                    abscissaFieldHBox.getChildren().add(abscissaField);
-                    abscissaField.disableProperty().bind(Bindings.isNull(spanChoiceBox.valueProperty()));
-
-                    mySlider.valueProperty().addListener(new ChangeListener<Number>() {
-                        private boolean changing;
-                        @Override
-                        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                            if( !changing ) {
-                                try {
-                                    changing = true;
-                                    spanChoiceBox.setValue(getSpanId(newValue.doubleValue(), mMethodsChoiceMap.get(methodsChoiceBox.getValue())));
-                                    TextField textField = (TextField) abscissaFieldHBox.getChildren().get(0);
-                                    textField.setText(TWO_DECIMALS.format(getSpanLocalX(newValue.doubleValue(), chosenMethod)));
-                                }
-                                finally {
-                                    changing = false;
-                                }
-                            }
-                        }
-                    });
-
-                    abscissaField.focusedProperty().addListener((observable2, oldValue2, newValue2) -> {
-                        if(!newValue2) {
-                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
-                            if (abscissaField.getText().isEmpty()){
-                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
-                            }else {
-                                double maxValue = round(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId),2);
-                                if (Double.parseDouble(abscissaField.getText()) > maxValue) {       //entered value > max limit
-                                    abscissaField.setText(String.valueOf(maxValue));                                          //remove the value
-                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxValue, chosenMethod));
-                                } else {
-                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
-                                }
-                            }
-                        }
-                    });
-
-//                    abscissaField.setOnKeyPressed(keyEvent -> {
-//                        if (keyEvent.getCode() == KeyCode.ENTER) {
-//                            inputControllerAdder.addPatternMatchTo(abscissaField, true);
-//                            if (abscissaField.getText().isEmpty()){
-//                                mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), 0, chosenMethod));
-//                            }else {
-//                                double maxX = round(chosenMethod.getCalculateSpanLengthMap().getRebarOfLayer(selectedSpanId),2);
-//                                if (Double.parseDouble(abscissaField.getText()) > maxX) {       //entered value > max limit
-//                                    abscissaField.setText(String.valueOf(maxX));                                          //remove the value
-//                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), maxX, chosenMethod));
-//                                } else {
-//                                    mySlider.setValue(getGlobalX(spanChoiceBox.getValue(), Double.parseDouble(abscissaField.getText()), chosenMethod));
-//                                }
-//                            }
-//                        }
-//                    });
-
-                    abscissaLimit.setText("(0 ~ "
-                            + TWO_DECIMALS.format(chosenMethod.getCalculateSpanLengthMap().get(selectedSpanId))
-                            + ")");
-                }
-            }));
-            spanChoiceBox.disableProperty().bind(Bindings.isNull(methodsChoiceBox.valueProperty()));
-
         }
 
         private void prepareMomentSeriesAndAddToLineChart(SpanMomentFunction spanMomentFunction) {
@@ -419,10 +477,13 @@ public class MomentPageController {
             methodCheck.setSelected(true);
             //Set action for the spinner to re-load the moment chart line
             totalNumOnSpanSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                mStringSeriesMap.get(maxSeriesId).getData().clear();
-                mStringSeriesMap.get(minSeriesId).getData().clear();
-                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(maxSeriesId));
-                addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(minSeriesId));
+                SpinnerValueFactory.IntegerSpinnerValueFactory intFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory)totalNumOnSpanSpinner.getValueFactory();
+                if (newValue <= intFactory.getMax() && newValue >= intFactory.getMin()) {
+                    mStringSeriesMap.get(maxSeriesId).getData().clear();
+                    mStringSeriesMap.get(minSeriesId).getData().clear();
+                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(maxSeriesId));
+                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(minSeriesId));
+                }
             });
 
             methodsCheckHBox.getChildren().add(methodCheck);
