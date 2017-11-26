@@ -68,7 +68,7 @@ public class ReinforcementResultTable {
         mResultTableStage.getIcons().add(new Image("image/section_32x32.png"));
 
 
-        double sceneWidth = mGeometry.getNumSpan() * 180 + 430;
+        double sceneWidth = mGeometry.getNumSpan() * 190 + 430;
         Scene scene = new Scene(container, sceneWidth, 880);
         scene.getStylesheets().add("/css/rebar_calculate_table.css");
         mResultTableStage.setScene(scene);

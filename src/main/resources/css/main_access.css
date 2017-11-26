@@ -2,6 +2,12 @@
     -fx-font-family: "Microsoft YaHei";
 }
 
+.tab-pane .tab-header-area .tab-header-background,
+.tab-pane .tab,
+.tab-pane .tab:selected {
+    -fx-background-color: #3D4956;
+}
+
 .split-pane{
     -fx-background-color: #3D4956;
 }

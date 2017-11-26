@@ -10,9 +10,10 @@
 <ScrollPane stylesheets="@../css/deflection.css"
             xmlns="http://javafx.com/javafx/8.0.141"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="scrollContainer"
             fx:controller="com.beamcalculate.controllers.DeflectionPageController">
    <content>
-      <AnchorPane fx:id="deflectionPageAnchorPane" minHeight="511.0" minWidth="719.0">
+      <AnchorPane fx:id="deflectionPageAnchorPane" minHeight="510.0" minWidth="720.0">
          <VBox spacing="40" alignment="TOP_CENTER"
                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

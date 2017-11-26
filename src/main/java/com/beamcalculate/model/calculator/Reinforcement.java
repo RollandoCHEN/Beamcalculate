@@ -76,8 +76,8 @@ public class Reinforcement {
     private void prepare(){
         mWidth = mGeometry.getSectionWidth();
         mEffectiveHeight = mGeometry.getEffectiveHeight();
-        mFcd = mMaterial.getFcd();
-        mFyd = mMaterial.getFyd();
+        mFcd = mMaterial.getFcd_MPa();
+        mFyd = mMaterial.getFyd_MPa();
         mSteelUltimateStrain = mMaterial.getSteelUltimateExtension();
         mPerpendicularSpacing = mGeometry.getPerpendicularSpacing();
         mSlabThickness = mGeometry.getSlabThickness();

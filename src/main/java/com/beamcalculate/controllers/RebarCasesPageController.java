@@ -132,7 +132,7 @@ public class RebarCasesPageController {
     private double mMinHeight;
     private double mMinWidth;
 
-    private BooleanBinding mDisableDeflectionButton = Bindings.isNotNull(new JFXComboBox<String>().valueProperty());
+    private BooleanBinding mDisableDeflectionButton;
     private BooleanProperty mShowDeflectionPage = new SimpleBooleanProperty(false);
     private List<ObjectProperty<RebarCase>> mRebarSelectionList = new ArrayList<>();
 
@@ -143,6 +143,7 @@ public class RebarCasesPageController {
             mRebar = rebar;
             mReinforcement = rebar.getReinforcement();
             mGeometry = mReinforcement.getSpanMomentFunction().getInputs().getGeometry();
+            mDisableDeflectionButton = Bindings.isNotNull(new JFXComboBox<String>().valueProperty());
 
             initializeCrossSectionView();
             setPageMinSize();
@@ -318,6 +319,7 @@ public class RebarCasesPageController {
                     new Label(getBundleText("label.selected_case")), 0, maxNumOfCases + 1
             );
 
+            mRebarSelectionList.clear();
             for (int spanId = 1; spanId < mGeometry.getNumSpan()+1; spanId++) {
                 // add combo box to the last row of the grid pane
                 JFXComboBox<RebarCase> rebarSelectionBox = new JFXComboBox();

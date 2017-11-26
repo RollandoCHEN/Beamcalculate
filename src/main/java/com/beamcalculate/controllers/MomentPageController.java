@@ -481,8 +481,16 @@ public class MomentPageController {
                 if (newValue <= intFactory.getMax() && newValue >= intFactory.getMin()) {
                     mStringSeriesMap.get(maxSeriesId).getData().clear();
                     mStringSeriesMap.get(minSeriesId).getData().clear();
-                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(maxSeriesId));
-                    addDataToMomentSeries(totalNumOnSpanSpinner.getValue(), spanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(minSeriesId));
+                    addDataToMomentSeries(
+                            totalNumOnSpanSpinner.getValue(),
+                            spanMomentFunction,
+                            MAX_MOMENT_TAG,
+                            mStringSeriesMap.get(maxSeriesId));
+                    addDataToMomentSeries(
+                            totalNumOnSpanSpinner.getValue(),
+                            spanMomentFunction,
+                            MIN_MOMENT_TAG,
+                            mStringSeriesMap.get(minSeriesId));
                 }
             });
 
@@ -540,12 +548,38 @@ public class MomentPageController {
             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(),
+                    newSpanMomentFunction,
+                    MAX_MOMENT_TAG,
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
             );
 
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(),
+                    newSpanMomentFunction,
+                    MIN_MOMENT_TAG,
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
             );
+
+            totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
+                SpinnerValueFactory.IntegerSpinnerValueFactory intFactory = (SpinnerValueFactory.IntegerSpinnerValueFactory)totalNumOnSpanSpinner.getValueFactory();
+                if (newValue1 <= intFactory.getMax() && newValue1 >= intFactory.getMin()) {
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
+                    addDataToRedistributionMomentSeries(
+                            totalNumOnSpanSpinner.getValue(),
+                            newSpanMomentFunction,
+                            MAX_MOMENT_TAG,
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                    );
+                    addDataToRedistributionMomentSeries(
+                            totalNumOnSpanSpinner.getValue(),
+                            newSpanMomentFunction,
+                            MIN_MOMENT_TAG,
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                    );
+                }
+            });
 
             redistributionCheck.selectedProperty().addListener(((observable, oldValue, newValue) -> {
                 if(newValue){
@@ -728,22 +762,38 @@ public class MomentPageController {
             mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
             mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(),
+                    newSpanMomentFunction,
+                    MAX_MOMENT_TAG,
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
             );
 
             addDataToRedistributionMomentSeries(
-                    totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                    totalNumOnSpanSpinner.getValue(),
+                    newSpanMomentFunction,
+                    MIN_MOMENT_TAG,
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
             );
 
             totalNumOnSpanSpinner.valueProperty().addListener((observable1, oldValue1, newValue1) -> {
-                mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
-                mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
-                addDataToRedistributionMomentSeries(
-                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MAX_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
-                );
-                addDataToRedistributionMomentSeries(
-                        totalNumOnSpanSpinner.getValue(), newSpanMomentFunction, MIN_MOMENT_TAG, mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
-                );
+                SpinnerValueFactory.IntegerSpinnerValueFactory intFactory =
+                        (SpinnerValueFactory.IntegerSpinnerValueFactory)totalNumOnSpanSpinner.getValueFactory();
+                if (newValue1 <= intFactory.getMax() && newValue1 >= intFactory.getMin()) {
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID).getData().clear();
+                    mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID).getData().clear();
+                    addDataToRedistributionMomentSeries(
+                            totalNumOnSpanSpinner.getValue(),
+                            newSpanMomentFunction,
+                            MAX_MOMENT_TAG,
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MAX_SERIES_ID)
+                    );
+                    addDataToRedistributionMomentSeries(
+                            totalNumOnSpanSpinner.getValue(),
+                            newSpanMomentFunction,
+                            MIN_MOMENT_TAG,
+                            mStringSeriesMap.get(THREE_MOMENT_RDS_MIN_SERIES_ID)
+                    );
+                }
             });
 
             // update moment value label

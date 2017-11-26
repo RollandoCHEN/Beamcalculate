@@ -108,7 +108,7 @@
             <TabPane fx:id="mainPageTabPane" tabClosingPolicy="UNAVAILABLE"
                      tabMinHeight="30"
                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-41">
+                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-40">
                 <Tab text="%label.tab.dimensions" disable="${inputPageButton.disabled}">
                     <fx:include fx:id="inputPage" source="InputPage.fxml"/>
                 </Tab>

@@ -18,6 +18,9 @@ public class Geometry {
     private final DoubleProperty mPerpendicularSpacing = new SimpleDoubleProperty();
     private final DoubleProperty mEffectiveHeight = new SimpleDoubleProperty();
     private final DoubleProperty mCoverThickness_cm = new SimpleDoubleProperty(3);
+    private final DoubleProperty mAverageRadius = new SimpleDoubleProperty();
+    private final DoubleProperty mConcreteSection = new SimpleDoubleProperty();
+    private final DoubleProperty mPerimeter = new SimpleDoubleProperty();
     private double mTotalLength = 0.0;
 
     private Map<Integer, Double> mSpansLengthMap = new HashMap<>();        // Not be able to use MapProperty, cause not be able to set (k,v) to it
@@ -28,6 +31,9 @@ public class Geometry {
     public Geometry() {
         mNumSupport.bind(Bindings.add(mNumSpan,1));
         mEffectiveHeight.bind(Bindings.multiply(mSectionHeight, 0.9));
+        mConcreteSection.bind(Bindings.multiply(mSectionHeight, mSectionWidth));
+        mPerimeter.bind(Bindings.add(mSectionHeight, mSectionWidth).multiply(2));
+        mAverageRadius.bind(Bindings.divide(mConcreteSection, mPerimeter).multiply(2));
     }
 
     public DoubleProperty effectiveHeightProperty() {
@@ -127,5 +133,29 @@ public class Geometry {
                 round(spanLength + supportWidthMap().get(spanId) /2 + supportWidthMap().get(spanId + 1) /2,2)
         ));
         return mEffectiveSpansLengthMap;
+    }
+
+    public double getAverageRadius() {
+        return mAverageRadius.get();
+    }
+
+    public DoubleProperty averageRadiusProperty() {
+        return mAverageRadius;
+    }
+
+    public double getConcreteSection() {
+        return mConcreteSection.get();
+    }
+
+    public DoubleProperty concreteSectionProperty() {
+        return mConcreteSection;
+    }
+
+    public double getPerimeter() {
+        return mPerimeter.get();
+    }
+
+    public DoubleProperty perimeterProperty() {
+        return mPerimeter;
     }
 }

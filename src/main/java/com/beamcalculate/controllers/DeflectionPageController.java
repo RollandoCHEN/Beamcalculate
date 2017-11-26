@@ -2,10 +2,12 @@ package com.beamcalculate.controllers;
 
 import com.beamcalculate.enums.DeflectionParam;
 import com.beamcalculate.model.calculator.Deflection;
+import com.beamcalculate.model.page_manager.PageScaleHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
@@ -20,11 +22,17 @@ import static com.beamcalculate.model.page_manager.LanguageManager.getBundleText
  * Created by rchen on 21/11/2017.
  */
 public class DeflectionPageController implements Initializable {
+    @FXML ScrollPane scrollContainer;
     @FXML GridPane gridPane;
     @FXML AnchorPane deflectionPageAnchorPane;
 
+    private final double PAGE_MIN_HEIGHT = 510;
+    private final double PAGE_MIN_WIDTH = 720;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        PageScaleHandler scaleHandler = new PageScaleHandler();
+        scaleHandler.AddScaleListener(scrollContainer, deflectionPageAnchorPane, PAGE_MIN_HEIGHT, PAGE_MIN_WIDTH);
 
     }
 

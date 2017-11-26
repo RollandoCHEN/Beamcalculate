@@ -29,7 +29,7 @@ public class Deflection {
     public Deflection(Rebar rebar, List<ObjectProperty<RebarCase>> rebarSelectionList) {
         mRebar = rebar;
         mInputs = rebar.getInputs();
-        mFck = mInputs.getMaterial().getFck();
+        mFck = mInputs.getMaterial().getFck_MPa();
         mRefPercentage = 0.001 * Math.sqrt(mFck);
         mNumOfSpans = mInputs.getGeometry().getNumSpan();
         mSectionWidth = mInputs.getGeometry().getSectionWidth();
@@ -60,14 +60,17 @@ public class Deflection {
 
             mSpanDeflectionParam.put(spanNo, paramValueMap);
 
-            System.out.printf("Span %d : rebar percentage = %.2f%%, limit L/d = %.2f, d = %.2fm, actual L/d = %.2f%n",
-                    spanNo,
-                    bottomPercentage*100,
-                    limitSpanHeightRatio,
-                    sectionEffectiveHeight,
-                    spanLength/sectionEffectiveHeight
-            );
+//            System.out.printf("Span %d : rebar percentage = %.2f%%, limit L/d = %.2f, d = %.2fm, actual L/d = %.2f%n",
+//                    spanNo,
+//                    bottomPercentage*100,
+//                    limitSpanHeightRatio,
+//                    sectionEffectiveHeight,
+//                    spanLength/sectionEffectiveHeight
+//            );
         }
+
+        Creep creep = new Creep(mInputs, 0.0);
+
     }
 
     private double spanHeightRatioFormula(double typeCoef, double topPercentage, double bottomPercentage){

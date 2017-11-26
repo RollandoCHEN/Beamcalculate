@@ -45,7 +45,7 @@ public class MomentRedistribution {
 
             double maxMoment = - combination.getMinMomentValueOfSupport(supportId);
             double supportMuValue = maxMoment /
-                    (mGeometry.getSectionWidth() * Math.pow(mGeometry.getEffectiveHeight(), 2.0) * mMaterial.getFcd());
+                    (mGeometry.getSectionWidth() * Math.pow(mGeometry.getEffectiveHeight(), 2.0) * mMaterial.getFcd_MPa());
             mSupportMuMap_BR.put(supportId, supportMuValue);
         }
 

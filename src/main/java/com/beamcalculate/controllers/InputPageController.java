@@ -259,8 +259,8 @@ public class InputPageController implements Initializable {
         mInputValueGetter.getInputValue(sectionWidth_tf, mGeometry.sectionWidthProperty());
         mInputValueGetter.getInputValue(permanentLoad_tf, load.gTmProperty());
         mInputValueGetter.getInputValue(variableLoad_tf, load.qTmProperty());
-        mInputValueGetter.getInputValue(fck_tf, material.fckProperty());
-        mInputValueGetter.getInputValue(fyk_tf, material.fykProperty());
+        mInputValueGetter.getInputValue(fck_tf, material.fck_MPaProperty());
+        mInputValueGetter.getInputValue(fyk_tf, material.fyk_MPaProperty());
         mInputValueGetter.getInputValue(ductibilityClass_chcb, material.ductibilityClassProperty());
         mInputValueGetter.getInputValue(onTSection_tgglbttn, mGeometry.onTSectionProperty());
         if (isOnTSection()) {
