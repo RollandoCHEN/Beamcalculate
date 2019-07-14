@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.beamcalculate.enums.CombinCoef.*;
+import static com.beamcalculate.enums.CombinationCoef.*;
 import static com.beamcalculate.enums.SpecialLoadCase.SPAN_MAX;
 import static com.beamcalculate.enums.SpecialLoadCase.SUPPORT_MIN;
 import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
@@ -52,15 +52,15 @@ public class ELUCombination {
                 }
                 if (loadCase == 0) {
                     if (mUnfavorableCondition) {
-                        mMomentAfterCombination += G_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        mMomentAfterCombination += G_ELU_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                     } else {
-                        mMomentAfterCombination += G_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        mMomentAfterCombination += G_ELU_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                     }
                 } else {
                     if (mUnfavorableCondition) {
-                        mMomentAfterCombination += Q_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        mMomentAfterCombination += Q_ELU_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                     } else {
-                        mMomentAfterCombination += Q_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                        mMomentAfterCombination += Q_ELU_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                     }
                 }
             });
@@ -113,15 +113,15 @@ public class ELUCombination {
             }
             if (loadCase == 0) {
                 if (mUnfavorableCondition) {
-                    mMomentUnderLoadCase += G_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                    mMomentUnderLoadCase += G_ELU_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                 } else {
-                    mMomentUnderLoadCase += G_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                    mMomentUnderLoadCase += G_ELU_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                 }
             } else {
                 if (mUnfavorableCondition) {
-                    mMomentUnderLoadCase += Q_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                    mMomentUnderLoadCase += Q_ELU_UNFAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                 } else {
-                    mMomentUnderLoadCase += Q_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
+                    mMomentUnderLoadCase += Q_ELU_FAVORABLE_COEF.getValue() * mMomentBeforeCombination;
                 }
             }
         });

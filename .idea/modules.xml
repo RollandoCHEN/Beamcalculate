@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Beamcalculate.iml" filepath="$PROJECT_DIR$/.idea/modules/Beamcalculate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Beamcalculate.iml" filepath="$PROJECT_DIR$/.idea/modules/Beamcalculate.iml" group="Beamcalculate" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Beamcalculate_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Beamcalculate_main.iml" group="Beamcalculate" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Beamcalculate_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Beamcalculate_test.iml" group="Beamcalculate" />
     </modules>

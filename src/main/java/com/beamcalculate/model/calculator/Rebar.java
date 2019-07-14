@@ -130,18 +130,6 @@ public class Rebar {
         return totalRebarAreaList;
     }
 
-    private void printRebarOfSpan(int spanId) {
-        for (int i = 0; i< getRebarCasesListOfSpan(spanId).size(); i++) {
-            System.out.printf("%nSpan %d : %n", spanId);
-            RebarCase layerRebarMap = getRebarCasesListOfSpan(spanId).get(i);
-            System.out.printf("- Case %d : %n", i+1);
-
-            layerRebarMap.forEach((layerNum, rebarType_amount) -> System.out.printf("Layer %d, %d%s%n", layerNum, rebarType_amount.getNumberOfRebar(), rebarType_amount.getRebarType().name())
-            );
-
-        }
-    }
-
     public Reinforcement getReinforcement() {
         return mReinforcement;
     }

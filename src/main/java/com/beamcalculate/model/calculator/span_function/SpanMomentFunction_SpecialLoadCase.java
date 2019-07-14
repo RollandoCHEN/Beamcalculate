@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static com.beamcalculate.enums.CalculateMethod.TROIS_MOMENT_R;
-import static com.beamcalculate.enums.CombinCoef.G_UNFAVORABLE_COEF;
-import static com.beamcalculate.enums.CombinCoef.Q_UNFAVORABLE_COEF;
+import static com.beamcalculate.enums.CombinationCoef.G_ELU_UNFAVORABLE_COEF;
+import static com.beamcalculate.enums.CombinationCoef.Q_ELU_UNFAVORABLE_COEF;
 import static com.beamcalculate.enums.UltimateCase.MAX_MOMENT_TAG;
 import static com.beamcalculate.enums.UltimateCase.MIN_MOMENT_TAG;
 import static com.beamcalculate.model.MyMethods.round;
@@ -44,15 +44,15 @@ public class SpanMomentFunction_SpecialLoadCase extends AbstractSpanMoment {
 
                     if (loadCase < 10) {                 // loadCase == 1, loadCase == 2
                         if (spanId % 2 == loadCase % 2) {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
+                            thisSpanLoad = G_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
                         } else {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm();
+                            thisSpanLoad = G_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm();
                         }
                     } else {
                         if (spanId == loadCase - 10 - 1 || spanId == loadCase - 10) {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
+                            thisSpanLoad = G_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
                         } else {
-                            thisSpanLoad = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm();
+                            thisSpanLoad = G_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm();
                         }
                     }
 

@@ -1,16 +1,16 @@
 package com.beamcalculate.model.calculator.support_moment;
 
-import com.beamcalculate.enums.CombinCoef;
+import com.beamcalculate.enums.CombinationCoef;
 import com.beamcalculate.model.entites.*;
 
 import java.util.*;
 
-import static com.beamcalculate.enums.CombinCoef.G_UNFAVORABLE_COEF;
-import static com.beamcalculate.enums.CombinCoef.Q_UNFAVORABLE_COEF;
+import static com.beamcalculate.enums.CombinationCoef.G_ELU_UNFAVORABLE_COEF;
+import static com.beamcalculate.enums.CombinationCoef.Q_ELU_UNFAVORABLE_COEF;
 import static com.beamcalculate.enums.CalculateMethod.FORFAITAIRE;
 
 public class SupportMomentForfaitaire extends SupportMoment{
-    private Map<Integer, Map<CombinCoef, Double>> mSpanRefMomentMap = new HashMap<>();
+    private Map<Integer, Map<CombinationCoef, Double>> mSpanRefMomentMap = new HashMap<>();
     private Map<Integer, Double> mSpanELURefMomentMap = new HashMap<>();
     private Map<Integer, Double> mSupportELUMomentMap = new HashMap<>();
     private Map<Integer, Double> mCalculateSpanLengthMap = new HashMap<>();
@@ -23,9 +23,9 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
         // add spanId and Map to mSpanRefMomentMap
         for(int i = 0; i<mGeometry.getNumSpan(); i++){
-            Map<CombinCoef, Double> loadCaseMomentMap = new HashMap();
-            loadCaseMomentMap.put(G_UNFAVORABLE_COEF, 0.0);
-            loadCaseMomentMap.put(Q_UNFAVORABLE_COEF, 0.0);
+            Map<CombinationCoef, Double> loadCaseMomentMap = new HashMap();
+            loadCaseMomentMap.put(G_ELU_UNFAVORABLE_COEF, 0.0);
+            loadCaseMomentMap.put(Q_ELU_UNFAVORABLE_COEF, 0.0);
             mSpanRefMomentMap.put(i+1, loadCaseMomentMap);
         }
 
@@ -49,7 +49,7 @@ public class SupportMomentForfaitaire extends SupportMoment{
         }
 
 
-        double p = G_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
+        double p = G_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getGMNm() + Q_ELU_UNFAVORABLE_COEF.getValue() * mLoad.getQMNm();
         mSpanELURefMomentMap.forEach((spanId, refMoment)->{
             refMoment = p * Math.pow(mCalculateSpanLengthMap.get(spanId),2) / 8.0;
             mSpanELURefMomentMap.put(spanId, refMoment);
@@ -81,10 +81,10 @@ public class SupportMomentForfaitaire extends SupportMoment{
 
         mSupportMomentMap.forEach((supportId, loadCaseMomentMap)->{
             if (supportId!=1 && supportId!=mGeometry.getNumSupport()){
-                double g1 = mSpanRefMomentMap.get(supportId-1).get(G_UNFAVORABLE_COEF);
-                double q1 = mSpanRefMomentMap.get(supportId-1).get(Q_UNFAVORABLE_COEF);
-                double g2 = mSpanRefMomentMap.get(supportId).get(G_UNFAVORABLE_COEF);
-                double q2 = mSpanRefMomentMap.get(supportId).get(Q_UNFAVORABLE_COEF);
+                double g1 = mSpanRefMomentMap.get(supportId-1).get(G_ELU_UNFAVORABLE_COEF);
+                double q1 = mSpanRefMomentMap.get(supportId-1).get(Q_ELU_UNFAVORABLE_COEF);
+                double g2 = mSpanRefMomentMap.get(supportId).get(G_ELU_UNFAVORABLE_COEF);
+                double q2 = mSpanRefMomentMap.get(supportId).get(Q_ELU_UNFAVORABLE_COEF);
                 double coef = mSupportELUMomentMap.get(supportId) / ( g1 + q1 + g2 + q2 );
                 loadCaseMomentMap.forEach((loaCase, moment)-> {
                     if (loaCase == 0){

@@ -54,7 +54,7 @@ public class Deflection {
             }
             double spanLength = mInputs.getGeometry().getEffectiveSpansLengthMap().get(spanNo);
             double sectionEffectiveHeight = mInputs.getGeometry().getSectionHeight() - mInputs.getGeometry().getCoverThickness_cm() / 100 -
-                    (rebarDiameterSum_mm  + selectedRebarCase.getMinSpacingBetweenRebar_mm() * (layerAmount -1)) / 2 / 1000;
+                    (rebarDiameterSum_mm  + selectedRebarCase.getMinSpacingBetweenRebar_mm() * (layerAmount - 1)) / 2 / 1000;
 
             paramValueMap.put(d_L_D, spanLength/sectionEffectiveHeight);
 

@@ -36,8 +36,7 @@ public class LanguageManager {
     }
 
     public static String getBundleText(String key){
-        ResourceBundle bundle = getBundle("UIResources", AppSettings.currentLocal);
-        return bundle.getString(key);
+        return getResourceBundle().getString(key);
     }
 
     public void setAppLanguage(Locale locale){
@@ -63,10 +62,10 @@ public class LanguageManager {
             if (previousScreenStatus == 2){
                 BeamCalculatorApp.getPrimaryStage().setFullScreen(true);
             } else if (previousScreenStatus == 1) {
-//                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
-//                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
+                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
+                BeamCalculatorApp.getPrimaryStage().setMaximized(true);
             } else {
-//                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
+                BeamCalculatorApp.getPrimaryStage().setMaximized(false);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -63,19 +63,19 @@ public class RebarCutChart {
         XYChart.Series<Number, Number> minSeries = new XYChart.Series<>();
 
         if (calculateMethod.equals(TROIS_MOMENT_R.getMethodName())) {
-            addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX_MOMENT_TAG, maxSeries);
-            addDataToRedistributionMomentSeries(300, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN_MOMENT_TAG, minSeries);
+            addDataToRedistributionMomentSeries(500, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MAX_MOMENT_TAG, maxSeries);
+            addDataToRedistributionMomentSeries(500, (SpanMomentFunction_SpecialLoadCase) mSpanMoment, MIN_MOMENT_TAG, minSeries);
 
         } else {
-            addDataToMomentSeries(300, mSpanMoment, MAX_MOMENT_TAG, maxSeries);
-            addDataToMomentSeries(300, mSpanMoment, MIN_MOMENT_TAG, minSeries);
+            addDataToMomentSeries(500, mSpanMoment, MAX_MOMENT_TAG, maxSeries);
+            addDataToMomentSeries(500, mSpanMoment, MIN_MOMENT_TAG, minSeries);
         }
 
         //for all series, take date, each data has custom_node (symbol) for representing point
         removeLineChartPoints(maxSeries);
         removeLineChartPoints(minSeries);
 
-        LineChart<Number, Number> lineChart = new LineChart(mXAxis, mYAxis);
+        LineChart<Number, Number> lineChart = new LineChart<>(mXAxis, mYAxis);
 
         lineChart.getData().addAll(maxSeries, minSeries);
 
@@ -168,7 +168,7 @@ public class RebarCutChart {
 
                 XYChart.Data<Number, Number> startData = new XYChart.Data<>(startPoint, getFirstLayerMoment());
                 XYChart.Data<Number, Number> endData = new XYChart.Data<>(endPoint, getFirstLayerMoment());
-                XYChart.Series<Number, Number> global = new XYChart.Series();
+                XYChart.Series<Number, Number> global = new XYChart.Series<>();
                 global.setName(getBundleText("legend.momentRst_global"));
                 lineChart.getData().add(global);
 
@@ -177,7 +177,7 @@ public class RebarCutChart {
                     double xValue = numberData.getXValue().doubleValue();
                     double yValue = numberData.getYValue().doubleValue();
 
-                    double tolerance = Math.abs(rebar.getReinforcement().getSpanReinforceParam().get(spanId).get(a_M) / 170);
+                    double tolerance = Math.abs(rebar.getReinforcement().getSpanReinforceParam().get(spanId).get(a_M) / 250);
 
                     // TODO Find a more reliable way to located the intersection point  !!! URGENT !!!
                     if (Math.abs(MyMethods.round(yValue, 4) - MyMethods.round(getFirstLayerMoment(), 4))
@@ -253,24 +253,6 @@ public class RebarCutChart {
 
         mScene = new Scene(borderPane, 800, 800);
         mScene.getStylesheets().add("/css/rebar_cut_chart.css");
-    }
-
-    private String getRebarCaseString(List<Map<Integer, RebarType_Amount>> rebarCasesList, int caseNum) {
-        StringBuilder buttonString = new StringBuilder();
-        int lastLayer = rebarCasesList.get(caseNum).size();
-        for (int layerNum = lastLayer; layerNum > 0; layerNum--){
-            RebarType_Amount rebarType_amount = rebarCasesList.get(caseNum).get(layerNum);
-
-            if (layerNum != lastLayer){
-                buttonString.append("\n");
-            }
-            String rebarTypeName = rebarType_amount.getRebarType().name();
-            int numberOfRebar = rebarType_amount.getNumberOfRebar();
-            buttonString.append(MyMethods.getOrdinalNumber(layerNum))
-                    .append(getBundleText("label.steelRebarLayer"))
-                    .append(" : ").append(numberOfRebar).append(rebarTypeName);
-        }
-        return buttonString.toString();
     }
 
     private void addLimitsToLineChart(LineChart<Number, Number> lineChart, double startPoint, double endPoint) {
